@@ -110,7 +110,7 @@ class SceneConceptExtractor(MapFunction):
         top_k = min(self.top_k, scores.shape[-1])
         top_scores, top_indices = torch.topk(scores, top_k)
         concepts: list[dict[str, Any]] = []
-        for score, idx in zip(top_scores.tolist(), top_indices.tolist()):
+        for score, idx in zip(top_scores.tolist(), top_indices.tolist(), strict=True):
             concepts.append(
                 {
                     "label": self.templates[idx],
@@ -178,7 +178,7 @@ class FrameObjectClassifier(MapFunction):
         k = min(self.top_k, probs.shape[0])
         top_scores, top_indices = torch.topk(probs, k)
         predictions: list[dict[str, Any]] = []
-        for score, idx in zip(top_scores.tolist(), top_indices.tolist()):
+        for score, idx in zip(top_scores.tolist(), top_indices.tolist(), strict=True):
             predictions.append(
                 {
                     "label": self.categories[idx],

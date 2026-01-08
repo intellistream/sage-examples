@@ -35,9 +35,12 @@ repos:
     rev: v0.14.6  # Match SAGE main repository version
     hooks:
       - id: ruff
-        args: [--fix]
+        name: ruff check
+        args: [--fix, --exit-non-zero-on-fix, --config, tools/config/ruff.toml]
         types_or: [python, pyi]
       - id: ruff-format
+        name: ruff format
+        args: [--config, tools/config/ruff.toml]
         types_or: [python, pyi]
 
   # Python: mypy type checking

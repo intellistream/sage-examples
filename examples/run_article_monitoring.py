@@ -22,7 +22,6 @@ Test Configuration:
 
 import argparse
 import sys
-from pathlib import Path
 
 try:
     from sage.apps.article_monitoring import run_article_monitoring_pipeline

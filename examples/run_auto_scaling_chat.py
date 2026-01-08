@@ -21,7 +21,6 @@ Test Configuration:
 
 import argparse
 import sys
-from pathlib import Path
 
 try:
     from sage.apps.auto_scaling_chat import run_auto_scaling_demo

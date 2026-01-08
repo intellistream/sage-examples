@@ -56,10 +56,9 @@ def check_and_setup_data(data_dir: str, auto_setup: bool = False) -> bool:
     setup_script = data_path.parent / "setup_data.sh"
 
     if not setup_script.exists():
-        # 尝试其他可能的位置
-        setup_script = (
-            project_root / "packages/sage-apps/src/sage/apps/medical_diagnosis/setup_data.sh"
-        )
+        # 尝试 sage-apps 包内的脚本位置
+        sage_apps_root = Path(__file__).parent.parent / "sage-apps"
+        setup_script = sage_apps_root / "src/sage/apps/medical_diagnosis/setup_data.sh"
 
     if not setup_script.exists():
         print("❌ 数据设置脚本未找到")

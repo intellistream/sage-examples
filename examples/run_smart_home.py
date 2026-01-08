@@ -21,7 +21,6 @@ Test Configuration:
 
 import argparse
 import sys
-from pathlib import Path
 
 try:
     from sage.apps.smart_home import run_smart_home_demo

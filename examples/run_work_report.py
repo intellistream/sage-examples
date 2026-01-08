@@ -24,7 +24,6 @@ Test Configuration:
 import argparse
 import os
 import sys
-from pathlib import Path
 
 try:
     from sage.apps.work_report_generator import run_work_report_pipeline

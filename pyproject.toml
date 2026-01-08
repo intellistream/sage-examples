@@ -147,24 +147,7 @@ target-version = ['py310', 'py311']     # 目标 Python 版本
 
 # 代码检查和格式化 (Ruff)
 [tool.ruff]
-line-length = 100                       # 最大行长度
-target-version = "py310"                # 目标 Python 版本
-
-[tool.ruff.lint]
-# 启用的检查规则
-select = [
-    "E",     # pycodestyle 错误
-    "F",     # Pyflakes
-    "W",     # pycodestyle 警告
-    "I",     # isort
-    "N",     # pep8-naming
-]
-
-# 忽略的规则
-ignore = [
-    "E501",  # 行过长（由格式化工具处理）
-    "F401",  # 导入但未使用（示例代码可能有演示性导入）
-]
+extend = "tools/config/ruff.toml"  # 继承统一配置
 
 # 静态类型检查 (MyPy)
 [tool.mypy]

@@ -6,7 +6,6 @@
 
 import json
 import random
-import sys
 from pathlib import Path
 
 from datasets import load_from_disk
@@ -15,6 +14,10 @@ from sklearn.model_selection import train_test_split
 
 # Note: This script assumes sage-apps package is installed
 # Install with: cd sage-apps && pip install -e .
+
+# 查找项目根目录
+_current_file = Path(__file__).resolve()
+project_root = _current_file.parent.parent.parent.parent.parent.parent  # 到 sage-examples 根目录
 
 
 # 疾病类别映射 (模拟)
