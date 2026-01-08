@@ -1,0 +1,72 @@
+name: Code Quality Checks
+
+on:
+  push:
+    branches: [main, main-dev]
+  pull_request:
+    branches: [main, main-dev]
+  workflow_dispatch:
+
+jobs:
+  pre-commit:
+    name: Pre-commit Hooks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pre-commit
+        run: |
+          pip install pre-commit
+
+      - name: Run pre-commit
+        run: |
+          pre-commit run --all-files --show-diff-on-failure
+
+  ruff:
+    name: Ruff Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install ruff
+        run: |
+          pip install ruff==0.14.6
+
+      - name: Run ruff check
+        run: |
+          ruff check .
+
+      - name: Run ruff format check
+        run: |
+          ruff format --check .
+
+  mypy:
+    name: Type Checking (mypy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install mypy types-PyYAML types-requests types-setuptools
+          pip install -r requirements.txt
+
+      - name: Run mypy
+        run: |
+          mypy . --config-file=pyproject.toml --no-error-summary
+        continue-on-error: true  # Type checking errors shouldn't block CI

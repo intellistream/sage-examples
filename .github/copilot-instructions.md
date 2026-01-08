@@ -142,7 +142,7 @@ L1: sage-common, sage-llm-core
 
 ```
 sage-examples/
-├── apps/                   # 🎯 生产应用示例
+├── apps/                   # 🎯 生产应用示例（运行入口）
 │   ├── run_video_intelligence.py
 │   ├── run_medical_diagnosis.py
 │   ├── run_smart_home.py
@@ -183,7 +183,7 @@ sage-examples/
 
 - Root overview: `README.md` (示例总览、快速开始)
 - Tutorials overview: `tutorials/README.md` (教程结构、学习路径)
-- Apps overview: `apps/README.md` (应用列表、使用方法)
+- Examples overview: `examples/README.md` (应用列表、使用方法)
 - Quick start: `tutorials/QUICK_START.md` (5分钟快速入门)
 
 **在处理特定层级/主题时，Copilot 应该额外阅读：**
@@ -204,7 +204,7 @@ sage-examples/
 - **常见文档位置：**
   - 教程文档：`tutorials/docs/`
   - 配置示例：`tutorials/config/`
-  - 应用说明：`apps/README.md`
+  - 应用说明：`examples/README.md`
   - 快速入门：`tutorials/QUICK_START.md`
 
 **规则**: 不要猜测架构决策或策略。阅读文档。文档就是为此而存在的。
@@ -221,7 +221,7 @@ sage-examples/
    - 循序渐进的学习路径
    - 配置文件示例
 
-2. **Applications (apps/)**: 生产级应用示例
+2. **Examples (examples/)**: 应用示例运行入口
    - 视频智能分析
    - 医疗诊断系统
    - 智能家居
@@ -264,7 +264,7 @@ sage-examples/
 │ (intellistream/sage-examples)                │
 ├──────────────────────────────────────────────┤
 │ • 教程代码 (tutorials/)                       │
-│ • 应用示例 (apps/)                            │
+│ • 应用示例入口 (examples/)                    │
 │ • 独立 sage-apps 包 (sage-apps/)             │
 │ • 依赖 PyPI 上的 isage-* 包                   │
 └──────────────────────────────────────────────┘
@@ -372,19 +372,19 @@ cd apps && python run_smart_home.py
 
 ```bash
 # 视频智能分析
-python apps/run_video_intelligence.py --video path/to/video.mp4
+python examples/run_video_intelligence.py --video path/to/video.mp4
 
 # 医疗诊断
-python apps/run_medical_diagnosis.py
+python examples/run_medical_diagnosis.py
 
 # 智能家居
-python apps/run_smart_home.py
+python examples/run_smart_home.py
 
 # 文章监控
-python apps/run_article_monitoring.py
+python examples/run_article_monitoring.py
 
 # 自动扩展聊天
-python apps/run_auto_scaling_chat.py
+python examples/run_auto_scaling_chat.py
 ```
 
 ## Common Issues
@@ -495,7 +495,7 @@ pre-commit run --all-files
 
 1. **选择正确的位置**:
    - 教程 → `tutorials/L{1-6}-*/`
-   - 应用 → `apps/`
+   - 应用示例 → `examples/`
    - 配置 → `tutorials/config/`
 
 2. **遵循命名规范**:
@@ -570,6 +570,6 @@ if __name__ == "__main__":
    - Root: `README.md`
    - Tutorials: `tutorials/README.md`, `tutorials/QUICK_START.md`
    - Layer guides: `tutorials/L{1-6}-*/README.md`
-   - Apps: `apps/README.md`
+   - Examples: `examples/README.md`
 
 **Remember**: Don't guess. Read the docs. They exist for this reason.

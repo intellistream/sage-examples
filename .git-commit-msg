@@ -1,0 +1,30 @@
+refactor: reorganize structure and prepare for tutorials migration
+
+## Directory Restructuring
+
+- Rename `apps/` → `examples/` for clarity
+- Create `docs/` directory for documentation
+- All files preserve git history via `git mv`
+
+## Tutorials Migration
+
+Tutorials will be moved to SAGE main repository for better synchronization.
+
+**Changes**:
+- Update README to point to SAGE/tutorials
+- Remove tutorials from pyproject.toml
+- Update CI workflows (no tutorial tests)
+- Created migration script: `migrate_tutorials_to_sage.sh`
+
+## Code Quality Infrastructure
+
+- Pre-commit hooks (ruff, mypy, shellcheck, etc.)
+- CI/CD workflows (quality + tests)
+- Comprehensive development documentation
+
+## Breaking Changes
+
+- Path changes: `apps/` → `examples/`
+- Tutorials location: Moving to SAGE main repo
+
+See docs/REFACTORING_SUMMARY.md for details.
