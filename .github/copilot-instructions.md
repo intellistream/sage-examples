@@ -167,7 +167,6 @@ sage-examples/
 │   ├── src/sage/apps/
 │   └── tests/
 │
-├── data/                  # 共享数据文件
 ├── requirements.txt       # Python 依赖
 ├── README.md
 └── LICENSE
@@ -215,13 +214,7 @@ sage-examples/
 
 **✅ 包含内容：**
 
-1. **Tutorials (tutorials/)**: 分层教程，覆盖 L1-L6 各层
-   - 基础概念演示
-   - 最佳实践示例
-   - 循序渐进的学习路径
-   - 配置文件示例
-
-2. **Examples (examples/)**: 应用示例运行入口
+1. **Examples (examples/)**: 应用示例运行入口
    - 视频智能分析
    - 医疗诊断系统
    - 智能家居
@@ -238,7 +231,8 @@ sage-examples/
 **❌ 不包含内容（在 SAGE 主仓库）：**
 
 1. **核心框架代码**: 在 `SAGE/packages/` 中
-2. **工具和脚本**: 在 `SAGE/tools/` 中
+2. **教程代码**: 在 `SAGE/tutorials/` 中
+3. **工具和脚本**: 在 `SAGE/tools/` 中
 3. **CI/CD 配置**: 在 `SAGE/.github/` 中
 4. **开发者文档**: 在 `SAGE/docs-public/` 中
 5. **Benchmark 框架**: 独立仓库 `sage-benchmark`
@@ -263,7 +257,6 @@ sage-examples/
 │ sage-examples Repository                     │
 │ (intellistream/sage-examples)                │
 ├──────────────────────────────────────────────┤
-│ • 教程代码 (tutorials/)                       │
 │ • 应用示例入口 (examples/)                    │
 │ • 独立 sage-apps 包 (sage-apps/)             │
 │ • 依赖 PyPI 上的 isage-* 包                   │
@@ -272,7 +265,7 @@ sage-examples/
 
 ## Installation
 
-### Minimal (Tutorials only)
+### Minimal (Examples only)
 
 ```bash
 # 克隆仓库
@@ -282,7 +275,7 @@ cd sage-examples
 # 安装核心依赖
 pip install -r requirements.txt
 
-# 或只安装教程所需
+# 或只安装示例所需
 pip install isage-common isage-llm-core isage-libs
 ```
 
@@ -335,38 +328,23 @@ HF_TOKEN=hf_xxx
 ### Quick Start
 
 ```bash
-# 1. 最简单的示例（30秒）
-python tutorials/hello_world.py
+# 视频智能分析
+python examples/run_video_intelligence.py --video path/to/video.mp4
 
-# 2. Embedding 示例（2分钟）
-python tutorials/embedding_server_example.py
+# 医疗诊断
+python examples/run_medical_diagnosis.py
 
-# 3. Agent 示例（5分钟）
-python tutorials/L3-libs/agents/basic_agent.py
+# 智能家居
+python examples/run_smart_home.py
+
+# 文章监控
+python examples/run_article_monitoring.py
+
+# 自动扩展聊天
+python examples/run_auto_scaling_chat.py
 ```
 
-### By Category
-
-```bash
-# === 基础教程 ===
-cd tutorials/L1-common && python hello_world.py
-
-# === 平台服务 ===
-cd tutorials/L2-platform/scheduler && python scheduler_comparison.py
-
-# === 核心引擎 ===
-cd tutorials/L3-kernel/batch && python hello_local_batch.py
-
-# === RAG & Agents ===
-cd tutorials/L3-libs/rag && python simple_rag.py
-cd tutorials/L3-libs/agents && python basic_agent.py
-
-# === 中间件 ===
-cd tutorials/L4-middleware/vector_db && python sagedb_demo.py
-
-# === 应用 ===
-cd apps && python run_smart_home.py
-```
+> **学习教程**: 前往 [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) 查看完整教程。
 
 ### Applications
 
@@ -494,14 +472,14 @@ pre-commit run --all-files
 ### Adding New Examples
 
 1. **选择正确的位置**:
-   - 教程 → `tutorials/L{1-6}-*/`
+   - 教程 → `SAGE/tutorials/L{1-6}-*/` (在 SAGE 主仓库)
    - 应用示例 → `examples/`
-   - 配置 → `tutorials/config/`
+   - 配置 → `examples/*/config/` 或应用内部
 
 2. **遵循命名规范**:
-   - 使用描述性名称：`basic_agent.py`, `simple_rag.py`
+   - 使用描述性名称：`run_video_intelligence.py`, `run_medical_diagnosis.py`
    - 添加 README：每个目录应有 README.md
-   - 示例数据：放在 `data/` 或 `tutorials/*/data/`
+   - 示例数据：放在应用包内 `sage-apps/src/sage/apps/*/data/`
 
 3. **文档要求**:
    - 代码注释：解释关键步骤

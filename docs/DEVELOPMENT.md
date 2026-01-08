@@ -16,14 +16,15 @@ sage-examples/
 │
 ├── docs/                   # 📚 项目文档
 │   ├── COPILOT_CONFIGURATION.md
+│   ├── DEVELOPMENT.md
+│   ├── MIGRATION_COMPLETE.md
 │   ├── PYPI_RELEASE_GUIDE.md
 │   ├── PYPI_SETUP_SUMMARY.md
-│   └── PYPI_TEST_REPORT.md
+│   ├── PYPI_TEST_REPORT.md
+│   └── REFACTORING_SUMMARY.md
 │
-├── tutorials/              # 📚 教程代码（L1-L6 分层）
 ├── examples/               # 🎯 应用示例（运行入口）
 ├── sage-apps/              # 独立 sage-apps 包
-├── data/                   # 共享数据
 │
 ├── .pre-commit-config.yaml # Pre-commit 配置
 ├── pyproject.toml          # 项目配置

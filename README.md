@@ -47,7 +47,6 @@ sage-examples/
 │   └── tests/                 # Package tests
 │
 ├── docs/                      # 📖 Project documentation
-├── data/                      # Shared data files
 └── pyproject.toml             # Project configuration
 ```
 
@@ -154,7 +153,6 @@ mypy .
 pytest
 
 # Run specific tests
-pytest tutorials/
 pytest examples/test_apps.py
 pytest sage-apps/tests/
 
