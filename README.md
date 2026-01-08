@@ -89,28 +89,41 @@ Complete applications and complex workflows.
 
 ## 📦 Installation
 
-### Minimal (Tutorials only)
+### From PyPI (推荐)
 
 ```bash
-pip install -e packages/sage-libs
+# 最小安装（仅教程）
+pip install isage-examples
+
+# 完整安装（教程 + 应用）
+pip install isage-examples[all]
+pip install isage-apps[all]
+
+# 或安装特定应用
+pip install isage-apps[video]        # 视频智能
+pip install isage-apps[medical]      # 医疗诊断
 ```
 
-### Full (All examples)
+### 从源码安装（开发）
 
 ```bash
-# All applications
-pip install -e packages/sage-apps[all]
+# 克隆仓库
+git clone https://github.com/intellistream/sage-examples.git
+cd sage-examples
 
-# RAG and benchmarking
-pip install -e packages/sage-benchmark
+# 快速开始（交互式安装）
+./quickstart.sh
 
-# Or specific apps
-pip install -e packages/sage-apps[video]
-pip install -e packages/sage-apps[medical]
-
-# All examples dependencies
-pip install -r examples/requirements.txt
+# 或手动安装
+pip install -e .                     # isage-examples（可编辑模式）
+pip install -e sage-apps[all]        # isage-apps（可编辑模式）
 ```
+
+### 依赖说明
+
+- `isage-examples`: 教程和基础示例
+- `isage-apps`: 生产级应用示例
+- 依赖的 SAGE 核心包会自动从 PyPI 安装
 
 ## ⚠️ Examples vs Tests
 
