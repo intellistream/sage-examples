@@ -228,14 +228,14 @@ sage-examples/
 
 ### What sage-examples Does NOT Contain
 
-**❌ 不包含内容（在 SAGE 主仓库）：**
+**❌ 不包含内容（在其他仓库）：**
 
 1. **核心框架代码**: 在 `SAGE/packages/` 中
-2. **教程代码**: 在 `SAGE/tutorials/` 中
+2. **教程代码**: 独立仓库 `sage-tutorials`
 3. **工具和脚本**: 在 `SAGE/tools/` 中
-3. **CI/CD 配置**: 在 `SAGE/.github/` 中
-4. **开发者文档**: 在 `SAGE/docs-public/` 中
-5. **Benchmark 框架**: 独立仓库 `sage-benchmark`
+4. **CI/CD 配置**: 在 `SAGE/.github/` 中
+5. **开发者文档**: 在 `SAGE/docs-public/` 中
+6. **Benchmark 框架**: 独立仓库 `sage-benchmark` (迁移中，当前仍在 `SAGE/benchmark/`)
 
 ### Relationship with SAGE Main Repository
 
