@@ -147,7 +147,12 @@ target-version = ['py310', 'py311']     # 目标 Python 版本
 
 # 代码检查和格式化 (Ruff)
 [tool.ruff]
-extend = "tools/config/ruff.toml"  # 继承统一配置
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]  # 行长度由 formatter 处理
 
 # 静态类型检查 (MyPy)
 [tool.mypy]
