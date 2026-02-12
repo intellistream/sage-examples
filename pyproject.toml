@@ -122,18 +122,18 @@ exclude = [
 ]
 
 [tool.setuptools]
-zip-safe = false                        # 不生成 zip-safe 包
+zip-safe = false
 
-# 包含数据文件
+# 包含数据文件 (简化配置，移除注释避免 bytecode compiler 解析错误)
 [tool.setuptools.package-data]
 "*" = [
-    "*.yaml",                           # 配置文件
-    "*.yml",                            # 配置文件
-    "*.json",                           # 数据文件
-    "*.txt",                            # 文本数据
-    "*.md",                             # 文档文件
-    "data/**/*",                        # 所有数据目录
-    "config/**/*",                      # 所有配置目录
+    "*.yaml",
+    "*.yml",
+    "*.json",
+    "*.txt",
+    "*.md",
+    "data/**/*",
+    "config/**/*"
 ]
 
 # ----------------------------------------------------------------------------
