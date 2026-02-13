@@ -234,7 +234,7 @@ sage-examples/
 2. **教程代码**: 独立仓库 `sage-tutorials`
 3. **工具和脚本**: 在 `SAGE/tools/` 中
 4. **CI/CD 配置**: 在 `SAGE/.github/` 中
-5. **开发者文档**: 在 `SAGE/docs-public/` 中
+5. **开发者文档**: 在 `SAGE-Pub` 或 `SAGE/.sage/docs/` 中
 6. **Benchmark 框架**: 独立仓库 `sage-benchmark` (迁移中，当前仍在 `SAGE/benchmark/`)
 
 ### Relationship with SAGE Main Repository
@@ -246,7 +246,7 @@ sage-examples/
 ├──────────────────────────────────────────────┤
 │ • 核心框架包 (packages/)                      │
 │ • 开发工具 (tools/)                           │
-│ • 文档 (docs-public/)                         │
+│ • 文档 (SAGE-Pub 或 .sage/docs/)             │
 │ • CI/CD (.github/)                            │
 └──────────────────────────────────────────────┘
                      ↓
