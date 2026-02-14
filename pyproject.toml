@@ -112,7 +112,7 @@ include = [
 ]
 exclude = [
     "tests*",                           # 排除测试
-    "sage-apps*",                       # sage-apps 独立打包
+    "apps*",                            # apps 独立打包
     "*.egg-info*",                      # 排除构建产物
     "__pycache__*",                     # 排除缓存
 ]
@@ -163,7 +163,7 @@ ignore_missing_imports = true           # 忽略缺失的导入
 # ----------------------------------------------------------------------------
 [tool.pytest.ini_options]
 # 测试文件搜索路径
-testpaths = ["examples", "sage-apps/tests"]
+testpaths = ["examples", "apps/tests"]
 
 # 测试文件匹配模式
 python_files = ["test_*.py"]
