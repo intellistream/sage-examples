@@ -147,3 +147,4 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
+apps/src/sage/apps/medical_diagnosis/data/processed/*
