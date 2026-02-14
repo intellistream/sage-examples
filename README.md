@@ -23,8 +23,8 @@ Production-ready application examples for the SAGE framework.
 git clone https://github.com/intellistream/sage-examples.git
 cd sage-examples
 
-# Install dependencies
-pip install -r requirements.txt
+# Install (all dependencies included)
+pip install -e .
 
 # Run an application example
 python examples/run_video_intelligence.py
@@ -79,17 +79,17 @@ See `examples/README.md` for details.
 git clone https://github.com/intellistream/sage-examples.git
 cd sage-examples
 
-# Install dependencies
-pip install -r requirements.txt
+# Install (all dependencies included by default)
+pip install -e .
 
-# Or install as package
-pip install isage-examples[examples]
+# Or install from PyPI
+pip install isage-examples
 
-# Or install applications directly
-pip install isage-apps[video]      # Video intelligence
-pip install isage-apps[medical]    # Medical diagnosis
-pip install isage-apps[all]        # All applications
+# Development mode (includes pytest, ruff, mypy)
+pip install -e .[dev]
 ```
+
+> **Note**: Following SAGE principles, all application dependencies are installed by default. No need for extra flags like `[video]` or `[medical]`.
 
 ## 🏗️ SAGE Architecture Overview
 

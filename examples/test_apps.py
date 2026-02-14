@@ -53,7 +53,8 @@ def test_imports():
     print(f"测试结果: {tests_passed} 通过, {tests_failed} 失败")
     print("=" * 60)
 
-    return tests_failed == 0
+    # Use assert instead of return for pytest
+    assert tests_failed == 0, f"{tests_failed} 个应用的依赖缺失"
 
 
 def test_script_help():
@@ -75,7 +76,8 @@ def test_script_help():
             print("  ✗ 文件不存在")
 
     print(f"\n找到 {len(test_scripts)} 个应用脚本")
-    return True
+    # Use assert instead of return for pytest
+    assert len(test_scripts) > 0, "没有找到任何应用脚本"
 
 
 def main():
