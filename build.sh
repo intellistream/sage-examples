@@ -2,7 +2,7 @@
 # ============================================================================
 # SAGE Examples Build Script
 # ============================================================================
-# 用于构建和发布 isage-examples 和 isage-apps 包到 PyPI
+# 用于构建和发布 isage-examples 和 iapps 包到 PyPI
 # ============================================================================
 
 set -e  # 遇到错误立即退出
@@ -46,7 +46,7 @@ check_dependencies() {
 clean() {
     info "清理旧的构建文件..."
     rm -rf dist/ build/ *.egg-info
-    rm -rf sage-apps/dist/ sage-apps/build/ sage-apps/*.egg-info
+    rm -rf apps/dist/ apps/build/ apps/*.egg-info
     info "清理完成"
 }
 
@@ -57,13 +57,13 @@ build_examples() {
     info "isage-examples 构建完成"
 }
 
-# 构建 isage-apps
+# 构建 iapps
 build_apps() {
-    info "构建 isage-apps..."
-    cd sage-apps
+    info "构建 iapps..."
+    cd apps
     python3 -m build
     cd ..
-    info "isage-apps 构建完成"
+    info "iapps 构建完成"
 }
 
 # 检查包
@@ -75,9 +75,9 @@ check_packages() {
         twine check dist/*
     fi
     
-    # 检查 isage-apps
-    if [ -d "sage-apps/dist" ]; then
-        twine check sage-apps/dist/*
+    # 检查 iapps
+    if [ -d "apps/dist" ]; then
+        twine check apps/dist/*
     fi
     
     info "包检查完成"
@@ -93,10 +93,10 @@ upload_test() {
         twine upload --repository testpypi dist/*
     fi
     
-    # 上传 isage-apps
-    if [ -d "sage-apps/dist" ]; then
-        info "上传 isage-apps 到 TestPyPI..."
-        twine upload --repository testpypi sage-apps/dist/*
+    # 上传 iapps
+    if [ -d "apps/dist" ]; then
+        info "上传 iapps 到 TestPyPI..."
+        twine upload --repository testpypi apps/dist/*
     fi
     
     info "TestPyPI 上传完成"
@@ -118,10 +118,10 @@ upload_prod() {
         twine upload dist/*
     fi
     
-    # 上传 isage-apps
-    if [ -d "sage-apps/dist" ]; then
-        info "上传 isage-apps 到 PyPI..."
-        twine upload sage-apps/dist/*
+    # 上传 iapps
+    if [ -d "apps/dist" ]; then
+        info "上传 iapps 到 PyPI..."
+        twine upload apps/dist/*
     fi
     
     info "PyPI 上传完成"
@@ -139,7 +139,7 @@ SAGE Examples 构建脚本
     clean       - 清理构建文件
     build       - 构建所有包（examples + apps）
     examples    - 仅构建 isage-examples
-    apps        - 仅构建 isage-apps
+    apps        - 仅构建 iapps
     check       - 检查包完整性
     test        - 上传到 TestPyPI
     release     - 发布到正式 PyPI
@@ -155,7 +155,7 @@ SAGE Examples 构建脚本
 注意:
     - 发布前请确保已更新版本号
     - isage-examples: pyproject.toml 中的 version
-    - isage-apps: src/sage/apps/_version.py 中的 __version__
+    - iapps: src/sage/apps/_version.py 中的 __version__
 EOF
 }
 

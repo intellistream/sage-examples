@@ -134,15 +134,15 @@ else
     echo -e "${GREEN}✓ Standard mode installed${NC}"
 fi
 
-# Also install sage-apps package
-echo -e "${YELLOW}Installing sage-apps package...${NC}"
-cd "$PROJECT_ROOT/sage-apps"
+# Also install apps package
+echo -e "${YELLOW}Installing apps package...${NC}"
+cd "$PROJECT_ROOT/apps"
 if [[ "$DEV_MODE" =~ ^[Yy]$ ]]; then
     pip install -e ".[dev]"
 else
     pip install -e .
 fi
-echo -e "${GREEN}✓ sage-apps package installed${NC}"
+echo -e "${GREEN}✓ apps package installed${NC}"
 
 echo ""
 

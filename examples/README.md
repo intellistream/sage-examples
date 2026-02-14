@@ -2,7 +2,7 @@
 
 
 
-Production-ready application examples demonstrating SAGE's capabilities in real-world scenarios.This directory contains example scripts for running applications from the `sage-apps` package.
+Production-ready application examples demonstrating SAGE's capabilities in real-world scenarios.This directory contains example scripts for running applications from the `apps` package.
 
 
 
@@ -10,7 +10,7 @@ Production-ready application examples demonstrating SAGE's capabilities in real-
 
 
 
-This directory contains **runnable application examples** that showcase complete end-to-end AI solutions built with SAGE.The `sage-apps` package provides production-ready AI applications built on the SAGE framework. These
+This directory contains **runnable application examples** that showcase complete end-to-end AI solutions built with SAGE.The `apps` package provides production-ready AI applications built on the SAGE framework. These
 
 example scripts demonstrate how to use them.
 
@@ -18,7 +18,7 @@ example scripts demonstrate how to use them.
 
 - **This directory (`examples/`)**: Entry point scripts that demonstrate how to use applications## Available Applications
 
-- **`sage-apps/` package**: The actual application code (published to PyPI as `isage-apps`)
+- **`apps/` package**: The actual application code (published to PyPI as `iapps`)
 
 ### 1. Video Intelligence Pipeline
 
@@ -26,7 +26,7 @@ Think of it as:
 
 - `examples/` = "How to run applications" (demonstrations)Multi-model video analysis combining CLIP and MobileNetV3 for comprehensive video understanding.
 
-- `sage-apps/` = "Application implementation" (library code)
+- `apps/` = "Application implementation" (library code)
 
 **Run:**
 
@@ -66,7 +66,7 @@ python examples/run_video_intelligence.py --video path/to/video.mp4- Frame-by-fr
 
 
 
-**Dependencies**: `pip install isage-examples[examples]` or `pip install isage-apps[video]````bash
+**Dependencies**: `pip install isage-examples[examples]` or `pip install iapps[video]````bash
 
 python examples/apps/run_medical_diagnosis.py
 
@@ -106,7 +106,7 @@ Automated article/news monitoring and analysis pipeline.
 
 ```
 
-**Dependencies**: `pip install isage-examples[examples]` or `pip install isage-apps[medical]`
+**Dependencies**: `pip install isage-examples[examples]` or `pip install iapps[medical]`
 
 **Features:**
 
@@ -200,7 +200,7 @@ Dynamic scaling chat service with load balancing.## Installation
 
 ```bash```bash
 
-python examples/run_auto_scaling_chat.pypip install -e packages/sage-apps[all]
+python examples/run_auto_scaling_chat.pypip install -e packages/apps[all]
 
 ``````
 
@@ -214,13 +214,13 @@ python examples/run_auto_scaling_chat.pypip install -e packages/sage-apps[all]
 
 - Queue management# Video Intelligence only
 
-- Performance monitoringpip install -e packages/sage-apps[video]
+- Performance monitoringpip install -e packages/apps[video]
 
 
 
 ---# Medical Diagnosis only
 
-pip install -e packages/sage-apps[medical]
+pip install -e packages/apps[medical]
 
 ### 6. 📝 Work Report Generator```
 
@@ -248,11 +248,11 @@ python examples/run_work_report.py- Medical Diagnosis: Custom configurations in 
 
 - Report template generation
 
-- Multi-format export- `packages/sage-apps/README.md` - Package overview
+- Multi-format export- `packages/apps/README.md` - Package overview
 
-- Customizable templates- `packages/sage-apps/MIGRATION.md` - Migration guide
+- Customizable templates- `packages/apps/MIGRATION.md` - Migration guide
 
-- `packages/sage-apps/PACKAGE_CREATION_SUMMARY.md` - Implementation details
+- `packages/apps/PACKAGE_CREATION_SUMMARY.md` - Implementation details
 
 ---
 
@@ -264,7 +264,7 @@ For questions or issues:
 
 Feature extraction demonstration for various data types.
 
-1. Check the application-specific documentation in `packages/sage-apps/src/sage/apps/<app_name>/`
+1. Check the application-specific documentation in `packages/apps/src/sage/apps/<app_name>/`
 
 **Script**: `demo_feature_extraction.py`1. Review the main SAGE documentation
 
@@ -288,10 +288,10 @@ python examples/demo_feature_extraction.py
 # Install all example dependencies
 pip install -e ".[examples]"
 
-# Or install specific applications from sage-apps
-pip install isage-apps[video]      # Video intelligence
-pip install isage-apps[medical]    # Medical diagnosis
-pip install isage-apps[all]        # All applications
+# Or install specific applications from apps
+pip install iapps[video]      # Video intelligence
+pip install iapps[medical]    # Medical diagnosis
+pip install iapps[all]        # All applications
 ```
 
 ### Running Examples
@@ -310,7 +310,7 @@ python examples/run_medical_diagnosis.py
 python examples/run_smart_home.py
 ```
 
-## 📦 Relationship with sage-apps
+## 📦 Relationship with apps
 
 ```
 sage-examples/
@@ -318,7 +318,7 @@ sage-examples/
 │   ├── run_video_intelligence.py     # Calls sage.apps.video
 │   └── run_medical_diagnosis.py      # Calls sage.apps.medical_diagnosis
 │
-└── sage-apps/                         # Application library
+└── apps/                         # Application library
     └── src/sage/apps/                 # Actual implementation
         ├── video/                     # Video app code
         │   └── video_intelligence_pipeline.py
@@ -328,8 +328,8 @@ sage-examples/
 
 **Why this structure?**
 - ✅ **Clean separation**: Demos vs. library code
-- ✅ **PyPI distribution**: `sage-apps` can be installed independently
-- ✅ **Easy to use**: Users can `pip install isage-apps` without cloning examples
+- ✅ **PyPI distribution**: `apps` can be installed independently
+- ✅ **Easy to use**: Users can `pip install iapps` without cloning examples
 - ✅ **Maintainable**: Library code is properly packaged and versioned
 
 ## 🧪 Testing
@@ -345,14 +345,14 @@ pytest examples/test_apps.py::test_video_intelligence -v
 ## 📚 Learn More
 
 - **Tutorials**: See `tutorials/` for learning SAGE basics
-- **sage-apps Documentation**: See `sage-apps/README.md` for library details
+- **apps Documentation**: See `apps/README.md` for library details
 - **SAGE Main Repository**: https://github.com/intellistream/SAGE
 
 ## 🤝 Contributing
 
 When adding new application examples:
 
-1. **Add implementation** to `sage-apps/src/sage/apps/your_app/`
+1. **Add implementation** to `apps/src/sage/apps/your_app/`
 2. **Add entry script** to `examples/run_your_app.py`
 3. **Update this README** with your application description
 4. **Add tests** to `examples/test_apps.py`
@@ -362,7 +362,7 @@ When adding new application examples:
 
 - All examples use environment variables from `.env` (copy from `.env.template`)
 - Some examples require API keys (OpenAI, HuggingFace, etc.)
-- For production use, consider installing `isage-apps` package directly
+- For production use, consider installing `iapps` package directly
 - These scripts are optimized for demonstration, not production deployment
 
 ---

@@ -12,7 +12,7 @@ Production-ready application examples for the SAGE framework.
 **sage-examples** showcases production application examples for [SAGE](https://github.com/intellistream/SAGE):
 
 - **🎯 Examples**: Complete, runnable application demonstrations
-- **📦 sage-apps Package**: Installable application library (published to PyPI as `isage-apps`)
+- **📦 apps Package**: Installable application library (published to PyPI as `iapps`)
 
 > **� Looking for tutorials?** Visit [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) for learning materials.
 
@@ -42,7 +42,7 @@ sage-examples/
 │   ├── run_smart_home.py
 │   └── ...
 │
-├── sage-apps/                 # 📦 Installable application package
+├── apps/                 # 📦 Installable application package
 │   ├── src/sage/apps/         # Application implementations
 │   └── tests/                 # Package tests
 │
@@ -56,7 +56,7 @@ sage-examples/
 |-----------|------------|
 | **Learn SAGE basics** | [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) |
 | **See production examples** | [sage-examples](https://github.com/intellistream/sage-examples) (this repo) |
-| **Install applications** | `pip install isage-apps` |
+| **Install applications** | `pip install iapps` |
 
 ## 🎯 Application Examples
 
@@ -154,7 +154,7 @@ pytest
 
 # Run specific tests
 pytest examples/test_apps.py
-pytest sage-apps/tests/
+pytest apps/tests/
 
 # With coverage
 pytest --cov=. --cov-report=html
@@ -181,7 +181,7 @@ We welcome contributions! Please see:
 
 1. **Tutorials**: Add to [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials)
 2. **Applications**: 
-   - Implementation → `sage-apps/src/sage/apps/your_app/`
+   - Implementation → `apps/src/sage/apps/your_app/`
    - Entry script → `examples/run_your_app.py`
 3. **Tests**: Add tests and ensure they pass
 4. **Dependencies**: Update `pyproject.toml`
