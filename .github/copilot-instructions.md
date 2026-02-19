@@ -6,6 +6,12 @@
 - Example code involving distributed execution or scheduling should align with Flownet-style runtime usage.
 - Do NOT introduce new `ray` imports/dependencies in examples.
 
+## 🚨 Installation Consistency (Cross-Repo)
+
+- 在 conda 环境中，**必须**使用 `python -m pip`，不要直接使用 `pip`。
+- 当示例依赖 SAGE 主仓库能力时，优先要求用户先在 `SAGE/` 执行 `./quickstart.sh --dev --yes`。
+- SAGE quickstart 已负责安装核心独立 PyPI 依赖（如 `isagellm`、`isage-flownet`、`isage-vdb` 等），不要再建议通过 extras 手动补装“核心依赖”。
+
 ## Overview
 
 **sage-examples** 是 SAGE 框架的示例代码仓库，包含完整的教程和应用案例。这个仓库从 SAGE 主仓库独立出来，专注于提供学习资源和生产应用示例。
@@ -30,7 +36,7 @@ pip install sage-libs                 # ❌ 手动依赖
 # 在 pyproject.toml 或 requirements.txt 中声明
 dependencies = [
     "isage-libs>=0.2.0",          # ✅ 声明在 pyproject.toml
-    "isage-llm-core>=0.2.0",      # ✅ 版本约束
+    "isagellm>=0.2.0",            # ✅ 版本约束
     "transformers>=4.52.0",       # ✅ 可选依赖
 ]
 ```
@@ -95,7 +101,7 @@ sage-examples 依赖于 SAGE 核心包（通过 PyPI 安装）：
 # 核心包（必需）
 dependencies = [
     "isage-common>=0.2.0",        # L1: Foundation
-    "isage-llm-core>=0.2.0",      # L1: LLM control plane + client
+    "isagellm>=0.2.0",            # L1: LLM control plane + client
     "isage-libs>=0.2.0",          # L3: Algorithms, RAG, Agents
 ]
 
@@ -129,13 +135,12 @@ L5: sage-apps
 L4: sage-middleware
 L3: sage-kernel, sage-libs
 L2: sage-platform
-L1: sage-common, sage-llm-core
+L1: sage-common
 ```
 
 **PyPI Package Names**:
 - `isage-common` (sage-common)
-- `isage-llm-core` (sage-llm-core)
-- `isage-llm-gateway` (sage-llm-gateway)
+- `isagellm` (sageLLM unified inference engine)
 - `isage-libs` (sage-libs)
 - `isage-middleware` (sage-middleware)
 - `isage-apps` (sage-apps)
@@ -279,20 +284,20 @@ git clone https://github.com/intellistream/sage-examples.git
 cd sage-examples
 
 # 安装核心依赖
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 # 或只安装示例所需
-pip install isage-common isage-llm-core isage-libs
+python -m pip install isage-common isagellm isage-libs
 ```
 
 ### Full (All examples including apps)
 
 ```bash
 # 安装所有依赖
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 # 或使用 pip extras
-pip install -e ".[full]"
+python -m pip install -e ".[full]"
 ```
 
 ### Development (sage-apps package)
@@ -300,7 +305,7 @@ pip install -e ".[full]"
 ```bash
 # 安装 sage-apps 包用于开发
 cd sage-apps
-pip install -e ".[dev]"
+python -m pip install -e ".[dev]"
 ```
 
 ## Environment Setup
@@ -380,10 +385,10 @@ python examples/run_auto_scaling_chat.py
 **解决**:
 ```bash
 # 确保安装了 SAGE 核心包
-pip install isage-common isage-llm-core isage-libs
+python -m pip install isage-common isagellm isage-libs
 
 # 或安装完整依赖
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 ### API Key Errors
