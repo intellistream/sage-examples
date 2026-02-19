@@ -1,5 +1,11 @@
 # SAGE Examples Copilot Instructions
 
+## 🚨 Runtime Direction (Cross-Repo)
+
+- `sageFlownet` is the runtime component that replaces `Ray` in the SAGE ecosystem.
+- Example code involving distributed execution or scheduling should align with Flownet-style runtime usage.
+- Do NOT introduce new `ray` imports/dependencies in examples.
+
 ## Overview
 
 **sage-examples** 是 SAGE 框架的示例代码仓库，包含完整的教程和应用案例。这个仓库从 SAGE 主仓库独立出来，专注于提供学习资源和生产应用示例。
