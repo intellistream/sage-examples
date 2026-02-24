@@ -6,6 +6,7 @@
 
 ## Critical rules
 - Runtime direction: Flownet-first; do not add new `ray` imports/dependencies.
+- Do not create new local virtual environments (`venv`/`.venv`); use the existing configured Python environment.
 - In conda environments, use `python -m pip` (never plain `pip`).
 - Do not rely on manual install commands for permanent deps; declare in `pyproject.toml`/`requirements.txt`.
 - No silent fallback logic; fail fast with actionable errors.

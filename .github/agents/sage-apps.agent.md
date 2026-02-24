@@ -13,6 +13,7 @@ tools: ['vscode', 'execute', 'read', 'agent', 'edit', 'search', 'web', 'todo', '
 ## Rules
 - Flownet-first: no new `ray` imports/dependencies.
 - Keep examples concise and runnable; avoid core-framework refactors here.
+- Do not create new local virtual environments (`venv`/`.venv`); use the existing configured Python environment.
 - In conda environments, use `python -m pip`.
 - Dependency changes must go to repo config files, not one-off install notes.
 
