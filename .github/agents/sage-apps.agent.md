@@ -21,3 +21,9 @@ tools: ['vscode', 'execute', 'read', 'agent', 'edit', 'search', 'web', 'todo', '
 1. Read nearest README/QUICK_START first.
 2. Implement minimal local change.
 3. Run relevant example/test and update nearby docs if behavior changed.
+
+## Polyrepo coordination rules
+
+- Treat this repository as the only local source tree; do not assume sibling repositories exist.
+- If a task spans multiple repositories, implement only this repo and explicitly list follow-up repo/version-bump actions.
+- Do not create `venv`/`.venv`; always use the existing configured Python environment.
