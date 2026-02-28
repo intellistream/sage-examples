@@ -8,13 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
-try:  # Optional dependency - fall back to template reports if unavailable
-    from sage.common.components.sage_vllm import VLLMService
-
-    _VLLM_COMPONENT_AVAILABLE = True
-except Exception:  # pragma: no cover - vLLM extras may be missing in CI
-    VLLMService = None  # type: ignore
-    _VLLM_COMPONENT_AVAILABLE = False
+import requests
 
 
 @dataclass
@@ -52,6 +46,9 @@ class ReportGenerator:
         self.config = config
         self.llm_service = None
         self._llm_generate_options: dict[str, Any] = {}
+        self._llm_api_base = ""
+        self._llm_api_key = ""
+        self._llm_model = ""
         self._setup_llm()
 
     def _setup_llm(self):
@@ -60,11 +57,11 @@ class ReportGenerator:
 
         models_cfg = self.config.get("models", {}) or {}
         services_cfg = self.config.get("services", {}) or {}
-        vllm_cfg = dict(services_cfg.get("vllm", {}) or {})
-        self._llm_generate_options = self._resolve_generation_options(vllm_cfg)
+        sagellm_cfg = dict(services_cfg.get("sagellm", {}) or services_cfg.get("llm", {}) or {})
+        self._llm_generate_options = self._resolve_generation_options(sagellm_cfg)
 
-        if not vllm_cfg.get("enabled", True):
-            print("   Warning: vLLM service disabled via config, using template reports")
+        if not sagellm_cfg.get("enabled", True):
+            print("   Warning: sageLLM service disabled via config, using template reports")
             return
 
         llm_model = models_cfg.get("llm_model")
@@ -72,17 +69,20 @@ class ReportGenerator:
             print("   Warning: Missing 'llm_model' config, using template reports")
             return
 
-        if not _VLLM_COMPONENT_AVAILABLE or VLLMService is None:
-            print("   Warning: sage_vllm component unavailable, using template reports")
-            return
-
         try:
-            service_config = self._build_vllm_config(llm_model, vllm_cfg, models_cfg)
-            self.llm_service = VLLMService(service_config)
-            self.llm_service.setup()
-            print("   ✓ vLLM service ready")
+            self._llm_model = llm_model
+            self._llm_api_base = str(
+                sagellm_cfg.get("base_url")
+                or sagellm_cfg.get("api_base")
+                or "http://127.0.0.1:8000/v1"
+            ).rstrip("/")
+            self._llm_api_key = str(sagellm_cfg.get("api_key", ""))
+            self.llm_service = "openai_compatible"
+            print("   ✓ sageLLM/OpenAI-compatible service ready")
         except Exception as exc:  # pragma: no cover - runtime dependency issues
-            print(f"   Warning: Failed to initialize vLLM service ({exc}), using template reports")
+            print(
+                f"   Warning: Failed to initialize sageLLM service ({exc}), using template reports"
+            )
             self.llm_service = None
 
     def generate(
@@ -112,7 +112,7 @@ class ReportGenerator:
             try:
                 report_text = self._generate_with_llm(prompt)
             except Exception as exc:  # pragma: no cover - network/runtime failures
-                print(f"   Warning: vLLM generation failed ({exc}), falling back to template")
+                print(f"   Warning: sageLLM generation failed ({exc}), falling back to template")
                 report_text = self._generate_template_report(
                     image_features, patient_info, similar_cases
                 )
@@ -213,33 +213,58 @@ class ReportGenerator:
 
     def _generate_with_llm(self, prompt: str) -> str:
         """使用LLM生成报告"""
-        if self.llm_service is None:
+        if self.llm_service is None or not self._llm_api_base or not self._llm_model:
             raise RuntimeError("LLM service not initialized")
 
         options = {k: v for k, v in self._llm_generate_options.items() if v is not None}
-        outputs = self.llm_service.generate(prompt, **options)
-        if not outputs:
-            raise RuntimeError("vLLM service returned no outputs")
+        headers = {"Content-Type": "application/json"}
+        if self._llm_api_key:
+            headers["Authorization"] = f"Bearer {self._llm_api_key}"
 
-        generations = outputs[0].get("generations") or []
-        if not generations:
-            raise RuntimeError("vLLM service returned empty generations")
+        payload = {
+            "model": self._llm_model,
+            "messages": [
+                {"role": "system", "content": "你是一位专业脊柱外科医生。"},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": options.get("temperature", 0.7),
+            "top_p": options.get("top_p", 0.95),
+            "max_tokens": options.get("max_tokens", 768),
+        }
 
-        text = generations[0].get("text", "")
-        return text.strip()
+        response = requests.post(
+            f"{self._llm_api_base}/chat/completions",
+            json=payload,
+            headers=headers,
+            timeout=60,
+        )
+        response.raise_for_status()
+        data = response.json()
 
-    def _resolve_generation_options(self, vllm_cfg: dict[str, Any]) -> dict[str, Any]:
+        choices = data.get("choices") or []
+        if not choices:
+            raise RuntimeError("sageLLM service returned no choices")
+
+        message = choices[0].get("message") or {}
+        text = message.get("content") or choices[0].get("text", "")
+        if not text:
+            raise RuntimeError("sageLLM service returned empty content")
+        return str(text).strip()
+
+    def _resolve_generation_options(self, sagellm_cfg: dict[str, Any]) -> dict[str, Any]:
         """解析采样/生成参数供每次请求使用"""
 
         sampling_cfg = (
-            vllm_cfg.get("sampling", {}) if isinstance(vllm_cfg.get("sampling"), dict) else {}
+            sagellm_cfg.get("sampling", {})
+            if isinstance(sagellm_cfg.get("sampling"), dict)
+            else {}
         )
 
         def _get_option(key: str, default: Any):
             if sampling_cfg.get(key) is not None:
                 return sampling_cfg[key]
-            if vllm_cfg.get(key) is not None:
-                return vllm_cfg[key]
+            if sagellm_cfg.get(key) is not None:
+                return sagellm_cfg[key]
             return default
 
         try:
@@ -263,50 +288,9 @@ class ReportGenerator:
             "top_p": min(max(top_p, 0.0), 1.0),
         }
 
-    def _build_vllm_config(
-        self,
-        llm_model: str,
-        vllm_cfg: dict[str, Any],
-        models_cfg: dict[str, Any],
-    ) -> dict[str, Any]:
-        """构建传递给 VLLMService 的配置字典"""
-
-        engine_cfg = {}
-        engine_cfg.update(
-            vllm_cfg.get("engine", {}) if isinstance(vllm_cfg.get("engine"), dict) else {}
-        )
-        engine_cfg.setdefault("dtype", vllm_cfg.get("dtype", "auto"))
-        engine_cfg.setdefault("tensor_parallel_size", int(vllm_cfg.get("tensor_parallel_size", 1)))
-        engine_cfg.setdefault(
-            "gpu_memory_utilization", float(vllm_cfg.get("gpu_memory_utilization", 0.9))
-        )
-        engine_cfg.setdefault("max_model_len", int(vllm_cfg.get("max_model_len", 4096)))
-
-        sampling_cfg = {}
-        sampling_cfg.update(
-            vllm_cfg.get("sampling", {}) if isinstance(vllm_cfg.get("sampling"), dict) else {}
-        )
-        for key, value in self._llm_generate_options.items():
-            sampling_cfg.setdefault(key, value)
-
-        config_dict: dict[str, Any] = {
-            "model_id": llm_model,
-            "auto_download": bool(vllm_cfg.get("auto_download", True)),
-            "auto_reload": bool(vllm_cfg.get("auto_reload", True)),
-            "engine": engine_cfg,
-            "sampling": sampling_cfg,
-        }
-
-        embedding_model = vllm_cfg.get("embedding_model_id") or models_cfg.get("embedding_model")
-        if embedding_model:
-            config_dict["embedding_model_id"] = embedding_model
-
-        return config_dict
-
     def __del__(self):  # pragma: no cover - best-effort cleanup
-        if getattr(self, "llm_service", None) and hasattr(self.llm_service, "cleanup"):
-            with contextlib.suppress(Exception):
-                self.llm_service.cleanup()
+        with contextlib.suppress(Exception):
+            self.llm_service = None
 
     def _generate_template_report(
         self,

@@ -94,7 +94,7 @@ class ImageAnalyzer:
 
     def _setup_models(self):
         """设置视觉模型"""
-        # TODO: 集成 SAGE VLLMService 或其他视觉模型
+        # TODO: 集成 SAGE 统一推理服务或其他视觉模型
         # Issue URL: https://github.com/intellistream/SAGE/issues/899
         print(f"   Loading vision model: {self.config['models']['vision_model']}")
 

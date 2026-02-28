@@ -18,8 +18,8 @@ models:
   embedding_model: "BAAI/bge-large-zh-v1.5"
 
 services:
-  # VLLM服务配置
-  vllm:
+  # sageLLM服务配置
+  sagellm:
     enabled: true
     gpu_memory_utilization: 0.9
     tensor_parallel_size: 1

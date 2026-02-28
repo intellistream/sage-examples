@@ -58,7 +58,7 @@ class DiagnosticAgent:
                 "embedding_model": "BAAI/bge-large-zh-v1.5",
             },
             "services": {
-                "vllm": {"enabled": True, "gpu_memory_utilization": 0.9},
+                "sagellm": {"enabled": True, "gpu_memory_utilization": 0.9},
                 "embedding": {"method": "hf", "cache_enabled": True},
                 "vector_db": {"collection_name": "lumbar_spine_cases", "top_k": 5},
             },
