@@ -1,10 +1,25 @@
-#!/bin/bash
-# SageVDB Quickstart Script
-# Sets up development environment and git hooks
+#!/usr/bin/env bash
+# quickstart.sh — sage-examples dev environment setup
+#
+# Usage:
+#   ./quickstart.sh               # dev mode (default): hooks + .[dev]  (includes [full])
+#   ./quickstart.sh --full        # optional backends only: .[full]
+#   ./quickstart.sh --standard    # core deps only: no extras
+#   ./quickstart.sh --yes         # non-interactive (assume yes)
+#   ./quickstart.sh --doctor      # diagnose environment issues
+#
+# Install matrix:
+#   (default / --dev)  pip install -e .[dev]   ← includes [full] via self-ref
+#   --full             pip install -e .[full]
+#   --standard         pip install -e .
+#
+# Rules:
+#   - NEVER creates a new venv. Must be called in an existing non-venv environment.
+#   - Installs hooks via direct copy from hooks/.
 
 set -e
 
-# Colors
+# ─── Colors ─────────────────────────────────────────────────────────────────
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
@@ -13,167 +28,105 @@ BLUE='\033[0;34m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-# Print banner
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BOLD}${BLUE}   ____                  __     ______  ____ ${NC}"
-echo -e "${BOLD}${BLUE}  / __/__  ___  ___     / /    / __  / / __ )${NC}"
-echo -e "${BOLD}${BLUE} _\\ \/ _ \/ _ \/ -_)   / /    / / / / / __  |${NC}"
-echo -e "${BOLD}${BLUE}/___/\\___/\\_, /\\__/   /_/    /_/ /_/ /____/ ${NC}"
-echo -e "${BOLD}${BLUE}         /___/                               ${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}${BOLD}SageVDB Quickstart Setup${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo ""
+# ─── Arguments ────────────────────────────────────────────────────────────────
+EXTRAS="[dev]"   # default — dev includes [full] via pyproject self-reference
+DOCTOR=false
+YES=false
+for arg in "$@"; do
+    case "$arg" in
+        --doctor)   DOCTOR=true ;;
+        --standard) EXTRAS="" ;;
+        --full)     EXTRAS="[full]" ;;
+        --dev)      EXTRAS="[dev]" ;;
+        --yes|-y)   YES=true ;;
+    esac
+done
 
-# Detect project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR"
 
-echo -e "${BLUE}📂 Project root: ${NC}$PROJECT_ROOT"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${BOLD}${BLUE}  sage-examples — Quick Start${NC}"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-# Step 1: Install git hooks
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${YELLOW}${BOLD}Step 1: Installing Git Hooks${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+# ─── Doctor ────────────────────────────────────────────────────────────────────
+if [ "$DOCTOR" = true ]; then
+    echo -e "${BOLD}${BLUE}Environment Diagnosis${NC}"
+    echo ""
+    echo -e "${YELLOW}Python:${NC} $(python3 --version 2>/dev/null || echo 'NOT FOUND')"
+    echo -e "${YELLOW}Conda env:${NC} ${CONDA_DEFAULT_ENV:-none}"
+    echo -e "${YELLOW}Venv:${NC} ${VIRTUAL_ENV:-none}"
+    echo -e "${YELLOW}ruff:${NC} $(ruff --version 2>/dev/null || echo 'NOT FOUND')"
+    echo -e "${YELLOW}pytest:${NC} $(pytest --version 2>/dev/null || echo 'NOT FOUND')"
+    echo ""
+    echo -e "${YELLOW}Git hooks installed:${NC}"
+    for h in pre-commit pre-push post-commit; do
+        if [ -f "$PROJECT_ROOT/.git/hooks/$h" ]; then
+            echo -e "  ${GREEN}✓ $h${NC}"
+        else
+            echo -e "  ${RED}✗ $h${NC}"
+        fi
+    done
+    exit 0
+fi
 
-HOOKS_DIR="$PROJECT_ROOT/.git/hooks"
-TEMPLATE_DIR="$PROJECT_ROOT/hooks"
-
-if [ ! -d "$HOOKS_DIR" ]; then
-    echo -e "${RED}✗ Git repository not initialized${NC}"
-    echo -e "${YELLOW}Run: git init${NC}"
+# ─── Step 0: Require an active non-venv environment ────────────────────────────
+if [ -n "$VIRTUAL_ENV" ]; then
+    echo -e "${RED}  ❌ Detected Python venv: $VIRTUAL_ENV${NC}"
+    echo -e "${YELLOW}  → This repository forbids venv/.venv usage.${NC}"
+    echo -e "${YELLOW}  → Please deactivate the venv and use Conda or a system Python.${NC}"
     exit 1
 fi
 
-# Install pre-commit hook
-if [ -f "$TEMPLATE_DIR/pre-commit" ]; then
-    cp "$TEMPLATE_DIR/pre-commit" "$HOOKS_DIR/pre-commit"
-    chmod +x "$HOOKS_DIR/pre-commit"
-    echo -e "${GREEN}✓ Installed pre-commit hook${NC}"
+# ─── Step 1/3: Python version check ──────────────────────────────────────────────
+echo -e "${YELLOW}${BOLD}Step 1/3: Checking Python environment${NC}"
+PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')" 2>/dev/null || echo "unknown")
+echo -e "  Python version: ${CYAN}${PYTHON_VERSION}${NC}"
+if python3 -c "import sys; exit(0 if sys.version_info >= (3,10) else 1)" 2>/dev/null; then
+    echo -e "  ${GREEN}✓ Python ≥ 3.10${NC}"
 else
-    echo -e "${YELLOW}⚠  pre-commit template not found, skipping${NC}"
+    echo -e "  ${RED}✗ Python 3.10+ required (found ${PYTHON_VERSION})${NC}"
+    exit 1
 fi
-
-# Install pre-push hook
-if [ -f "$TEMPLATE_DIR/pre-push" ]; then
-    cp "$TEMPLATE_DIR/pre-push" "$HOOKS_DIR/pre-push"
-    chmod +x "$HOOKS_DIR/pre-push"
-    echo -e "${GREEN}✓ Installed pre-push hook${NC}"
-else
-    echo -e "${YELLOW}⚠  pre-push template not found, skipping${NC}"
-fi
-
-# Install post-commit hook (auto-bump version)
-if [ -f "$TEMPLATE_DIR/post-commit" ]; then
-    cp "$TEMPLATE_DIR/post-commit" "$HOOKS_DIR/post-commit"
-    chmod +x "$HOOKS_DIR/post-commit"
-    echo -e "${GREEN}✓ Installed post-commit hook${NC}"
-fi
-
 echo ""
 
-# Step 2: Check dependencies
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${YELLOW}${BOLD}Step 2: Checking Dependencies${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-
-# Check for Python
-if command -v python3 &> /dev/null; then
-    PYTHON_VERSION=$(python3 --version | awk '{print $2}')
-    echo -e "${GREEN}✓ Python found: ${NC}v$PYTHON_VERSION"
-    
-    # Check Python version (3.10+)
-    PYTHON_MAJOR=$(echo "$PYTHON_VERSION" | cut -d. -f1)
-    PYTHON_MINOR=$(echo "$PYTHON_VERSION" | cut -d. -f2)
-    if [ "$PYTHON_MAJOR" -ge 3 ] && [ "$PYTHON_MINOR" -ge 10 ]; then
-        echo -e "${GREEN}  Python version is 3.10+, good!${NC}"
-    else
-        echo -e "${RED}  Python 3.10+ required, found $PYTHON_VERSION${NC}"
-        echo -e "${YELLOW}  Please upgrade Python${NC}"
-    fi
+# ─── Step 2/3: Install Git Hooks ─────────────────────────────────────────────────
+echo -e "${YELLOW}${BOLD}Step 2/3: Installing Git hooks${NC}"
+if [ -d "$PROJECT_ROOT/hooks" ]; then
+    installed=0
+    for hook_src in "$PROJECT_ROOT/hooks"/*; do
+        hook_name=$(basename "$hook_src")
+        hook_dst="$PROJECT_ROOT/.git/hooks/$hook_name"
+        cp "$hook_src" "$hook_dst"
+        chmod +x "$hook_dst"
+        echo -e "  ${GREEN}✓ $hook_name${NC}"
+        installed=$((installed + 1))
+    done
+    echo -e "${GREEN}✓ $installed hook(s) installed${NC}"
 else
-    echo -e "${RED}✗ Python not found${NC}"
-    echo -e "${YELLOW}  Install: sudo apt install python3 python3-pip${NC}"
+    echo -e "${YELLOW}⚠  hooks/ directory not found — skipping${NC}"
 fi
-
-# Check for pip
-if command -v pip &> /dev/null || command -v pip3 &> /dev/null; then
-    echo -e "${GREEN}✓ pip found${NC}"
-else
-    echo -e "${RED}✗ pip not found${NC}"
-    echo -e "${YELLOW}  Install: sudo apt install python3-pip${NC}"
-fi
-fi
-
-# Check for sage-pypi-publisher
-if command -v sage-pypi-publisher &> /dev/null; then
-    echo -e "${GREEN}✓ sage-pypi-publisher found${NC}"
-else
-    echo -e "${YELLOW}⚠  sage-pypi-publisher not found${NC}"
-    echo -e "${YELLOW}  Optional for PyPI publishing: pip install sage-pypi-publisher${NC}"
-fi
-
 echo ""
 
-# Step 4: Install package
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${YELLOW}${BOLD}Step 4: Installing SAGE Examples${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-
-echo -e "${BLUE}Installing package (all dependencies included by default)...${NC}"
-cd "$PROJECT_ROOT"
-
-# Check if user wants dev mode
-echo -e "${BLUE}Install in development mode?${NC}"
-echo -e "  ${GREEN}[y]${NC} Yes, install with dev dependencies (pytest, ruff, mypy)"
-echo -e "  ${YELLOW}[n]${NC} No, standard installation only"
-echo -n "Your choice [y/n]: "
-read -r DEV_MODE
-
-if [[ "$DEV_MODE" =~ ^[Yy]$ ]]; then
-    echo -e "${YELLOW}Installing in development mode...${NC}"
-    pip install -e ".[dev]"
-    echo -e "${GREEN}✓ Development mode installed${NC}"
+# ─── Step 3/3: Install package ────────────────────────────────────────────────────
+echo -e "${YELLOW}${BOLD}Step 3/3: Installing package (editable)${NC}"
+if [ -n "$EXTRAS" ]; then
+    echo -e "  ${CYAN}pip install -e .$EXTRAS${NC}"
+    pip install -e ".$EXTRAS"
 else
-    echo -e "${YELLOW}Installing standard mode...${NC}"
-    pip install -e .
-    echo -e "${GREEN}✓ Standard mode installed${NC}"
-fi
-
-# Also install apps package
-echo -e "${YELLOW}Installing apps package...${NC}"
-cd "$PROJECT_ROOT/apps"
-if [[ "$DEV_MODE" =~ ^[Yy]$ ]]; then
-    pip install -e ".[dev]"
-else
+    echo -e "  ${CYAN}pip install -e .${NC}  (standard — no extras)"
     pip install -e .
 fi
-echo -e "${GREEN}✓ apps package installed${NC}"
-
+echo -e "${GREEN}✓ Package installed in editable mode${EXTRAS:+ with extras: $EXTRAS}${NC}"
 echo ""
 
-# Summary
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}${BOLD}✓ Setup Complete!${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}${BOLD}✓ Setup complete!${NC}"
 echo ""
-echo -e "${BLUE}${BOLD}Next Steps:${NC}"
-echo -e "  ${CYAN}1.${NC} Run tests: ${CYAN}pytest${NC}"
-echo -e "  ${CYAN}2.${NC} Try examples: ${CYAN}python examples/run_video_intelligence.py${NC}"
-echo -e "  ${CYAN}3.${NC} Read docs: ${CYAN}cat README.md${NC}"
+echo -e "${BLUE}${BOLD}Next steps:${NC}"
+echo -e "  ${CYAN}pytest tests/${NC}                    — run tests"
+echo -e "  ${CYAN}ruff check src/${NC}                  — lint"
+echo -e "  ${CYAN}./quickstart.sh --full${NC}           — reinstall with optional backends"
+echo -e "  ${CYAN}./quickstart.sh --standard${NC}       — install core deps only (no extras)"
+echo -e "  ${CYAN}./quickstart.sh --doctor${NC}         — diagnose environment"
 echo ""
-echo -e "${YELLOW}${BOLD}Installation Mode:${NC}"
-if [[ "$DEV_MODE" =~ ^[Yy]$ ]]; then
-    echo -e "  ${GREEN}•${NC} Development mode (includes pytest, ruff, mypy)"
-else
-    echo -e "  ${GREEN}•${NC} Standard mode (all application dependencies included)"
-fi
-echo ""
-echo -e "${BLUE}${BOLD}Useful Commands:${NC}"
-echo -e "  ${CYAN}pytest${NC}                        - Run tests"
-echo -e "  ${CYAN}ruff check .${NC}                  - Check code quality"
-echo -e "  ${CYAN}python examples/run_*.py${NC}     - Run any example"
-echo ""
-echo -e "${GREEN}Happy coding! 🚀${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

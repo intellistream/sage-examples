@@ -85,7 +85,11 @@ dependencies = [
 [project.optional-dependencies]
 
 # 开发和测试依赖
+full = []
+
 dev = [
+    # dev includes [full] — no need for a separate extras install
+    "isage-examples[full]",
     "pytest>=7.0.0",                    # 测试框架
     "pytest-cov>=4.0.0",                # 覆盖率报告
     "ruff==0.14.6",                     # 代码检查和格式化（与 SAGE 主仓库版本一致）
