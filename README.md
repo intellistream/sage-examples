@@ -69,7 +69,6 @@ Complete, runnable applications demonstrating real-world use cases:
 | 🏠 **Smart Home** | IoT automation system | `examples/run_smart_home.py` |
 | 📰 **Article Monitoring** | News monitoring pipeline | `examples/run_article_monitoring.py` |
 | 💬 **Auto-scaling Chat** | Dynamic scaling chat | `examples/run_auto_scaling_chat.py` |
-| ⚙️ **Runtime API Layering** | Facade vs Local/FlownetEnvironment contract demo | `examples/run_runtime_api_layering.py` |
 
 See `examples/README.md` for details.
 
