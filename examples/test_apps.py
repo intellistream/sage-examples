@@ -3,6 +3,7 @@
 测试 sage-examples/apps 目录中所有应用的导入和基本功能
 """
 
+import ast
 import sys
 from pathlib import Path
 
@@ -78,6 +79,44 @@ def test_script_help():
     print(f"\n找到 {len(test_scripts)} 个应用脚本")
     # Use assert instead of return for pytest
     assert len(test_scripts) > 0, "没有找到任何应用脚本"
+
+
+def test_examples_boundary_no_core_layer_imports():
+    """示例入口不应直接依赖核心实现层。"""
+    apps_dir = Path(__file__).parent
+    forbidden_prefixes = (
+        "sage.kernel",
+        "sage.platform",
+        "sage.middleware",
+        "sage.libs",
+    )
+
+    violations: list[str] = []
+
+    for script in apps_dir.glob("run_*.py"):
+        tree = ast.parse(script.read_text(encoding="utf-8"), filename=str(script))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    if alias.name.startswith(forbidden_prefixes):
+                        violations.append(f"{script.name}: import {alias.name}")
+            elif isinstance(node, ast.ImportFrom):
+                module_name = node.module or ""
+                if module_name.startswith(forbidden_prefixes):
+                    violations.append(f"{script.name}: from {module_name} import ...")
+
+    assert not violations, "\n".join(violations)
+
+
+def test_deprecated_entries_removed():
+    """过时入口脚本应保持移除状态。"""
+    apps_dir = Path(__file__).parent
+    deprecated_entries = [
+        "run_runtime_api_layering.py",
+    ]
+
+    existing = [name for name in deprecated_entries if (apps_dir / name).exists()]
+    assert not existing, f"发现已移除的过时入口再次出现: {existing}"
 
 
 def main():
