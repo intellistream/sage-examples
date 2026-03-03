@@ -3,11 +3,10 @@
 负责医学知识和病例的检索
 """
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
-
-from sage.common.components.sage_embedding.service import EmbeddingService
 
 # SageVDB has been migrated to independent PyPI package
 try:
@@ -17,6 +16,38 @@ try:
 except ImportError:
     SAGEDB_AVAILABLE = False
     SageVDB = None  # type: ignore
+
+
+class _HashEmbedder:
+    """Deterministic lightweight embedder for example/test environments."""
+
+    def __init__(self, dim: int = 1024):
+        self._dim = dim
+
+    def embed(self, text: str) -> list[float]:
+        if self._dim <= 0:
+            raise ValueError("Embedding dimension must be positive")
+
+        vector = [0.0] * self._dim
+        tokens = [token for token in text.lower().split() if token]
+        if not tokens:
+            return vector
+
+        for token in tokens:
+            digest = hashlib.sha256(token.encode("utf-8")).digest()
+            index = int.from_bytes(digest[:8], byteorder="little") % self._dim
+            vector[index] += 1.0
+
+        norm = sum(value * value for value in vector) ** 0.5
+        if norm > 0:
+            vector = [value / norm for value in vector]
+        return vector
+
+    def embed_batch(self, texts: list[str]) -> list[list[float]]:
+        return [self.embed(text) for text in texts]
+
+    def get_dim(self) -> int:
+        return self._dim
 
 
 class MedicalKnowledgeBase:
@@ -51,7 +82,7 @@ class MedicalKnowledgeBase:
                 - verbose: 详细输出
         """
         self.config = config
-        self.embedding_service = None
+        self.embedder = None
         self.vector_db = None
 
         # 配置选项
@@ -77,21 +108,26 @@ class MedicalKnowledgeBase:
         embedding_config = self.config.get("services", {}).get("embedding", {})
         models_config = self.config.get("models", {})
 
-        # 初始化 EmbeddingService
         embedding_service_config = {
-            "method": embedding_config.get("method", "hf"),
+            "method": embedding_config.get("method", "hash"),
             "model": models_config.get("embedding_model", "BAAI/bge-large-zh-v1.5"),
             "batch_size": embedding_config.get("batch_size", 32),
             "normalize": embedding_config.get("normalize", True),
             "cache_enabled": embedding_config.get("cache_enabled", False),
         }
 
-        self.embedding_service = EmbeddingService(embedding_service_config)
-        self.embedding_service.setup()
+        method = str(embedding_service_config["method"]).lower()
+        if method != "hash":
+            raise ValueError(
+                f"Unsupported embedding method '{method}'. "
+                "This example currently supports only 'hash'."
+            )
+
+        self.embedder = _HashEmbedder(dim=1024)
 
         # 初始化 SageVDB
         # 获取embedding维度
-        dimension = self.embedding_service.get_dimension()
+        dimension = self._embedding_dimension()
         # index_type = vector_db_config.get("index_type", "AUTO")
 
         # TODO: Update to use SageVDB directly after service migration
@@ -99,7 +135,7 @@ class MedicalKnowledgeBase:
         self.vector_db = None  # Temporarily disabled pending service migration
 
         print(
-            f"   ✓ EmbeddingService initialized (dim={dimension}, method={embedding_service_config['method']})"
+            f"   ✓ Embedding initialized (dim={dimension}, method={embedding_service_config['method']})"
         )
         # print(f"   ✓ SageVDB initialized (dim={dimension})")
 
@@ -341,8 +377,8 @@ class MedicalKnowledgeBase:
         Returns:
             相似病例列表
         """
-        # 如果向量数据库为空，使用关键词匹配或模拟病例
-        if self.vector_db.stats()["size"] == 0:
+        # 如果向量数据库未启用或为空，使用关键词匹配或模拟病例
+        if self.vector_db is None or self.vector_db.stats()["size"] == 0:
             # 如果有加载的病例数据库，使用它；否则返回模拟病例
             if self.case_database:
                 # 简单的关键词匹配（实际应该使用向量检索）
@@ -380,9 +416,8 @@ class MedicalKnowledgeBase:
             # 没有加载的数据或没有匹配，返回模拟病例
             return self._get_mock_cases()[:top_k]
 
-        # 使用 EmbeddingService 生成查询向量
-        result = self.embedding_service.embed(query)
-        query_vector = result["vectors"][0]
+        # 使用 embedding 客户端生成查询向量
+        query_vector = self._embed_one(query)
 
         # 使用 SageDB 进行向量检索
         search_results = self.vector_db.search(query_vector, k=top_k, include_metadata=True)
@@ -436,20 +471,19 @@ class MedicalKnowledgeBase:
                 results.append(knowledge)
 
         # 如果没有匹配结果，使用向量相似度检索
-        if not results and self.embedding_service:
+        if not results and self.embedder:
             # 为知识库条目生成embedding并检索
             knowledge_texts = [k["topic"] + " " + k["content"] for k in self.knowledge_base]
-            knowledge_embeddings = self.embedding_service.embed(knowledge_texts)
+            knowledge_embeddings = self._embed_many(knowledge_texts)
 
             # 为查询生成embedding
-            query_embedding = self.embedding_service.embed(query)
-            query_vec = query_embedding["vectors"][0]
+            query_vec = self._embed_one(query)
 
             # 计算相似度并排序
             import numpy as np
 
             similarities = []
-            for i, emb_vec in enumerate(knowledge_embeddings["vectors"]):
+            for i, emb_vec in enumerate(knowledge_embeddings):
                 similarity = float(np.dot(query_vec, emb_vec))
                 similarities.append((i, similarity))
 
@@ -523,8 +557,7 @@ class MedicalKnowledgeBase:
         case_text = f"{case_data.get('diagnosis', '')} {case_data.get('symptoms', '')}"
 
         # 生成文本embedding
-        result = self.embedding_service.embed(case_text)
-        case_vector = result["vectors"][0]
+        case_vector = self._embed_one(case_text)
 
         # 准备metadata
         metadata = {
@@ -537,8 +570,9 @@ class MedicalKnowledgeBase:
             "outcome": str(case_data.get("outcome", "")),
         }
 
-        # 存入向量数据库
-        self.vector_db.add(case_vector, metadata)
+        # 存入向量数据库（若可用）
+        if self.vector_db is not None:
+            self.vector_db.add(case_vector, metadata)
 
         # 同时添加到本地缓存
         self.case_database.append(case_data)
@@ -580,8 +614,28 @@ class MedicalKnowledgeBase:
 
     def cleanup(self):
         """清理资源"""
-        if self.embedding_service and hasattr(self.embedding_service, "cleanup"):
-            self.embedding_service.cleanup()
+        if self.embedder and hasattr(self.embedder, "cleanup"):
+            self.embedder.cleanup()
+
+    def _embed_one(self, text: str) -> list[float]:
+        if self.embedder is None:
+            raise RuntimeError("Embedding component is not initialized")
+        return self.embedder.embed(text)
+
+    def _embed_many(self, texts: list[str]) -> list[list[float]]:
+        if self.embedder is None:
+            raise RuntimeError("Embedding component is not initialized")
+        if hasattr(self.embedder, "embed_batch"):
+            return self.embedder.embed_batch(texts)
+        return [self.embedder.embed(text) for text in texts]
+
+    def _embedding_dimension(self) -> int:
+        if self.embedder is None:
+            raise RuntimeError("Embedding component is not initialized")
+        if hasattr(self.embedder, "get_dim"):
+            return int(self.embedder.get_dim())
+        sample = self._embed_one("dim_probe")
+        return len(sample)
 
     def __del__(self):
         """析构时清理资源"""

@@ -165,6 +165,7 @@ ignore_missing_imports = true # 忽略缺失的导入
 [tool.pytest.ini_options]
 # 测试文件搜索路径
 testpaths = ["examples", "apps/tests"]
+pythonpath = ["apps/src"]
 
 # 测试文件匹配模式
 python_files = ["test_*.py"]

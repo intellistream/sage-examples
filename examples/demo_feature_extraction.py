@@ -9,7 +9,6 @@ Issue #894: Use pretrained models for feature extraction instead of random featu
 """
 
 import numpy as np
-
 from sage.apps.medical_diagnosis.agents.image_analyzer import (
     TORCH_AVAILABLE,
     ImageAnalyzer,

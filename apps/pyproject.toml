@@ -145,6 +145,7 @@ testpaths = [
     "tests",
     "src",
 ]
+pythonpath = ["src"]
 python_files = [
     "test_*.py",
     "*_test.py",
