@@ -73,6 +73,7 @@ Complete, runnable applications demonstrating real-world use cases:
 | 🏠 **Smart Home**         | IoT automation system      | `examples/run_smart_home.py`         |
 | 📰 **Article Monitoring** | News monitoring pipeline   | `examples/run_article_monitoring.py` |
 | 💬 **Auto-scaling Chat**  | Dynamic scaling chat       | `examples/run_auto_scaling_chat.py`  |
+| 📚 **Literature Recommendation** | Personalized scientific paper recommendation | `examples/run_literature_report_assistant.py` |
 
 See `examples/README.md` for details.
 

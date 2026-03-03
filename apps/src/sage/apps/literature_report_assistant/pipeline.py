@@ -23,6 +23,23 @@ class LiteraturePaper:
     published: str
 
 
+@dataclass(frozen=True)
+class ResearchProfile:
+    """User profile for personalized paper recommendation."""
+
+    interests: list[str]
+    keywords: list[str]
+
+
+@dataclass(frozen=True)
+class PaperRecommendation:
+    """A scored recommendation item with explanation."""
+
+    paper: LiteraturePaper
+    score: float
+    reason: str
+
+
 def search_arxiv_papers(
     topic: str, max_results: int = 10, timeout: int = 20
 ) -> list[LiteraturePaper]:
@@ -84,6 +101,66 @@ def rank_papers(
     return [paper for _, paper in scored[:top_k]]
 
 
+def preprocess_paper_stream(papers: Iterable[LiteraturePaper]) -> list[LiteraturePaper]:
+    """Normalize and deduplicate paper stream records."""
+    normalized: list[LiteraturePaper] = []
+    seen_keys: set[str] = set()
+
+    for paper in papers:
+        title = " ".join(paper.title.split())
+        summary = " ".join(paper.summary.split())
+        url = paper.url.strip()
+        key = (url or title).lower()
+        if not key or key in seen_keys:
+            continue
+        seen_keys.add(key)
+        normalized.append(
+            LiteraturePaper(
+                title=title,
+                summary=summary,
+                url=url,
+                published=paper.published.strip(),
+            )
+        )
+
+    return normalized
+
+
+def recommend_papers(
+    papers: Iterable[LiteraturePaper],
+    profile: ResearchProfile,
+    top_k: int = 5,
+) -> list[PaperRecommendation]:
+    """Generate personalized paper recommendations with reasons."""
+    profile_tokens = {
+        token.lower()
+        for token in [*profile.interests, *profile.keywords]
+        if isinstance(token, str) and token.strip()
+    }
+
+    if not profile_tokens:
+        return [
+            PaperRecommendation(paper=paper, score=0.0, reason="未提供画像关键词，按原始顺序返回")
+            for paper in list(papers)[:top_k]
+        ]
+
+    recommendations: list[PaperRecommendation] = []
+    for paper in papers:
+        text = f"{paper.title} {paper.summary}".lower()
+        matched_tokens = [token for token in sorted(profile_tokens) if token in text]
+        if not matched_tokens:
+            continue
+
+        coverage = len(matched_tokens)
+        freshness_bonus = 0.1 if paper.published else 0.0
+        score = float(coverage) + freshness_bonus
+        reason = f"匹配关键词: {', '.join(matched_tokens[:4])}"
+        recommendations.append(PaperRecommendation(paper=paper, score=score, reason=reason))
+
+    recommendations.sort(key=lambda item: item.score, reverse=True)
+    return recommendations[:top_k]
+
+
 def generate_literature_report(topic: str, papers: list[LiteraturePaper]) -> str:
     """Generate a markdown literature reading report."""
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -127,5 +204,39 @@ def generate_literature_report(topic: str, papers: list[LiteraturePaper]) -> str
             "- 再按方法或数据集相似度挑选后续文献深入。",
         ]
     )
+
+    return "\n".join(lines)
+
+
+def generate_personalized_recommendation_report(
+    topic: str,
+    recommendations: list[PaperRecommendation],
+) -> str:
+    """Generate markdown report for personalized recommendations."""
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    lines = [
+        f"# 个性化文献推荐报告：{topic}",
+        "",
+        f"生成时间：{now}",
+        f"推荐条目数：{len(recommendations)}",
+        "",
+        "## 推荐结果",
+    ]
+
+    if not recommendations:
+        lines.append("- 未找到与当前画像匹配的文献，建议扩大兴趣关键词范围。")
+        return "\n".join(lines)
+
+    for index, item in enumerate(recommendations, start=1):
+        lines.extend(
+            [
+                f"### {index}. {item.paper.title}",
+                f"- 分数：{item.score:.2f}",
+                f"- 推荐理由：{item.reason}",
+                f"- 发表时间：{item.paper.published or '未知'}",
+                f"- 链接：{item.paper.url or 'N/A'}",
+                "",
+            ]
+        )
 
     return "\n".join(lines)
