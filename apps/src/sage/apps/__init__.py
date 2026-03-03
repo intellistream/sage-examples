@@ -9,6 +9,7 @@ capabilities across various domains:
 - video: Video intelligence and analysis
 - medical_diagnosis: AI-assisted medical imaging diagnosis
 - work_report_generator: Weekly/daily work report generator with GitHub integration
+- literature_report_assistant: Literature search and reading report generation assistant
 
 Architecture:
 - L5 应用层，组合使用下层功能构建完整应用
