@@ -30,11 +30,11 @@ error() {
 # 检查依赖
 check_dependencies() {
     info "检查构建依赖..."
-    
+
     if ! command -v python3 &> /dev/null; then
         error "Python 3 未安装"
     fi
-    
+
     # 检查并安装构建工具
     if ! python3 -c "import build" &> /dev/null; then
         info "安装构建工具..."
@@ -69,36 +69,36 @@ build_apps() {
 # 检查包
 check_packages() {
     info "检查包完整性..."
-    
+
     # 检查 isage-examples
     if [ -d "dist" ]; then
         twine check dist/*
     fi
-    
+
     # 检查 iapps
     if [ -d "apps/dist" ]; then
         twine check apps/dist/*
     fi
-    
+
     info "包检查完成"
 }
 
 # 上传到 TestPyPI（测试）
 upload_test() {
     warn "上传到 TestPyPI（测试环境）..."
-    
+
     # 上传 isage-examples
     if [ -d "dist" ]; then
         info "上传 isage-examples 到 TestPyPI..."
         twine upload --repository testpypi dist/*
     fi
-    
+
     # 上传 iapps
     if [ -d "apps/dist" ]; then
         info "上传 iapps 到 TestPyPI..."
         twine upload --repository testpypi apps/dist/*
     fi
-    
+
     info "TestPyPI 上传完成"
     info "安装测试: pip install --index-url https://test.pypi.org/simple/ isage-examples"
 }
@@ -107,23 +107,23 @@ upload_test() {
 upload_prod() {
     warn "上传到 PyPI（正式环境）..."
     read -p "确认要发布到正式 PyPI？(yes/no): " confirm
-    
+
     if [ "$confirm" != "yes" ]; then
         error "用户取消发布"
     fi
-    
+
     # 上传 isage-examples
     if [ -d "dist" ]; then
         info "上传 isage-examples 到 PyPI..."
         twine upload dist/*
     fi
-    
+
     # 上传 iapps
     if [ -d "apps/dist" ]; then
         info "上传 iapps 到 PyPI..."
         twine upload apps/dist/*
     fi
-    
+
     info "PyPI 上传完成"
 }
 

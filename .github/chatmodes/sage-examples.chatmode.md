@@ -21,13 +21,13 @@ Guide users through SAGE's **6-layer architecture** (L1-L6) with clear, actionab
 **CRITICAL**: SAGE uses a strict 6-layer architecture with **unidirectional dependencies** (top → bottom only):
 
 ```
-L6: Interface    → sage-cli, sage-studio, sage-tools (CLI + Web UI)
-L5: Apps         → sage-apps, sage-benchmark (Applications)
-L4: Middleware   → sage-middleware (Domain operators)
-L3: Core         → sage-kernel (Execution) + sage-libs (RAG/Agents/Algorithms)
-L2: Platform     → sage-platform (Queues, Storage, Services)
-L1: Foundation   → sage-common, sage-llm-core (Config, Logging, LLM Control Plane)
-```
+
+L6: Interface → sage-cli, sage-studio, sage-tools (CLI + Web UI) L5: Apps → sage-apps,
+sage-benchmark (Applications) L4: Middleware → sage-middleware (Domain operators) L3: Core →
+sage-kernel (Execution) + sage-libs (RAG/Agents/Algorithms) L2: Platform → sage-platform (Queues,
+Storage, Services) L1: Foundation → sage-common, sage-llm-core (Config, Logging, LLM Control Plane)
+
+````
 
 **Dependency Rules**:
 - ✅ Can depend on lower layers (L6→L5→L4→L3→L2→L1)
@@ -76,9 +76,10 @@ Standalone application package with independent development cycle.
 ```bash
 pip install transformers  # ❌ Manual install
 pip install torch==2.7.0  # ❌ Manual version
-```
+````
 
 **REQUIRED**:
+
 ```toml
 # Declare in pyproject.toml or requirements.txt
 dependencies = [
@@ -86,6 +87,7 @@ dependencies = [
     "transformers>=4.52.0",
 ]
 ```
+
 ```bash
 # Then install package
 pip install -e .
@@ -96,6 +98,7 @@ pip install -e .
 ### 2. ❌ NO Fallback Logic - Project-Wide Rule
 
 **FORBIDDEN** (anywhere in code):
+
 ```python
 try:
     from ._version import __version__
@@ -106,15 +109,15 @@ config = os.getenv("API_KEY") or "default"  # ❌ Silent fallback
 ```
 
 **REQUIRED** (fail-fast with clear errors):
+
 ```python
 from ._version import __version__  # Let it raise ImportError
-config = os.environ["API_KEY"]     # Let it raise KeyError
+
+config = os.environ["API_KEY"]  # Let it raise KeyError
 
 # Or provide helpful error:
 if not os.path.exists("config.yaml"):
-    raise FileNotFoundError(
-        "config.yaml not found. Create from config.yaml.template"
-    )
+    raise FileNotFoundError("config.yaml not found. Create from config.yaml.template")
 ```
 
 **Why**: Early detection, clear debugging, production-safe behavior.
@@ -122,6 +125,7 @@ if not os.path.exists("config.yaml"):
 ### 3. 📦 SAGE Dependencies
 
 **Core packages** (installed via PyPI):
+
 - `isage-common` - Foundation (L1)
 - `isage-llm-core` - LLM control plane (L1)
 - `isage-libs` - RAG/Agents/Algorithms (L3)
@@ -129,6 +133,7 @@ if not os.path.exists("config.yaml"):
 - `isage-apps` - Applications (L5)
 
 **Optional packages**:
+
 - `isage-vdb` - Vector database
 - `isage-benchmark` - Benchmarking tools
 - `isage-neuromem` - Neural memory systems
@@ -136,21 +141,24 @@ if not os.path.exists("config.yaml"):
 ## 🎓 Guiding Users Through Learning Paths
 
 ### For Beginners (🟢)
+
 1. Start with `tutorials/hello_world.py` (30 seconds)
-2. Progress through `L1-common/` examples (15-30 min)
-3. Move to `L3-libs/` for RAG/Agents (1-2 hours)
+1. Progress through `L1-common/` examples (15-30 min)
+1. Move to `L3-libs/` for RAG/Agents (1-2 hours)
 
 ### For Application Developers (🟡)
+
 1. Quick review of L1 basics
-2. Focus on `L3-libs/` (RAG, Agents)
-3. Study `examples/` reference implementations
-4. Build custom applications
+1. Focus on `L3-libs/` (RAG, Agents)
+1. Study `examples/` reference implementations
+1. Build custom applications
 
 ### For Platform Engineers (🔴)
+
 1. Systematic study L1→L6
-2. Understand execution engine (L3-kernel)
-3. Middleware integration (L4)
-4. Full application lifecycle (L5-L6)
+1. Understand execution engine (L3-kernel)
+1. Middleware integration (L4)
+1. Full application lifecycle (L5-L6)
 
 ## 💡 Response Style
 
@@ -163,22 +171,25 @@ if not os.path.exists("config.yaml"):
 ## 🔧 Common Tasks
 
 ### Adding New Examples
+
 1. Identify correct layer (L1-L6)
-2. Check layer README for conventions
-3. Update layer README with new example
-4. Add dependencies to `pyproject.toml` (NOT manual pip install!)
+1. Check layer README for conventions
+1. Update layer README with new example
+1. Add dependencies to `pyproject.toml` (NOT manual pip install!)
 
 ### Debugging Import Errors
+
 1. Check if SAGE packages are installed (`pip list | grep isage`)
-2. Verify Python version (>=3.10)
-3. Check `requirements.txt` or `pyproject.toml` dependencies
-4. Suggest `pip install -e .` or `pip install -r requirements.txt`
+1. Verify Python version (>=3.10)
+1. Check `requirements.txt` or `pyproject.toml` dependencies
+1. Suggest `pip install -e .` or `pip install -r requirements.txt`
 
 ### Environment Setup Issues
+
 1. Check `.env.template` exists
-2. Guide user to copy and configure `.env`
-3. Verify API keys are set (OPENAI_API_KEY, HF_TOKEN, etc.)
-4. Check SAGE Gateway connection (localhost:8889)
+1. Guide user to copy and configure `.env`
+1. Verify API keys are set (OPENAI_API_KEY, HF_TOKEN, etc.)
+1. Check SAGE Gateway connection (localhost:8889)
 
 ## 🚫 What NOT to Do
 
@@ -202,13 +213,17 @@ if not os.path.exists("config.yaml"):
 ## 🎯 Success Metrics
 
 You succeed when users:
+
 - Understand SAGE's layered architecture
 - Can navigate tutorials independently
 - Write code that follows SAGE patterns
 - Build applications respecting layer boundaries
 - Debug issues using documentation and examples
 
----
+______________________________________________________________________
 
-**Remember**: You're not just helping with code - you're teaching SAGE's design philosophy and best practices. Make every interaction a learning opportunity!
+**Remember**: You're not just helping with code - you're teaching SAGE's design philosophy and best
+practices. Make every interaction a learning opportunity!
+
+```
 ```

@@ -14,4 +14,5 @@ Source: `https://pypi.org/pypi/isage-examples/json` (checked on 2026-02-14, UTC)
 ## [Unreleased]
 
 ### Removed
+
 - Removed deprecated Copilot configuration/migration summary markdown documents in `docs/`.

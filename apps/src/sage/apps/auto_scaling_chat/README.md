@@ -22,10 +22,10 @@ run_auto_scaling_demo()
 
 # Custom load profile
 run_auto_scaling_demo(
-    duration=60,        # seconds
-    base_rate=5,        # min concurrent users
-    peak_rate=80,       # max concurrent users
-    verbose=True        # show scaling events
+    duration=60,  # seconds
+    base_rate=5,  # min concurrent users
+    peak_rate=80,  # max concurrent users
+    verbose=True,  # show scaling events
 )
 ```
 
@@ -144,10 +144,10 @@ from sage.apps.auto_scaling_chat.operators import AutoScaler
 
 # Custom scaler with different thresholds
 scaler = AutoScaler(
-    scale_up_threshold=25,    # Scale up earlier
-    scale_down_threshold=5,   # Scale down more aggressively
-    min_servers=1,            # Allow single server
-    max_servers=20,           # Allow more servers
+    scale_up_threshold=25,  # Scale up earlier
+    scale_down_threshold=5,  # Scale down more aggressively
+    min_servers=1,  # Allow single server
+    max_servers=20,  # Allow more servers
 )
 ```
 

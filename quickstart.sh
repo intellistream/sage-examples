@@ -31,14 +31,13 @@ NC='\033[0m'
 # ─── Arguments ────────────────────────────────────────────────────────────────
 EXTRAS="[dev]"   # default — dev includes [full] via pyproject self-reference
 DOCTOR=false
-YES=false
 for arg in "$@"; do
     case "$arg" in
         --doctor)   DOCTOR=true ;;
         --standard) EXTRAS="" ;;
         --full)     EXTRAS="[full]" ;;
         --dev)      EXTRAS="[dev]" ;;
-        --yes|-y)   YES=true ;;
+        --yes|-y)   : ;;
     esac
 done
 

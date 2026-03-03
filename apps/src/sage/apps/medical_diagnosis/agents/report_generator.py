@@ -255,9 +255,7 @@ class ReportGenerator:
         """解析采样/生成参数供每次请求使用"""
 
         sampling_cfg = (
-            sagellm_cfg.get("sampling", {})
-            if isinstance(sagellm_cfg.get("sampling"), dict)
-            else {}
+            sagellm_cfg.get("sampling", {}) if isinstance(sagellm_cfg.get("sampling"), dict) else {}
         )
 
         def _get_option(key: str, default: Any):

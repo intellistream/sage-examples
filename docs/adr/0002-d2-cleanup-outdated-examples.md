@@ -9,17 +9,17 @@
 `examples/` 目录存在以下边界问题：
 
 1. 存在旧 API 演示脚本，不属于当前维护范围；
-2. `examples/README.md` 文档内容损坏且包含无效入口（如 `examples/apps/...`）；
-3. 顶层 README 仍暴露过时入口，造成“文档可见但实际不维护”的误导。
+1. `examples/README.md` 文档内容损坏且包含无效入口（如 `examples/apps/...`）；
+1. 顶层 README 仍暴露过时入口，造成“文档可见但实际不维护”的误导。
 
 ## Decision
 
 执行最小边界收敛：
 
 1. 删除过时脚本 `examples/run_runtime_api_layering.py`；
-2. 重写 `examples/README.md`，仅保留可运行且受维护的入口；
-3. 同步更新根 `README.md` 的示例列表，移除过时入口；
-4. 不新增 shim/re-export/fallback，不保留兼容入口。
+1. 重写 `examples/README.md`，仅保留可运行且受维护的入口；
+1. 同步更新根 `README.md` 的示例列表，移除过时入口；
+1. 不新增 shim/re-export/fallback，不保留兼容入口。
 
 ## Consequences
 

@@ -9,12 +9,15 @@ Production-ready application examples for the SAGE framework.
 
 ## 🎯 What is This?
 
-**sage-examples** showcases production application examples for [SAGE](https://github.com/intellistream/SAGE):
+**sage-examples** showcases production application examples for
+[SAGE](https://github.com/intellistream/SAGE):
 
 - **🎯 Examples**: Complete, runnable application demonstrations
 - **📦 apps Package**: Installable application library (published to PyPI as `iapps`)
 
-> **� Looking for tutorials?** Visit [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) for learning materials.
+> **� Looking for tutorials?** Visit
+> [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) for learning
+> materials.
 
 ## 🚀 Quick Start
 
@@ -30,7 +33,8 @@ pip install -e .
 python examples/run_video_intelligence.py
 ```
 
-> **New to SAGE?** Start with [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) first.
+> **New to SAGE?** Start with
+> [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) first.
 
 ## 📁 Repository Structure
 
@@ -52,23 +56,23 @@ sage-examples/
 
 ## 📚 Learning vs Examples
 
-| Your Goal | Repository |
-|-----------|------------|
-| **Learn SAGE basics** | [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) |
+| Your Goal                   | Repository                                                                  |
+| --------------------------- | --------------------------------------------------------------------------- |
+| **Learn SAGE basics**       | [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) |
 | **See production examples** | [sage-examples](https://github.com/intellistream/sage-examples) (this repo) |
-| **Install applications** | `pip install iapps` |
+| **Install applications**    | `pip install iapps`                                                         |
 
 ## 🎯 Application Examples
 
 Complete, runnable applications demonstrating real-world use cases:
 
-| Application | Description | Script |
-|-------------|-------------|--------|
+| Application               | Description                | Script                               |
+| ------------------------- | -------------------------- | ------------------------------------ |
 | 🎬 **Video Intelligence** | Multi-model video analysis | `examples/run_video_intelligence.py` |
-| 🏥 **Medical Diagnosis** | AI medical image analysis | `examples/run_medical_diagnosis.py` |
-| 🏠 **Smart Home** | IoT automation system | `examples/run_smart_home.py` |
-| 📰 **Article Monitoring** | News monitoring pipeline | `examples/run_article_monitoring.py` |
-| 💬 **Auto-scaling Chat** | Dynamic scaling chat | `examples/run_auto_scaling_chat.py` |
+| 🏥 **Medical Diagnosis**  | AI medical image analysis  | `examples/run_medical_diagnosis.py`  |
+| 🏠 **Smart Home**         | IoT automation system      | `examples/run_smart_home.py`         |
+| 📰 **Article Monitoring** | News monitoring pipeline   | `examples/run_article_monitoring.py` |
+| 💬 **Auto-scaling Chat**  | Dynamic scaling chat       | `examples/run_auto_scaling_chat.py`  |
 
 See `examples/README.md` for details.
 
@@ -89,7 +93,8 @@ pip install isage-examples
 pip install -e .[dev]
 ```
 
-> **Note**: Following SAGE principles, all application dependencies are installed by default. No need for extra flags like `[video]` or `[medical]`.
+> **Note**: Following SAGE principles, all application dependencies are installed by default. No
+> need for extra flags like `[video]` or `[medical]`.
 
 ## 🏗️ SAGE Architecture Overview
 
@@ -166,7 +171,8 @@ See `docs/DEVELOPMENT.md` for complete development guide.
 
 - **Examples Guide**: `examples/README.md` - Application examples
 - **Development Guide**: `docs/DEVELOPMENT.md` - Contributing
-- **SAGE Tutorials**: [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) - Learn SAGE
+- **SAGE Tutorials**: [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) -
+  Learn SAGE
 - **SAGE Docs**: https://intellistream.github.io/SAGE
 
 ## 🤝 Contributing
@@ -174,17 +180,17 @@ See `docs/DEVELOPMENT.md` for complete development guide.
 We welcome contributions! Please see:
 
 1. **Development Guide**: `docs/DEVELOPMENT.md`
-2. **Code of Conduct**: Follow respectful collaboration
-3. **Issue Tracker**: https://github.com/intellistream/sage-examples/issues
+1. **Code of Conduct**: Follow respectful collaboration
+1. **Issue Tracker**: https://github.com/intellistream/sage-examples/issues
 
 ### Adding Examples
 
 1. **Tutorials**: Add to [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials)
-2. **Applications**: 
+1. **Applications**:
    - Implementation → `apps/src/sage/apps/your_app/`
    - Entry script → `examples/run_your_app.py`
-3. **Tests**: Add tests and ensure they pass
-4. **Dependencies**: Update `pyproject.toml`
+1. **Tests**: Add tests and ensure they pass
+1. **Dependencies**: Update `pyproject.toml`
 
 ## 🔗 Related Repositories
 
@@ -206,6 +212,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 If you find this project helpful, please consider giving it a ⭐️!
 
----
+______________________________________________________________________
 
 **Made with ❤️ by the IntelliStream Team**

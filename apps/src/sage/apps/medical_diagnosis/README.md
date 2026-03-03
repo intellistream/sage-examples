@@ -74,7 +74,7 @@ patient_data = {
     "gender": "male",
     "symptoms": ["头痛", "发烧", "咳嗽"],
     "duration": "3天",
-    "medical_history": ["高血压"]
+    "medical_history": ["高血压"],
 }
 
 # 执行诊断
@@ -92,10 +92,7 @@ print(f"治疗方案: {result['treatment_plan']}")
 from sage.apps.medical_diagnosis import run_batch_diagnosis
 
 # 批量诊断
-results = run_batch_diagnosis(
-    input_dir="data/patient_cases/",
-    output_dir="results/"
-)
+results = run_batch_diagnosis(input_dir="data/patient_cases/", output_dir="results/")
 
 # 生成报告
 for patient_id, diagnosis in results.items():

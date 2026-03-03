@@ -121,10 +121,7 @@ Create your own automation:
 
 ```python
 # Send custom commands
-home.send_command("robot_001", "move_laundry", {
-    "from": "basket",
-    "to": "washer"
-})
+home.send_command("robot_001", "move_laundry", {"from": "basket", "to": "washer"})
 
 home.send_command("washer_001", "start_wash")
 ```

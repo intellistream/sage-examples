@@ -12,105 +12,104 @@ jobs:
     name: Pre-commit Hooks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Install pre-commit
-        run: |
-          pip install pre-commit
+    - name: Install pre-commit
+      run: |
+        pip install pre-commit
 
-      - name: Run pre-commit
-        run: |
-          pre-commit run --all-files --show-diff-on-failure
+    - name: Run pre-commit
+      run: |
+        pre-commit run --all-files --show-diff-on-failure
 
   ruff:
     name: Ruff Linting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Install ruff
-        run: |
-          pip install ruff==0.14.6
+    - name: Install ruff
+      run: |
+        pip install ruff==0.14.6
 
-      - name: Run ruff check
-        run: |
-          ruff check .
+    - name: Run ruff check
+      run: |
+        ruff check .
 
-      - name: Run ruff format check
-        run: |
-          ruff format --check .
+    - name: Run ruff format check
+      run: |
+        ruff format --check .
 
   mypy:
     name: Type Checking (mypy)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          pip install mypy types-PyYAML types-requests types-setuptools
-          pip install -r requirements.txt
+    - name: Install dependencies
+      run: |
+        pip install -e ".[dev]"
 
-      - name: Run mypy
-        run: |
-          mypy . --config-file=pyproject.toml --no-error-summary
-        continue-on-error: true  # Type checking errors shouldn't block CI
+    - name: Run mypy
+      run: |
+        mypy . --config-file=pyproject.toml --no-error-summary
+      continue-on-error: true    # Type checking errors shouldn't block CI
 
   legacy-ray-guard:
     name: Legacy Ray Term Guard
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Check for legacy Ray terms in source
+    - name: Check for legacy Ray terms in source
         # Fail fast if any new direct Ray imports or identifiers sneak in.
         # All distributed-execution work must go via sageFlownet / SAGE facade APIs.
-        run: |
-          python - << 'EOF'
-          import re, sys
-          from pathlib import Path
-          FORBIDDEN = {
-              "import ray":         re.compile(r"\bimport\s+ray\b"),
-              "from ray":           re.compile(r"\bfrom\s+ray\b"),
-              "ray.init()":         re.compile(r"\bray\.init\s*\("),
-              "ray.remote":         re.compile(r"\bray\.remote\b"),
-              "RayQueueDescriptor": re.compile(r"\bRayQueueDescriptor\b"),
-              "RayServiceTask":     re.compile(r"\bRayServiceTask\b"),
-              "use_ray=True":       re.compile(r"\buse_ray\s*=\s*True\b"),
-          }
-          violations = []
-          for path in Path(".").rglob("*.py"):
-              rel = path.relative_to(".")
-              if any(p.startswith(".") for p in rel.parts) or "__pycache__" in rel.parts:
-                  continue
-              text = path.read_text(encoding="utf-8")
-              for term, pat in FORBIDDEN.items():
-                  for m in pat.finditer(text):
-                      ln = text.count("\n", 0, m.start()) + 1
-                      violations.append(f"{rel}:{ln}: {term}")
-          if violations:
-              print("ERROR: Legacy Ray terms found (use sageFlownet / SAGE facade APIs instead):")
-              print("\n".join(sorted(violations)))
-              sys.exit(1)
-          print("OK: no legacy Ray terms found")
-          EOF
+      run: |
+        python - << 'EOF'
+        import re, sys
+        from pathlib import Path
+        FORBIDDEN = {
+            "import ray":         re.compile(r"\bimport\s+ray\b"),
+            "from ray":           re.compile(r"\bfrom\s+ray\b"),
+            "ray.init()":         re.compile(r"\bray\.init\s*\("),
+            "ray.remote":         re.compile(r"\bray\.remote\b"),
+            "RayQueueDescriptor": re.compile(r"\bRayQueueDescriptor\b"),
+            "RayServiceTask":     re.compile(r"\bRayServiceTask\b"),
+            "use_ray=True":       re.compile(r"\buse_ray\s*=\s*True\b"),
+        }
+        violations = []
+        for path in Path(".").rglob("*.py"):
+            rel = path.relative_to(".")
+            if any(p.startswith(".") for p in rel.parts) or "__pycache__" in rel.parts:
+                continue
+            text = path.read_text(encoding="utf-8")
+            for term, pat in FORBIDDEN.items():
+                for m in pat.finditer(text):
+                    ln = text.count("\n", 0, m.start()) + 1
+                    violations.append(f"{rel}:{ln}: {term}")
+        if violations:
+            print("ERROR: Legacy Ray terms found (use sageFlownet / SAGE facade APIs instead):")
+            print("\n".join(sorted(violations)))
+            sys.exit(1)
+        print("OK: no legacy Ray terms found")
+        EOF

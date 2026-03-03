@@ -26,10 +26,10 @@ run_article_monitoring_pipeline(
     keywords=["machine learning", "deep learning", "neural network"],
     interest_topics=[
         "artificial intelligence and machine learning applications",
-        "natural language processing and text analysis"
+        "natural language processing and text analysis",
     ],
     category="cs.AI",
-    max_articles=20
+    max_articles=20,
 )
 ```
 

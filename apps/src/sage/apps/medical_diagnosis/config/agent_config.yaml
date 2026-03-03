@@ -1,21 +1,21 @@
 # 医疗诊断Agent配置
 
 agent:
-  name: "LumbarSpineDiagnosticAgent"
-  version: "1.0.0"
-  description: "腰椎MRI诊断智能助手"
+  name: LumbarSpineDiagnosticAgent
+  version: 1.0.0
+  description: 腰椎MRI诊断智能助手
   max_iterations: 5
   timeout: 300  # 秒
 
 models:
   # 视觉理解模型（用于影像分析）
-  vision_model: "Qwen/Qwen2-VL-7B-Instruct"
+  vision_model: Qwen/Qwen2-VL-7B-Instruct
 
   # 语言模型（用于报告生成）
-  llm_model: "Qwen/Qwen2.5-7B-Instruct"
+  llm_model: Qwen/Qwen2.5-7B-Instruct
 
   # 嵌入模型（用于知识检索）
-  embedding_model: "BAAI/bge-large-zh-v1.5"
+  embedding_model: BAAI/bge-large-zh-v1.5
 
 services:
   # sageLLM服务配置
@@ -24,22 +24,22 @@ services:
     gpu_memory_utilization: 0.9
     tensor_parallel_size: 1
     max_model_len: 4096
-    dtype: "auto"
+    dtype: auto
 
   # Embedding服务配置
   embedding:
-    method: "hf"
+    method: hf
     cache_enabled: true
     normalize: true
     batch_size: 32
 
   # 向量数据库配置
   vector_db:
-    backend: "sage_db"
-    collection_name: "lumbar_spine_cases"
+    backend: sage_db
+    collection_name: lumbar_spine_cases
     dimension: 1024
-    index_type: "HNSW"
-    metric_type: "cosine"
+    index_type: HNSW
+    metric_type: cosine
     top_k: 5
 
 image_processing:
@@ -51,9 +51,9 @@ image_processing:
   # 分割模型
   segmentation:
     enabled: false  # 没有GPU或模型权重时可以暂时关闭
-    model: "SAM"  # Segment Anything Model
-    checkpoint_path: ".sage/models/sam_vit_h.pth"  # SAM 权重路径
-    sam_variant: "vit_h"  # vit_b / vit_l / vit_h
+    model: SAM    # Segment Anything Model
+    checkpoint_path: .sage/models/sam_vit_h.pth    # SAM 权重路径
+    sam_variant: vit_h    # vit_b / vit_l / vit_h
     points_per_side: 16
     pred_iou_thresh: 0.86
     stability_score_thresh: 0.92
@@ -80,7 +80,7 @@ image_processing:
 
   # 特征提取
   feature_extraction:
-    method: "clip"  # 特征提取方法: "clip" (推荐) 或 "dinov2"
+    method: clip    # 特征提取方法: "clip" (推荐) 或 "dinov2"
     dimension: 768  # 特征向量维度 (CLIP: 512, DINOv2: 768)
 
 diagnosis:
@@ -97,23 +97,23 @@ diagnosis:
     include_similar_cases: true
     max_similar_cases: 5
     include_confidence_score: true
-    language: "zh"
+    language: zh
 
 knowledge_base:
   # 知识来源
   sources:
-  - "medical_literature"
-  - "clinical_guidelines"
-  - "case_database"
+  - medical_literature
+  - clinical_guidelines
+  - case_database
 
   # 更新策略
-  update_frequency: "weekly"
+  update_frequency: weekly
   auto_update: false
 
 output:
   # 输出格式
-  format: "structured"  # structured, json, pdf
-  save_path: "output/diagnoses/"
+  format: structured    # structured, json, pdf
+  save_path: output/diagnoses/
 
   # 包含内容
   include_image_annotations: true
@@ -121,6 +121,6 @@ output:
   include_references: true
 
 logging:
-  level: "INFO"
+  level: INFO
   save_logs: true
-  log_path: "logs/medical_diagnosis/"
+  log_path: logs/medical_diagnosis/

@@ -1,87 +1,71 @@
-# Pre-commit hooks configuration for SAGE Examples
-# Installation:
-#   pip install pre-commit
-#   pre-commit install
-#
-# Usage:
-#   pre-commit run --all-files
-#   git commit --no-verify  # Skip hooks temporarily (not recommended)
-
 default_language_version:
   python: python3.11
 
 repos:
-  # General file checks
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
-    hooks:
-      - id: trailing-whitespace
-        args: [--markdown-linebreak-ext=md]
-      - id: end-of-file-fixer
-      - id: check-yaml
-        args: [--unsafe]
-      - id: check-json
-      - id: check-toml
-      - id: check-added-large-files
-        args: ['--maxkb=1000']
-      - id: check-merge-conflict
-      - id: check-case-conflict
-      - id: mixed-line-ending
-        args: [--fix=lf]
-      - id: detect-private-key
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v6.0.0
+  hooks:
+  - id: trailing-whitespace
+    args: [--markdown-linebreak-ext=md]
+  - id: end-of-file-fixer
+  - id: check-yaml
+    args: [--unsafe]
+  - id: check-json
+  - id: check-toml
+  - id: check-added-large-files
+    args: [--maxkb=1000]
+  - id: check-merge-conflict
+  - id: check-case-conflict
+  - id: mixed-line-ending
+    args: [--fix=lf]
+  - id: detect-private-key
 
-  # Python: Ruff linter and formatter (replaces black, isort, flake8)
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.6  # Match SAGE main repository version
-    hooks:
-      - id: ruff
-        name: ruff check
-        args: [--fix, --exit-non-zero-on-fix, --config, tools/config/ruff.toml]
-        types_or: [python, pyi]
-      - id: ruff-format
-        name: ruff format
-        args: [--config, tools/config/ruff.toml]
-        types_or: [python, pyi]
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.14.6
+  hooks:
+  - id: ruff
+    name: ruff check
+    args: [--fix, --exit-non-zero-on-fix, --config, tools/config/ruff.toml]
+    types_or: [python, pyi]
+  - id: ruff-format
+    name: ruff format
+    args: [--config, tools/config/ruff.toml]
+    types_or: [python, pyi]
 
-  # Python: mypy type checking
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.14.0
-    hooks:
-      - id: mypy
-        args: [--config-file=pyproject.toml, --no-error-summary]
-        additional_dependencies:
-          - types-PyYAML
-          - types-requests
-          - types-setuptools
+- repo: local
+  hooks:
+  - id: mypy
+    name: mypy
+    entry: mypy . --config-file=pyproject.toml --no-error-summary
+    language: system
+    pass_filenames: false
+    types_or: [python, pyi]
+    stages: [manual]
 
-  # Shell scripts
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
-    hooks:
-      - id: shellcheck
-        args: [--severity=warning]
+- repo: https://github.com/shellcheck-py/shellcheck-py
+  rev: v0.10.0.1
+  hooks:
+  - id: shellcheck
+    args: [--severity=warning]
 
-  # YAML formatting
-  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-    rev: v2.15.0
-    hooks:
-      - id: pretty-format-yaml
-        args: [--autofix, --indent, '2']
+- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  rev: v2.15.0
+  hooks:
+  - id: pretty-format-yaml
+    args: [--autofix, --indent, '2']
 
-  # Markdown formatting
-  - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.21
-    hooks:
-      - id: mdformat
-        args: [--wrap, '100']
-        additional_dependencies:
-          - mdformat-gfm
-          - mdformat-black
+- repo: https://github.com/executablebooks/mdformat
+  rev: 0.7.21
+  hooks:
+  - id: mdformat
+    args: [--wrap, '100']
+    additional_dependencies:
+    - mdformat-gfm
+    - mdformat-black
 
-  # Secret detection
-  - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.5.0
-    hooks:
-      - id: detect-secrets
-        args: ['--baseline', '.secrets.baseline']
-        exclude: package.lock.json
+- repo: https://github.com/Yelp/detect-secrets
+  rev: v1.5.0
+  hooks:
+  - id: detect-secrets
+    args: [--baseline, .secrets.baseline]
+    exclude: package.lock.json

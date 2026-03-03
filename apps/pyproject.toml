@@ -49,12 +49,12 @@ dependencies = [
     # SAGE 核心依赖（遵循 SAGE 原则：默认安装所有必需依赖）
     "isage-common>=0.2.0",              # L1: 基础工具和配置
     "isage-libs>=0.2.0",                # L3: RAG、智能体等
-    
+
     # 基础工具
     "pyyaml>=6.0",
     "pillow>=10.0.0",
     "numpy>=1.26.0,<2.3.0",
-    
+
     # 所有应用依赖（统一安装，无需额外可选组）
     "opencv-python-headless>=4.5.0",    # 视频处理（无GUI依赖）
     "torch>=2.7.0,<3.0.0",              # PyTorch

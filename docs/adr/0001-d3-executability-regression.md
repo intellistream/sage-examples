@@ -11,8 +11,8 @@
 核心原因：
 
 1. `sage.apps` 源码位于 `apps/src/sage/apps`；
-2. 根仓库 pytest 配置未将 `apps/src` 注入 Python import path；
-3. 在 `apps/` 子目录执行 pytest 时，同样缺失 `src` 路径注入。
+1. 根仓库 pytest 配置未将 `apps/src` 注入 Python import path；
+1. 在 `apps/` 子目录执行 pytest 时，同样缺失 `src` 路径注入。
 
 这会造成“依赖已声明但示例不可执行”的假失败，不符合 D3 的“可执行性与依赖一致性回归”目标。
 
@@ -21,8 +21,8 @@
 采用最小修复，不引入兼容层：
 
 1. 在根目录 `pyproject.toml` 的 `[tool.pytest.ini_options]` 中新增 `pythonpath = ["apps/src"]`；
-2. 在 `apps/pyproject.toml` 的 `[tool.pytest.ini_options]` 中新增 `pythonpath = ["src"]`；
-3. 不添加 shim/re-export/fallback，不修改业务导入路径。
+1. 在 `apps/pyproject.toml` 的 `[tool.pytest.ini_options]` 中新增 `pythonpath = ["src"]`；
+1. 不添加 shim/re-export/fallback，不修改业务导入路径。
 
 ## Consequences
 
