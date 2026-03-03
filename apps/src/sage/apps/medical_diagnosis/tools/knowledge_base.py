@@ -557,7 +557,29 @@ class MedicalKnowledgeBase:
         case_text = f"{case_data.get('diagnosis', '')} {case_data.get('symptoms', '')}"
 
         # 生成文本embedding
-        case_vector = self._embed_one(case_text)
+        text_vector = self._embed_one(case_text)
+
+        # 可选：融合影像特征（若已由影像分析器提供）
+        case_vector = text_vector
+        image_vector = case_data.get("image_embedding")
+        if image_vector is None:
+            image_features = case_data.get("image_features")
+            if isinstance(image_features, dict):
+                image_vector = image_features.get("image_embedding")
+
+        if image_vector is not None:
+            try:
+                image_vector_list = [float(value) for value in image_vector]
+                if len(image_vector_list) == len(text_vector):
+                    fused = [
+                        0.5 * text_val + 0.5 * image_val
+                        for text_val, image_val in zip(text_vector, image_vector_list, strict=True)
+                    ]
+                    norm = sum(value * value for value in fused) ** 0.5
+                    if norm > 0:
+                        case_vector = [value / norm for value in fused]
+            except (TypeError, ValueError):
+                pass
 
         # 准备metadata
         metadata = {
@@ -568,6 +590,7 @@ class MedicalKnowledgeBase:
             "symptoms": str(case_data.get("symptoms", "")),
             "treatment": str(case_data.get("treatment", "")),
             "outcome": str(case_data.get("outcome", "")),
+            "has_image_embedding": str(image_vector is not None).lower(),
         }
 
         # 存入向量数据库（若可用）
