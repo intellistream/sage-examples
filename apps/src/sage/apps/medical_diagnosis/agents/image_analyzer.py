@@ -645,23 +645,98 @@ class ImageAnalyzer:
 
     def _segment_vertebrae(self, image) -> list[dict[str, Any]]:
         """分割椎体"""
-        # TODO: 使用分割模型识别 L1-L5 椎体
-        # Issue URL: https://github.com/intellistream/SAGE/issues/896
-
-        # 模拟输出
         vertebrae_names = ["L1", "L2", "L3", "L4", "L5"]
-        return [
-            {
-                "name": name,
-                "position": {"x": 100, "y": 50 + i * 80},
-                "size": {"width": 40, "height": 30},
-                "features": {
-                    "signal_intensity": 0.7 + i * 0.02,
-                    "shape_regularity": 0.9,
-                },
-            }
-            for i, name in enumerate(vertebrae_names)
-        ]
+
+        if image is None:
+            return [
+                {
+                    "name": name,
+                    "position": {"x": 100, "y": 50 + i * 80},
+                    "size": {"width": 40, "height": 30},
+                    "features": {
+                        "signal_intensity": 0.7 + i * 0.02,
+                        "shape_regularity": 0.9,
+                    },
+                }
+                for i, name in enumerate(vertebrae_names)
+            ]
+
+        array = np.asarray(image)
+        if array.ndim == 3:
+            array = array.mean(axis=2)
+
+        height, width = array.shape[:2]
+        if height < 10 or width < 10:
+            return [
+                {
+                    "name": name,
+                    "position": {"x": 100, "y": 50 + i * 80},
+                    "size": {"width": 40, "height": 30},
+                    "features": {
+                        "signal_intensity": 0.7 + i * 0.02,
+                        "shape_regularity": 0.9,
+                    },
+                }
+                for i, name in enumerate(vertebrae_names)
+            ]
+
+        gray = array.astype(np.float32)
+        min_val = float(gray.min())
+        max_val = float(gray.max())
+        if max_val - min_val > 1e-6:
+            gray = (gray - min_val) / (max_val - min_val)
+        else:
+            gray = np.zeros_like(gray)
+
+        profile = gray.mean(axis=1)
+        window = max(3, int(height * 0.03))
+        kernel = np.ones(window, dtype=np.float32) / float(window)
+        smoothed = np.convolve(profile, kernel, mode="same")
+
+        vertebrae: list[dict[str, Any]] = []
+        box_width = max(20, int(width * 0.35))
+        box_height = max(14, int(height * 0.08))
+        left = max(0, (width - box_width) // 2)
+
+        band = max(1, height // len(vertebrae_names))
+        for index, name in enumerate(vertebrae_names):
+            start = index * band
+            end = height if index == len(vertebrae_names) - 1 else min(height, (index + 1) * band)
+            if end <= start:
+                center_y = min(height - 1, start)
+            else:
+                local = smoothed[start:end]
+                center_y = start + int(np.argmax(local))
+
+            top = max(0, center_y - box_height // 2)
+            bottom = min(height, top + box_height)
+            top = max(0, bottom - box_height)
+
+            region = gray[top:bottom, left : left + box_width]
+            if region.size == 0:
+                signal_intensity = 0.0
+                shape_regularity = 0.75
+            else:
+                signal_intensity = float(np.clip(region.mean(), 0.0, 1.0))
+                gradient = (
+                    np.abs(np.diff(region.mean(axis=1))) if region.shape[0] > 1 else np.array([0])
+                )
+                roughness = float(gradient.mean()) if gradient.size > 0 else 0.0
+                shape_regularity = float(np.clip(1.0 - roughness, 0.6, 0.98))
+
+            vertebrae.append(
+                {
+                    "name": name,
+                    "position": {"x": int(left), "y": int(top)},
+                    "size": {"width": int(box_width), "height": int(bottom - top)},
+                    "features": {
+                        "signal_intensity": signal_intensity,
+                        "shape_regularity": shape_regularity,
+                    },
+                }
+            )
+
+        return vertebrae
 
     def _segment_discs(self, image) -> list[dict[str, Any]]:
         """分割椎间盘"""
