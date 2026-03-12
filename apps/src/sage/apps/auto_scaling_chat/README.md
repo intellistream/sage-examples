@@ -50,7 +50,7 @@ python -m sage.apps.auto_scaling_chat.pipeline --duration 15 --peak-rate 40
 
 The system uses SAGE stream processing operators:
 
-```
+```text
 UserTrafficSource (BatchFunction)
     ↓
 AutoScaler (MapFunction)
@@ -85,7 +85,7 @@ Default thresholds:
 
 ## Example Output
 
-```
+```text
 ⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡
           SAGE Auto-Scaling Chat System Demo
 ⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡
@@ -179,7 +179,7 @@ The system tracks:
 ## Dependencies
 
 - Python 3.8+
-- SAGE framework (sage-common, sage-kernel)
+- SAGE framework (`isage>=0.3.0`)
 - Standard library only
 
 ## Future Enhancements

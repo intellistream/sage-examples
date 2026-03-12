@@ -13,7 +13,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from sage.common.core import BatchFunction, MapFunction, SinkFunction
+from sage.foundation import BatchFunction, MapFunction, SinkFunction
 
 
 class DeviceType(Enum):

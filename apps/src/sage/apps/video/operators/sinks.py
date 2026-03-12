@@ -7,7 +7,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from sage.common.core import SinkFunction
+from sage.foundation import SinkFunction
 
 
 class TimelineSink(SinkFunction):

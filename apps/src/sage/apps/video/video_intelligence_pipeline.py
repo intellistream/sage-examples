@@ -27,8 +27,8 @@ from typing import Any
 
 import yaml
 
-from sage.common.utils.logging.custom_logger import CustomLogger
-from sage.kernel.api.local_environment import LocalEnvironment
+from sage.foundation import CustomLogger
+from sage.runtime import LocalEnvironment
 
 
 # Helper function to get logger
@@ -37,49 +37,52 @@ def get_logger(name: str) -> CustomLogger:
     return CustomLogger(outputs=[("console", "INFO")], name=name)
 
 
-try:  # Optional middleware components - sage_mem (migrated from neuromem)
-    # Note: NeuroMemVDBService has been refactored in the new architecture
-    # Using registry-based approach instead
-    from sage.middleware.components.sage_mem.neuromem.services.neuromem_service_factory import (
-        NeuromemServiceFactory,
-    )
-    from sage.middleware.components.sage_mem.neuromem.services.registry import MemoryServiceRegistry
-
-    # Legacy compatibility - may need updating based on new service API
-    NeuroMemVDBService = None  # Deprecated - use registry instead
-except ImportError:  # pragma: no cover - optional dependency
-    MemoryServiceRegistry = None  # type: ignore[assignment]
-    NeuromemServiceFactory = None  # type: ignore[assignment]
-    NeuroMemVDBService = None  # type: ignore[assignment]
-
-try:
-    from sage.middleware.components.sage_db.python.micro_service import SageDBService
-except ImportError:  # pragma: no cover - optional dependency
-    SageDBService = None  # type: ignore[assignment]
-
-try:
-    from sage.middleware.components.sage_flow.python.micro_service import SageFlowService
-except ImportError:  # pragma: no cover - optional dependency
-    SageFlowService = None  # type: ignore[assignment]
-
-from sage.apps.video.operators import (  # noqa: E402
-    EventStatsSink,
-    FrameEventEmitter,
-    FrameLightweightFormatter,
-    FrameObjectClassifier,
-    FramePreprocessor,
-    SageMiddlewareIntegrator,
-    SceneConceptExtractor,
-    SlidingWindowSummaryEmitter,
-    SummaryMemoryAugmentor,
-    SummarySink,
-    TemporalAnomalyDetector,
-    TimelineSink,
-    VideoFrameSource,
-)
+# Optional service integrations were previously provided by retired auxiliary
+# repositories. The consolidated example now keeps the hooks but disables them
+# unless equivalent in-tree services are added back explicitly.
+MemoryServiceRegistry = None  # type: ignore[assignment]
+NeuromemServiceFactory = None  # type: ignore[assignment]
+NeuroMemVDBService = None  # type: ignore[assignment]
+SageDBService = None  # type: ignore[assignment]
+SageFlowService = None  # type: ignore[assignment]
 
 # Default config path
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent / "config" / "default_config.yaml"
+
+
+def _load_video_operator_symbols() -> dict[str, Any]:
+    """Lazily load heavy video operators.
+
+    This keeps lightweight actions such as ``--help`` usable even when optional
+    vision dependencies like ``torchvision`` are not installed.
+    """
+
+    from sage.apps.video import operators as video_operators
+
+    required_symbols = [
+        "EventStatsSink",
+        "FrameEventEmitter",
+        "FrameLightweightFormatter",
+        "FrameObjectClassifier",
+        "FramePreprocessor",
+        "SageMiddlewareIntegrator",
+        "SceneConceptExtractor",
+        "SlidingWindowSummaryEmitter",
+        "SummaryMemoryAugmentor",
+        "SummarySink",
+        "TemporalAnomalyDetector",
+        "TimelineSink",
+        "VideoFrameSource",
+    ]
+
+    try:
+        return {name: getattr(video_operators, name) for name in required_symbols}
+    except Exception as exc:  # pragma: no cover - optional dependency surface
+        raise RuntimeError(
+            "Video intelligence demo requires optional vision dependencies. "
+            "Install packages such as torch, torchvision, pillow and transformers "
+            "before running the full pipeline."
+        ) from exc
 
 
 def load_config(config_path: str | None) -> dict[str, Any]:
@@ -223,6 +226,21 @@ def ensure_video_exists(video_path: str, auto_download: bool = True) -> str:
 
 
 def build_pipeline(env: LocalEnvironment, config: dict[str, Any]) -> None:
+    operator_symbols = _load_video_operator_symbols()
+    VideoFrameSource = operator_symbols["VideoFrameSource"]
+    FramePreprocessor = operator_symbols["FramePreprocessor"]
+    SceneConceptExtractor = operator_symbols["SceneConceptExtractor"]
+    FrameObjectClassifier = operator_symbols["FrameObjectClassifier"]
+    TemporalAnomalyDetector = operator_symbols["TemporalAnomalyDetector"]
+    SageMiddlewareIntegrator = operator_symbols["SageMiddlewareIntegrator"]
+    FrameLightweightFormatter = operator_symbols["FrameLightweightFormatter"]
+    TimelineSink = operator_symbols["TimelineSink"]
+    FrameEventEmitter = operator_symbols["FrameEventEmitter"]
+    EventStatsSink = operator_symbols["EventStatsSink"]
+    SlidingWindowSummaryEmitter = operator_symbols["SlidingWindowSummaryEmitter"]
+    SummaryMemoryAugmentor = operator_symbols["SummaryMemoryAugmentor"]
+    SummarySink = operator_symbols["SummarySink"]
+
     video_path = config["video_path"]
     sample_every = config["sample_every_n_frames"]
     max_frames = config.get("max_frames")
@@ -234,6 +252,15 @@ def build_pipeline(env: LocalEnvironment, config: dict[str, Any]) -> None:
     integrations_cfg = config.get("integrations", {})
 
     logger = get_logger("video_intelligence_pipeline")
+
+    if any(
+        bool(integrations_cfg.get(flag, False))
+        for flag in ("enable_sage_db", "enable_sage_flow", "enable_neuromem")
+    ):
+        logger.warning(
+            "Optional external middleware integrations are retired from the consolidated demo. "
+            "Only in-tree SAGE operators and services are supported."
+        )
 
     # ------------------------------------------------------------------
     # Service registrations (SageDB, SageFlow, NeuroMem)

@@ -1,7 +1,4 @@
-"""SAGE Applications - Real-world AI applications built on SAGE framework.
-
-Layer: L5 (Applications)
-Dependencies: sage.middleware (L4), sage.libs (L3), sage.kernel (L3), sage.platform (L2), sage.common (L1)
+"""SAGE applications built on the consolidated main-repo runtime.
 
 This package contains production-ready applications demonstrating SAGE's
 capabilities across various domains:
@@ -12,12 +9,9 @@ capabilities across various domains:
 - literature_report_assistant: Literature search and reading report generation assistant
 
 Architecture:
-- L5 应用层，组合使用下层功能构建完整应用
-- 依赖 L4 领域组件和 L3 核心引擎
-- 提供端到端的应用解决方案
+- 直接依赖主仓 `sage` 提供的流、运行时与服务能力
+- 保持应用层最小封装，提供端到端示例
 """
-
-__layer__ = "L5"
 
 from ._version import __version__
 

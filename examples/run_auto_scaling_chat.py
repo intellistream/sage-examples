@@ -24,7 +24,7 @@ import sys
 
 try:
     from sage.apps.auto_scaling_chat import run_auto_scaling_demo
-    from sage.common.utils.logging.custom_logger import CustomLogger
+    from sage.foundation import CustomLogger
 except ImportError as e:
     print(f"Error importing sage.apps.auto_scaling_chat: {e}")
     print("\nPlease install sage-apps:")

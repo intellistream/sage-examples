@@ -15,7 +15,7 @@ from typing import Any
 
 import requests
 
-from sage.common.core import BatchFunction, MapFunction, SinkFunction
+from sage.foundation import BatchFunction, MapFunction, SinkFunction
 
 from .models import (
     ContributorSummary,

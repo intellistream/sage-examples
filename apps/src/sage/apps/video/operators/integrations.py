@@ -6,7 +6,7 @@ from typing import Any
 
 import numpy as np
 
-from sage.common.core import MapFunction
+from sage.foundation import MapFunction
 
 
 class SageMiddlewareIntegrator(MapFunction):

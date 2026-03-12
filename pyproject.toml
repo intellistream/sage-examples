@@ -64,10 +64,8 @@ classifiers = [
 # 核心依赖 - 运行应用示例所需的依赖（遵循 SAGE 原则：默认安装）
 # ----------------------------------------------------------------------------
 dependencies = [
-    # SAGE 生态核心组件（已发布到 PyPI）
-    "isage-common>=0.2.0",   # L1: 基础工具和配置
-    "isage-libs>=0.2.0",     # L3: RAG、智能体和算法库
-    "isage-apps>=0.2.0",     # L5: 应用包（自动安装）
+    # 单一 SAGE 主仓核心包
+    "isage>=0.3.0",
 
     # 基础工具
     "pyyaml>=6.0",          # 配置文件解析
@@ -106,7 +104,7 @@ dev = [
 # ----------------------------------------------------------------------------
 [project.urls]
 Homepage = "https://github.com/intellistream/SAGE"
-Documentation = "https://intellistream.github.io/SAGE"
+Documentation = "https://intellistream.github.io/sage-docs"
 Repository = "https://github.com/intellistream/sage-examples"
 Issues = "https://github.com/intellistream/SAGE/issues"
 

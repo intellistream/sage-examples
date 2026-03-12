@@ -8,8 +8,7 @@ from typing import Any
 
 import torch
 
-from sage.common.core import FlatMapFunction, MapFunction
-from sage.common.utils.logging.custom_logger import CustomLogger
+from sage.foundation import CustomLogger, FlatMapFunction, MapFunction
 
 try:
     from transformers import pipeline as hf_pipeline

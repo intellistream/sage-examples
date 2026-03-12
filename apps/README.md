@@ -107,7 +107,7 @@ python -m sage.apps.medical_diagnosis.run_diagnosis
 
 ## Package Structure
 
-```
+```text
 sage-apps/
 ├── src/sage/apps/
 │   ├── __init__.py
@@ -129,10 +129,8 @@ sage-apps/
 
 ### Core Framework
 
-- `isage-common` - Common utilities
-- `isage-kernel` - Runtime and operators
-- `isage-middleware` - Services (SageVDB, SageFlow, NeuroMem)
-- `isage-libs` - Operator libraries
+- `isage>=0.3.0` - Consolidated SAGE core (`sage.foundation`, `sage.stream`, `sage.runtime`)
+- Optional adapters such as `isagellm` / `isage-rag` when a specific app needs external inference or retrieval backends
 
 ### Application-Specific
 

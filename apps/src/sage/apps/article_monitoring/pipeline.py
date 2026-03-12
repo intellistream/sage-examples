@@ -6,8 +6,8 @@ Main pipeline implementation using SAGE operators for article monitoring.
 
 from __future__ import annotations
 
-from sage.common.utils.logging.custom_logger import CustomLogger
-from sage.kernel.api.local_environment import LocalEnvironment
+from sage.foundation import CustomLogger
+from sage.runtime import LocalEnvironment
 
 from .operators import (
     ArticleLogSink,

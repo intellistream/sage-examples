@@ -28,7 +28,7 @@ import sys
 try:
     from sage.apps.work_report_generator import run_work_report_pipeline
     from sage.apps.work_report_generator.operators import GitHubDataSource
-    from sage.common.utils.logging.custom_logger import CustomLogger
+    from sage.foundation import CustomLogger
 except ImportError as e:
     print(f"Error importing sage.apps.work_report_generator: {e}")
     print("\nPlease install sage-apps:")

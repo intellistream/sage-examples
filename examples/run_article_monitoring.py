@@ -25,7 +25,7 @@ import sys
 
 try:
     from sage.apps.article_monitoring import run_article_monitoring_pipeline
-    from sage.common.utils.logging.custom_logger import CustomLogger
+    from sage.foundation import CustomLogger
 except ImportError as e:
     print(f"Error importing sage.apps.article_monitoring: {e}")
     print("\nPlease install sage-apps:")

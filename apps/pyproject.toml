@@ -46,9 +46,8 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    # SAGE 核心依赖（遵循 SAGE 原则：默认安装所有必需依赖）
-    "isage-common>=0.2.0",              # L1: 基础工具和配置
-    "isage-libs>=0.2.0",                # L3: RAG、智能体等
+    # SAGE 核心依赖（单一主仓）
+    "isage>=0.3.0",
 
     # 基础工具
     "pyyaml>=6.0",

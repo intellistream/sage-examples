@@ -11,7 +11,7 @@ import torch.nn.functional as func
 from PIL import Image
 from torchvision.models import MobileNet_V3_Large_Weights, mobilenet_v3_large
 
-from sage.common.core import MapFunction
+from sage.foundation import MapFunction
 
 try:
     from transformers import CLIPModel, CLIPProcessor

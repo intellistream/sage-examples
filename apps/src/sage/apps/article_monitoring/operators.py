@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from typing import Any
 
-from sage.common.core import BatchFunction, MapFunction, SinkFunction
+from sage.foundation import BatchFunction, MapFunction, SinkFunction
 
 
 @dataclass

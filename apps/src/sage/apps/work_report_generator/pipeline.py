@@ -9,7 +9,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from sage.kernel.api.local_environment import LocalEnvironment
+from sage.runtime import LocalEnvironment
 
 from .models import ReportPeriod
 from .operators import (
