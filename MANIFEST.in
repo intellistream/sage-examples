@@ -1,0 +1,38 @@
+# MANIFEST.in for isage-examples
+#
+# This file specifies additional files to include in the source distribution
+# that are not automatically included by setuptools.
+
+# Include all documentation files
+include README.md
+include LICENSE
+include requirements.txt
+
+# Include all configuration files
+recursive-include tutorials *.yaml *.yml *.json *.txt *.md
+recursive-include apps *.yaml *.yml *.json *.txt *.md
+
+# Include all data files
+recursive-include tutorials/*/data *
+recursive-include tutorials/*/config *
+recursive-include apps/data *
+recursive-include apps/config *
+graft data
+
+# Exclude unwanted files
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude *.so
+global-exclude .git*
+global-exclude *.egg-info
+
+# Exclude sage-apps (it has its own package)
+prune sage-apps
+
+# Exclude tests and development files
+prune tests
+exclude .gitignore
+exclude .pre-commit-config.yaml
+exclude tox.ini

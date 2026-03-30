@@ -1,0 +1,89 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, main-dev]
+  pull_request:
+    branches: [main, main-dev]
+  workflow_dispatch:
+
+jobs:
+  test-examples:
+    name: Test Examples
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11']
+    env:
+      # Skip tests requiring network/external services in CI
+      SAGE_EXAMPLES_MODE: test
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -e ".[dev]"
+
+    - name: Install examples dependencies
+      run: |
+        pip install -e .
+
+    - name: Run example tests
+      run: |
+        pytest examples/test_apps.py -v --tb=short
+      continue-on-error: true
+
+  test-sage-apps-package:
+    name: Test sage-apps Package
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install sage-apps package
+      run: |
+        pip install -e "./apps[dev]"
+
+    - name: Run sage-apps tests
+      run: |
+        pytest apps/tests/ -v --tb=short --cov=apps/src/sage/apps --cov-report=term-missing
+      continue-on-error: true
+
+  test-coverage:
+    name: Coverage Report
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -e ".[dev]"
+
+    - name: Run tests with coverage
+      run: |
+        pytest tutorials/ apps/test_apps.py --cov=. --cov-report=xml --cov-report=term-missing
+      continue-on-error: true
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+      continue-on-error: true
