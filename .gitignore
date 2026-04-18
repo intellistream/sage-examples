@@ -150,3 +150,6 @@ ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 apps/src/sage/apps/medical_diagnosis/data/processed/*
+apps/src/sage/apps/medical_diagnosis/data/test_results/*
+apps/src/sage/apps/medical_diagnosis/data/medical/lumbar-spine-mri/cache/*
+apps/src/sage/apps/medical_diagnosis/data/medical/lumbar-spine-mri/dataset_info.txt

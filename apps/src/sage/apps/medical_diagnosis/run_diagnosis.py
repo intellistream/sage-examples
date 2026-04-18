@@ -16,6 +16,9 @@ from typing import Any
 from sage.apps.medical_diagnosis.agents import DiagnosticAgent
 
 
+DEFAULT_CONFIG_PATH = Path(__file__).parent / "config" / "agent_config.yaml"
+
+
 def check_and_setup_data(auto_setup: bool = False):
     """检查数据是否存在，如果不存在则自动下载和准备"""
     # 获取当前脚本所在目录
@@ -120,7 +123,7 @@ def parse_args():
         "--config",
         "-c",
         type=str,
-        default="examples/medical_diagnosis/config/agent_config.yaml",
+        default=str(DEFAULT_CONFIG_PATH),
         help="配置文件路径",
     )
 
