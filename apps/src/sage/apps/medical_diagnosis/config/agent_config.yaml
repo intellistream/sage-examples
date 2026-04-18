@@ -28,7 +28,7 @@ services:
 
   # Embedding服务配置
   embedding:
-    method: hf
+    method: hash
     cache_enabled: true
     normalize: true
     batch_size: 32
