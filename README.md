@@ -74,6 +74,8 @@ Complete, runnable applications demonstrating real-world use cases:
 | 📰 **Article Monitoring** | News monitoring pipeline   | `examples/run_article_monitoring.py` |
 | 💬 **Auto-scaling Chat**  | Dynamic scaling chat       | `examples/run_auto_scaling_chat.py`  |
 | 📚 **Literature Recommendation** | Personalized scientific paper recommendation | `examples/run_literature_report_assistant.py` |
+| 🧭 **Patent Landscape Mapper** | Patent clustering and whitespace opportunity mapping | `examples/run_patent_landscape_mapper.py` |
+| 🎓 **Student Improvement** | Stateful learning diagnosis and score improvement MVP | `examples/run_student_improvement.py` |
 
 See `examples/README.md` for details.
 

@@ -83,6 +83,8 @@ site/
 # Logs and temporary files
 # ----------------------------------------------------------------------------
 *.log
+.env
+.env.*
 pytest.log
 test.log
 .sage/test/

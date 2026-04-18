@@ -5,6 +5,8 @@ capabilities across various domains:
 
 - video: Video intelligence and analysis
 - medical_diagnosis: AI-assisted medical imaging diagnosis
+- patent_landscape_mapper: Patent clustering, whitespace analysis, and assignee mapping
+- student_improvement: Personalized score improvement with stateful learning workflows
 - work_report_generator: Weekly/daily work report generator with GitHub integration
 - literature_report_assistant: Literature search and reading report generation assistant
 

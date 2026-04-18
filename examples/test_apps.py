@@ -25,7 +25,9 @@ def test_imports():
         ("run_article_monitoring.py", ["yaml", "requests"]),
         ("run_auto_scaling_chat.py", ["yaml"]),
         ("run_medical_diagnosis.py", ["yaml", "PIL", "numpy"]),
+        ("run_patent_landscape_mapper.py", ["numpy", "sklearn"]),
         ("run_smart_home.py", ["yaml"]),
+        ("run_student_improvement.py", []),
         ("run_video_intelligence.py", ["cv2", "torch", "torchvision", "PIL"]),
         ("run_work_report.py", ["yaml"]),
     ]
