@@ -15,9 +15,8 @@ from sklearn.model_selection import train_test_split
 # Note: This script assumes sage-apps package is installed
 # Install with: cd sage-apps && pip install -e .
 
-# 查找项目根目录
-_current_file = Path(__file__).resolve()
-project_root = _current_file.parent.parent.parent.parent.parent.parent  # 到 sage-examples 根目录
+# 当前 medical_diagnosis 应用目录
+APP_DIR = Path(__file__).resolve().parent.parent
 
 
 # 疾病类别映射 (模拟)
@@ -123,8 +122,8 @@ def generate_mock_report(label: int, patient_info: dict) -> str:
 def prepare_dataset():
     """准备数据集"""
 
-    dataset_path = project_root / "data" / "medical" / "lumbar-spine-mri" / "cache"
-    output_dir = project_root / "examples" / "medical_diagnosis" / "data" / "processed"
+    dataset_path = APP_DIR / "data" / "medical" / "lumbar-spine-mri" / "cache"
+    output_dir = APP_DIR / "data" / "processed"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     print("=" * 80)
