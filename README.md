@@ -76,6 +76,8 @@ Complete, runnable applications demonstrating real-world use cases:
 | 📚 **Literature Recommendation** | Personalized scientific paper recommendation | `examples/run_literature_report_assistant.py` |
 | 🧭 **Patent Landscape Mapper** | Patent clustering and whitespace opportunity mapping | `examples/run_patent_landscape_mapper.py` |
 | 🎓 **Student Improvement** | Stateful learning diagnosis and score improvement MVP | `examples/run_student_improvement.py` |
+| 🚚 **Supply Chain Alert** | Stateful supply risk detection and dashboard snapshot MVP | `examples/run_supply_chain_alert.py` |
+| 🌐 **Supply Chain Alert API** | FastAPI service for querying dashboard, alerts, and supplier risk | `examples/run_supply_chain_alert_api.py` |
 
 See `examples/README.md` for details.
 
