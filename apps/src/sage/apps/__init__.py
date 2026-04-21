@@ -7,6 +7,7 @@ capabilities across various domains:
 - medical_diagnosis: AI-assisted medical imaging diagnosis
 - patent_landscape_mapper: Patent clustering, whitespace analysis, and assignee mapping
 - student_improvement: Personalized score improvement with stateful learning workflows
+- ticket_triage: Customer support ticket triage with explicit stateful routing
 - work_report_generator: Weekly/daily work report generator with GitHub integration
 - literature_report_assistant: Literature search and reading report generation assistant
 

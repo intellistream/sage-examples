@@ -80,6 +80,8 @@
 - 自动回复建议
 - 升级路径
 
+详细实现计划见 [docs/customer-support-ticket-triage-plan.md](docs/customer-support-ticket-triage-plan.md)。
+
 ## 3. 合同审阅与修订建议器
 
 **目标**

@@ -78,6 +78,8 @@ Complete, runnable applications demonstrating real-world use cases:
 | 🎓 **Student Improvement** | Stateful learning diagnosis and score improvement MVP | `examples/run_student_improvement.py` |
 | 🚚 **Supply Chain Alert** | Stateful supply risk detection and dashboard snapshot MVP | `examples/run_supply_chain_alert.py` |
 | 🌐 **Supply Chain Alert API** | FastAPI service for querying dashboard, alerts, and supplier risk | `examples/run_supply_chain_alert_api.py` |
+| 🎫 **Ticket Triage** | Stateful customer support ticket classification, urgency scoring, and routing | `examples/run_ticket_triage.py` |
+| 🌐 **Ticket Triage API** | FastAPI service for triage ingestion, queue queries, and ticket lookup | `examples/run_ticket_triage_api.py` |
 
 See `examples/README.md` for details.
 
