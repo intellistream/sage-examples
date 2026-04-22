@@ -66,16 +66,20 @@ sage-examples/
 
 Complete, runnable applications demonstrating real-world use cases:
 
-| Application | Description | Script |
-| --- | --- | --- |
-| 🎬 **Video Intelligence** | Multi-model video analysis | `examples/run_video_intelligence.py` |
-| 🏥 **Medical Diagnosis** | AI medical image analysis | `examples/run_medical_diagnosis.py` |
-| 🏠 **Smart Home** | IoT automation system | `examples/run_smart_home.py` |
-| 📰 **Article Monitoring** | News monitoring pipeline | `examples/run_article_monitoring.py` |
-| 💬 **Auto-scaling Chat** | Dynamic scaling chat | `examples/run_auto_scaling_chat.py` |
-| 📚 **Literature Recommendation** | Personalized scientific paper recommendation | `examples/run_literature_report_assistant.py` |
-| 🧭 **Patent Landscape Mapper** | Patent clustering and whitespace opportunity mapping | `examples/run_patent_landscape_mapper.py` |
-| 🎓 **Student Improvement** | Stateful learning diagnosis and score improvement MVP | `examples/run_student_improvement.py` |
+| Application                      | Description                                                                   | Script                                        |
+| -------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------- |
+| 🎬 **Video Intelligence**        | Multi-model video analysis                                                    | `examples/run_video_intelligence.py`          |
+| 🏥 **Medical Diagnosis**         | AI medical image analysis                                                     | `examples/run_medical_diagnosis.py`           |
+| 🏠 **Smart Home**                | IoT automation system                                                         | `examples/run_smart_home.py`                  |
+| 📰 **Article Monitoring**        | News monitoring pipeline                                                      | `examples/run_article_monitoring.py`          |
+| 💬 **Auto-scaling Chat**         | Dynamic scaling chat                                                          | `examples/run_auto_scaling_chat.py`           |
+| 📚 **Literature Recommendation** | Personalized scientific paper recommendation                                  | `examples/run_literature_report_assistant.py` |
+| 🧭 **Patent Landscape Mapper**   | Patent clustering and whitespace opportunity mapping                          | `examples/run_patent_landscape_mapper.py`     |
+| 🎓 **Student Improvement**       | Stateful learning diagnosis and score improvement MVP                         | `examples/run_student_improvement.py`         |
+| 🚚 **Supply Chain Alert**        | Stateful supply risk detection and dashboard snapshot MVP                     | `examples/run_supply_chain_alert.py`          |
+| 🌐 **Supply Chain Alert API**    | FastAPI service for querying dashboard, alerts, and supplier risk             | `examples/run_supply_chain_alert_api.py`      |
+| 🎫 **Ticket Triage**             | Stateful customer support ticket classification, urgency scoring, and routing | `examples/run_ticket_triage.py`               |
+| 🌐 **Ticket Triage API**         | FastAPI service for triage ingestion, queue queries, and ticket lookup        | `examples/run_ticket_triage_api.py`           |
 
 The repository also includes the full 53-91 domain app suite across research, education, healthcare,
 enterprise operations, public service, sustainability, and infrastructure monitoring.

@@ -116,8 +116,12 @@ def _build_clusters(
 
         local_matrix = matrix[patent_indexes]
         similarities = cosine_similarity(local_matrix, centroid.reshape(1, -1)).reshape(-1)
-        representative_local_indexes = np.argsort(similarities)[::-1][: request.top_patents_per_cluster]
-        representative_indexes = [patent_indexes[index] for index in representative_local_indexes.tolist()]
+        representative_local_indexes = np.argsort(similarities)[::-1][
+            : request.top_patents_per_cluster
+        ]
+        representative_indexes = [
+            patent_indexes[index] for index in representative_local_indexes.tolist()
+        ]
 
         assignee_breakdown = dict(Counter(record.assignee for record in cluster_patents))
         top_assignee_share = max(assignee_breakdown.values()) / len(cluster_patents)
@@ -147,7 +151,9 @@ def _build_clusters(
     return sorted(states, key=lambda item: item.whitespace_score, reverse=True)
 
 
-def _build_theme_clusters(states: list[_ClusterState], patents: list[PatentRecord]) -> list[ThemeCluster]:
+def _build_theme_clusters(
+    states: list[_ClusterState], patents: list[PatentRecord]
+) -> list[ThemeCluster]:
     return [
         ThemeCluster(
             cluster_id=state.cluster_id,
@@ -155,7 +161,9 @@ def _build_theme_clusters(states: list[_ClusterState], patents: list[PatentRecor
             top_terms=state.top_terms,
             patent_ids=[patents[index].patent_id for index in state.patent_indexes],
             patent_count=len(state.patent_indexes),
-            representative_patent_ids=[patents[index].patent_id for index in state.representative_indexes],
+            representative_patent_ids=[
+                patents[index].patent_id for index in state.representative_indexes
+            ],
             assignee_breakdown=state.assignee_breakdown,
             average_focus_relevance=state.average_focus_relevance,
             whitespace_score=state.whitespace_score,
@@ -187,7 +195,9 @@ def _build_whitespace_opportunities(
                 rationale=rationale,
                 target_keywords=state.top_terms[:3],
                 opportunity_score=state.whitespace_score,
-                supporting_patent_ids=[patents[index].patent_id for index in state.representative_indexes],
+                supporting_patent_ids=[
+                    patents[index].patent_id for index in state.representative_indexes
+                ],
             )
         )
     return opportunities
@@ -208,7 +218,12 @@ def _build_watchlist(
         for index in state.patent_indexes:
             record = patents[index]
             recency_score = (record.year - min_year) / year_span
-            watch_score = round(0.55 * float(focus_scores[index]) + 0.30 * state.whitespace_score + 0.15 * recency_score, 3)
+            watch_score = round(
+                0.55 * float(focus_scores[index])
+                + 0.30 * state.whitespace_score
+                + 0.15 * recency_score,
+                3,
+            )
             watch_items.append(
                 PatentWatchItem(
                     patent_id=record.patent_id,
@@ -226,7 +241,9 @@ def _build_watchlist(
     return sorted(watch_items, key=lambda item: item.watch_score, reverse=True)[:5]
 
 
-def _build_graph(states: list[_ClusterState], patents: list[PatentRecord]) -> tuple[list[LandscapeGraphNode], list[LandscapeGraphEdge]]:
+def _build_graph(
+    states: list[_ClusterState], patents: list[PatentRecord]
+) -> tuple[list[LandscapeGraphNode], list[LandscapeGraphEdge]]:
     nodes: list[LandscapeGraphNode] = []
     edges: list[LandscapeGraphEdge] = []
     seen_assignees: set[str] = set()
@@ -312,8 +329,14 @@ def analyze_patent_landscape(request: PatentLandscapeRequest) -> PatentLandscape
     watchlist_patents = _build_watchlist(states, patents, focus_scores)
     graph_nodes, graph_edges = _build_graph(states, patents)
 
-    top_themes = ", ".join(cluster.label for cluster in theme_clusters[: min(ceil(cluster_count / 2), 3)])
-    lead_opportunity = whitespace_opportunities[0].title if whitespace_opportunities else "No whitespace opportunity identified"
+    top_themes = ", ".join(
+        cluster.label for cluster in theme_clusters[: min(ceil(cluster_count / 2), 3)]
+    )
+    lead_opportunity = (
+        whitespace_opportunities[0].title
+        if whitespace_opportunities
+        else "No whitespace opportunity identified"
+    )
     summary = (
         f"Mapped {len(patents)} patents across {cluster_count} themes. Leading themes: {top_themes}. "
         f"Top whitespace opportunity: {lead_opportunity}."

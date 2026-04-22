@@ -834,7 +834,7 @@ class ImageAnalyzer:
             if bbox is None:
                 continue
 
-            x, y, w, h = [int(value) for value in bbox]
+            x, y, w, h = (int(value) for value in bbox)
             if w <= 0 or h <= 0:
                 continue
 

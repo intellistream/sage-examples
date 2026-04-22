@@ -3,17 +3,17 @@
 This document is the planning baseline for expanding `sage-examples` into a portfolio of 100
 meaningful SAGE applications.
 
-The goal here is not to create 100 empty scripts. The goal is to define 100 application targets
-that are worth building, prioritize them in rational batches, and keep future implementation
-consistent with the current repository structure.
+The goal here is not to create 100 empty scripts. The goal is to define 100 application targets that
+are worth building, prioritize them in rational batches, and keep future implementation consistent
+with the current repository structure.
 
 ## Portfolio Rules
 
 - Keep runnable entry points in `examples/` only when an app is actually maintained.
 - Keep implementation code in `apps/src/sage/apps/<slug>/`.
 - Keep each runnable script named `examples/run_<slug>.py`.
-- Prefer apps that demonstrate one or more SAGE strengths: stateful workflows, streaming,
-  multimodal processing, retrieval, agentic coordination, or service orchestration.
+- Prefer apps that demonstrate one or more SAGE strengths: stateful workflows, streaming, multimodal
+  processing, retrieval, agentic coordination, or service orchestration.
 - Prefer fail-fast application flows over hidden fallback logic.
 - Do not add new `ray` dependencies or imports.
 
@@ -36,16 +36,26 @@ consistent with the current repository structure.
 
 ### Research And Knowledge Systems
 
-1. `literature_report_assistant` | `existing` | Personalized paper discovery, clustering, and reading report generation.
-2. `article_monitoring` | `existing` | Continuous article monitoring with topic extraction and alerting.
-3. `patent_landscape_mapper` | `B1` | Map patent trends, assignees, claim overlap, and white-space opportunities.
-4. `grant_call_matcher` | `B1` | Match research groups or startups to grant calls and generate opportunity briefs.
-5. `experiment_log_summarizer` | `B1` | Convert lab logs into structured daily summaries, anomalies, and next actions.
-6. `scientific_claim_verifier` | `B2` | Check whether a scientific claim is supported, mixed, or contradicted by sources.
-7. `conference_trend_monitor` | `B2` | Track conference sessions, speakers, themes, and emerging topic shifts.
-8. `peer_review_copilot` | `B2` | Produce structured review rubrics, evidence notes, and revision requests.
-9. `reproducibility_auditor` | `B2` | Audit datasets, configs, scripts, and environment metadata for reproducibility.
-10. `benchmark_change_tracker` | `B1` | Track benchmark leaderboards, evaluation changes, and model movement over time.
+1. `literature_report_assistant` | `existing` | Personalized paper discovery, clustering, and
+   reading report generation.
+1. `article_monitoring` | `existing` | Continuous article monitoring with topic extraction and
+   alerting.
+1. `patent_landscape_mapper` | `B1` | Map patent trends, assignees, claim overlap, and white-space
+   opportunities.
+1. `grant_call_matcher` | `B1` | Match research groups or startups to grant calls and generate
+   opportunity briefs.
+1. `experiment_log_summarizer` | `B1` | Convert lab logs into structured daily summaries, anomalies,
+   and next actions.
+1. `scientific_claim_verifier` | `B2` | Check whether a scientific claim is supported, mixed, or
+   contradicted by sources.
+1. `conference_trend_monitor` | `B2` | Track conference sessions, speakers, themes, and emerging
+   topic shifts.
+1. `peer_review_copilot` | `B2` | Produce structured review rubrics, evidence notes, and revision
+   requests.
+1. `reproducibility_auditor` | `B2` | Audit datasets, configs, scripts, and environment metadata for
+   reproducibility.
+1. `benchmark_change_tracker` | `B1` | Track benchmark leaderboards, evaluation changes, and model
+   movement over time.
 
 ### Education And Training
 
@@ -170,24 +180,24 @@ If the goal is to move from planning to implementation with the highest signal a
 effort, these are the strongest next candidates after the already existing apps:
 
 1. `meeting_action_tracker`
-2. `course_qa_tutor`
-3. `assignment_feedback_assistant`
-4. `patent_landscape_mapper`
-5. `grant_call_matcher`
-6. `customer_support_copilot`
-7. `org_policy_search`
-8. `podcast_clip_generator`
-9. `dynamic_catalog_enricher`
-10. `return_reason_analyzer`
-11. `carbon_data_collector`
-12. `campus_emissions_reporter`
-13. `drug_label_extractor`
-14. `telehealth_visit_summarizer`
-15. `citizen_feedback_router`
+1. `course_qa_tutor`
+1. `assignment_feedback_assistant`
+1. `patent_landscape_mapper`
+1. `grant_call_matcher`
+1. `customer_support_copilot`
+1. `org_policy_search`
+1. `podcast_clip_generator`
+1. `dynamic_catalog_enricher`
+1. `return_reason_analyzer`
+1. `carbon_data_collector`
+1. `campus_emissions_reporter`
+1. `drug_label_extractor`
+1. `telehealth_visit_summarizer`
+1. `citizen_feedback_router`
 
 ## Recommended Implementation Order
 
 1. Finish stabilizing and testing the existing apps as reusable reference implementations.
-2. Build the first 5 `B1` apps that mostly reuse current dependencies and packaging.
-3. Extract shared retrieval, state, and operator utilities from those apps before starting `B2`.
-4. Only start `B3` apps after the repo has enough stable multimodal and integration primitives.
+1. Build the first 5 `B1` apps that mostly reuse current dependencies and packaging.
+1. Extract shared retrieval, state, and operator utilities from those apps before starting `B2`.
+1. Only start `B3` apps after the repo has enough stable multimodal and integration primitives.

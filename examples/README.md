@@ -104,6 +104,12 @@ This directory contains maintained entry scripts for the `sage.apps` package.
 - `run_solar_alerting.py` — Solar plant alert prioritization demo.
 - `run_campus_emission_report.py` — Campus emission aggregation and report drafting demo.
 - `run_data_center_watch.py` — Data center capacity and cooling risk watch demo.
+- `run_supply_chain_alert.py` — Supply chain anomaly alert dashboard MVP.
+- `run_supply_chain_alert_api.py` — FastAPI service for the supply chain anomaly alert dashboard,
+  including a multi-role browser dashboard at `/dashboard/ui`.
+- `run_ticket_triage.py` — Customer support ticket triage MVP with explicit SAGE workflow and queue
+  routing.
+- `run_ticket_triage_api.py` — FastAPI service for the customer support ticket triage MVP.
 - `demo_feature_extraction.py` — Feature extraction demo for medical imaging.
 
 ## Run Examples
@@ -211,6 +217,10 @@ python examples/run_carbon_collection.py
 python examples/run_solar_alerting.py
 python examples/run_campus_emission_report.py
 python examples/run_data_center_watch.py
+python examples/run_supply_chain_alert.py
+python examples/run_supply_chain_alert_api.py
+python examples/run_ticket_triage.py
+python examples/run_ticket_triage_api.py
 python examples/demo_feature_extraction.py
 ```
 

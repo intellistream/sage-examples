@@ -78,7 +78,9 @@ def _format_knowledge_names(knowledge_point_ids: list[str], graph_payload: dict[
     return "、".join(names)
 
 
-def _print_exam_snapshot(title: str, payload: dict[str, Any], graph_payload: dict[str, Any]) -> None:
+def _print_exam_snapshot(
+    title: str, payload: dict[str, Any], graph_payload: dict[str, Any]
+) -> None:
     _print_section(title)
     print(
         f"成绩: {payload['total_score']}/{payload['max_score']}  "
@@ -87,7 +89,9 @@ def _print_exam_snapshot(title: str, payload: dict[str, Any], graph_payload: dic
     print(f"新增错题数: {payload['wrong_question_count']}")
     print(
         "薄弱知识点: "
-        + "、".join(item["knowledge_point"] for item in payload["diagnosis"]["weak_knowledge_points"][:3])
+        + "、".join(
+            item["knowledge_point"] for item in payload["diagnosis"]["weak_knowledge_points"][:3]
+        )
     )
     current_exam_time = payload["diagnosis"]["generated_at"]
     new_wrong_questions = [
@@ -144,7 +148,9 @@ def _print_mastery_changes(
         )
 
 
-def _print_wrong_bank(final_wrong_bank: list[dict[str, Any]], graph_payload: dict[str, Any]) -> None:
+def _print_wrong_bank(
+    final_wrong_bank: list[dict[str, Any]], graph_payload: dict[str, Any]
+) -> None:
     _print_section("动态错题集")
     for item in final_wrong_bank:
         knowledge_names = _format_knowledge_names(item["knowledge_point_ids"], graph_payload)
@@ -225,7 +231,9 @@ def run_demo_once(storage_path: str | Path | None = None, *, json_mode: bool = F
 
     print("\n📘 SAGE Personalized Score Improvement MVP")
     print("展示流程: 初始化课程 -> 导入第一次考试 -> 导入第二次考试 -> 查看状态更新\n")
-    print(f"学生: {final_profile['student_id']} | {final_profile['grade']} {final_profile['subject']}")
+    print(
+        f"学生: {final_profile['student_id']} | {final_profile['grade']} {final_profile['subject']}"
+    )
     print("课程: 八年级数学教材知识图谱 + 两次考试增量导入")
     print(f"诊断概览: {final_profile['diagnosis_overview']}")
 
@@ -305,7 +313,9 @@ class StudentImprovementConsoleApp:
                 return exam
         return None
 
-    def import_next_demo_exam(self, *, render: bool = False) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    def import_next_demo_exam(
+        self, *, render: bool = False
+    ) -> tuple[dict[str, Any], dict[str, Any]] | None:
         next_exam = self._next_demo_exam()
         if next_exam is None:
             print("所有 demo 考试都已经导入完毕。可选择查看总览，或重置 demo 状态。")
@@ -324,7 +334,9 @@ class StudentImprovementConsoleApp:
 
     def show_dashboard(self) -> None:
         try:
-            profile = _to_payload(_quiet_runtime_call(self.service.get_student_profile, self.student_id))
+            profile = _to_payload(
+                _quiet_runtime_call(self.service.get_student_profile, self.student_id)
+            )
             diagnosis = _to_payload(
                 _quiet_runtime_call(self.service.get_student_diagnosis, self.student_id)
             )
@@ -372,7 +384,9 @@ class StudentImprovementConsoleApp:
         _print_wrong_bank(wrong_bank, graph)
 
     def show_knowledge_graph(self) -> None:
-        graph = _to_payload(_quiet_runtime_call(self.service.get_student_knowledge_graph, self.student_id))
+        graph = _to_payload(
+            _quiet_runtime_call(self.service.get_student_knowledge_graph, self.student_id)
+        )
         _print_knowledge_graph(graph)
 
     def test_llm_connection(self) -> None:
@@ -394,7 +408,9 @@ class StudentImprovementConsoleApp:
 
     def show_ai_guidance(self) -> None:
         try:
-            profile = _to_payload(_quiet_runtime_call(self.service.get_student_profile, self.student_id))
+            profile = _to_payload(
+                _quiet_runtime_call(self.service.get_student_profile, self.student_id)
+            )
             diagnosis = _to_payload(
                 _quiet_runtime_call(self.service.get_student_diagnosis, self.student_id)
             )
