@@ -1,8 +1,10 @@
 # 基于 SAGE 的客服工单分诊系统实现计划
 
-说明：当前这个 Demo 的“实现计划 + 实际代码结构 + 运行方式”已经统一维护在 [apps/src/sage/apps/ticket_triage/README.md](../apps/src/sage/apps/ticket_triage/README.md)。
+说明：当前这个 Demo 的“实现计划 + 实际代码结构 + 运行方式”已经统一维护在
+[apps/src/sage/apps/ticket_triage/README.md](../apps/src/sage/apps/ticket_triage/README.md)。
 
-本文现在保留为方案入口和背景说明；如果这里的内容与代码不一致，以 [apps/src/sage/apps/ticket_triage/README.md](../apps/src/sage/apps/ticket_triage/README.md) 为准。
+本文现在保留为方案入口和背景说明；如果这里的内容与代码不一致，以
+[apps/src/sage/apps/ticket_triage/README.md](../apps/src/sage/apps/ticket_triage/README.md) 为准。
 
 本文给出“客服工单分诊系统”这个 Demo 的落地方案。目标不是做一个只会分类的脚本，而是做一个显式调用 SAGE 接口、具备状态管理、可扩展为 API 服务的可运行演示应用。
 
@@ -11,10 +13,10 @@
 这个软件第一版只解决五件事：
 
 1. 接收来自邮件、表单和在线聊天的工单输入。
-2. 识别工单主题、业务类型和紧急程度。
-3. 基于 FAQ 或历史案例推荐自动回复草案。
-4. 根据规则把工单路由到对应团队或人工坐席。
-5. 持续记录工单状态，输出结构化分诊结果。
+1. 识别工单主题、业务类型和紧急程度。
+1. 基于 FAQ 或历史案例推荐自动回复草案。
+1. 根据规则把工单路由到对应团队或人工坐席。
+1. 持续记录工单状态，输出结构化分诊结果。
 
 第一版不做复杂前端，不直接接企业 CRM，也不追求多渠道实时接入。核心目标是把 SAGE 的以下能力演示出来：
 
@@ -50,7 +52,8 @@ from sage.runtime import BaseService, LocalEnvironment
 from sage.runtime import LocalEnvironment
 ```
 
-第一版先通过 `service.py` 封装应用服务门面，再由 FastAPI 或其他 HTTP 适配层调用服务层。也就是说，对外提供 API 没问题，但业务主干必须跑在 SAGE runtime 上，而不是绕过 SAGE 直接写控制器逻辑。
+第一版先通过 `service.py` 封装应用服务门面，再由 FastAPI 或其他 HTTP 适配层调用服务层。也就是说，对外提供 API 没问题，但业务主干必须跑在 SAGE runtime
+上，而不是绕过 SAGE 直接写控制器逻辑。
 
 ### 2.3 可选的 LLM 增强接口
 
@@ -292,7 +295,7 @@ def run_ticket_triage(events, store):
 这段骨架要表达两个关键点：
 
 1. 整条处理链路运行在 `LocalEnvironment` 上。
-2. 状态读写必须通过 `register_service(...)` 和 `call_service(...)` 完成。
+1. 状态读写必须通过 `register_service(...)` 和 `call_service(...)` 完成。
 
 这样才算真正“调用了 SAGE 接口”。
 
@@ -303,13 +306,13 @@ def run_ticket_triage(events, store):
 建议优先实现以下 8 条规则：
 
 1. 消息中出现“无法登录”“账号锁定”“支付失败”等词，优先归为高优先级故障单。
-2. 消息中出现“退款”“重复扣费”“发票”时，路由到订单或财务队列。
-3. 消息中出现“投诉”“升级”“立即处理”“已经等待两天”时，提高紧急度。
-4. 同一客户 24 小时内重复提交相似工单时，提高一个优先级档位。
-5. 命中 FAQ 且置信度高于阈值时，生成自动回复建议。
-6. 未命中 FAQ 且工单复杂度高时，直接转人工。
-7. 高价值客户或 SLA 临近工单优先进入人工快速通道。
-8. 带附件且包含“报错截图”“账单截图”等字段时，标记为需要人工复核。
+1. 消息中出现“退款”“重复扣费”“发票”时，路由到订单或财务队列。
+1. 消息中出现“投诉”“升级”“立即处理”“已经等待两天”时，提高紧急度。
+1. 同一客户 24 小时内重复提交相似工单时，提高一个优先级档位。
+1. 命中 FAQ 且置信度高于阈值时，生成自动回复建议。
+1. 未命中 FAQ 且工单复杂度高时，直接转人工。
+1. 高价值客户或 SLA 临近工单优先进入人工快速通道。
+1. 带附件且包含“报错截图”“账单截图”等字段时，标记为需要人工复核。
 
 这些规则已经足够让 Demo 展示“意图识别 + 紧急度打分 + 路由决策 + 状态更新”四个核心能力。
 
@@ -351,8 +354,8 @@ def run_ticket_triage(events, store):
 第一版建议同时输出三类结果：
 
 1. 控制台摘要：展示工单编号、意图、优先级、路由团队、回复建议。
-2. JSON 结果：方便后续接 API 或前端。
-3. 队列快照：展示每个团队当前待处理工单数。
+1. JSON 结果：方便后续接 API 或前端。
+1. 队列快照：展示每个团队当前待处理工单数。
 
 输出示例可以包含：
 
@@ -391,11 +394,11 @@ def run_ticket_triage(events, store):
 建议按下面顺序实现：
 
 1. 先写 `models.py` 和 `demo_data.py`，保证输入输出结构清晰。
-2. 再写 `state_store.py` 和 `BaseService`，把状态操作接口固定下来。
-3. 实现 `NormalizeTicketStep`、`ClassifyIntentStep`、`ScoreUrgencyStep`、`DecideRouteStep` 四个核心算子。
-4. 在 `workflow.py` 中用 `LocalEnvironment` 把链路串起来。
-5. 在 `service.py` 里封装对外接口。
-6. 最后补 `examples/run_ticket_triage.py` 和测试。
+1. 再写 `state_store.py` 和 `BaseService`，把状态操作接口固定下来。
+1. 实现 `NormalizeTicketStep`、`ClassifyIntentStep`、`ScoreUrgencyStep`、`DecideRouteStep` 四个核心算子。
+1. 在 `workflow.py` 中用 `LocalEnvironment` 把链路串起来。
+1. 在 `service.py` 里封装对外接口。
+1. 最后补 `examples/run_ticket_triage.py` 和测试。
 
 这个顺序可以最快做出一个能跑通、能解释、能扩展的 MVP。
 
@@ -404,10 +407,10 @@ def run_ticket_triage(events, store):
 只要满足下面几点，就可以认为第一版完成：
 
 1. 能从演示数据批量导入工单。
-2. 能显式通过 SAGE workflow 完成分类、打分、路由和状态更新。
-3. 能输出结构化分诊结果和队列摘要。
-4. 能通过服务层重复查询工单状态。
-5. 代码结构与当前 `sage-examples` 仓库模式一致。
+1. 能显式通过 SAGE workflow 完成分类、打分、路由和状态更新。
+1. 能输出结构化分诊结果和队列摘要。
+1. 能通过服务层重复查询工单状态。
+1. 代码结构与当前 `sage-examples` 仓库模式一致。
 
 ## 14. 后续可扩展方向
 

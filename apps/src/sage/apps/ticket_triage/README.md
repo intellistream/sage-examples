@@ -9,10 +9,10 @@
 这个 MVP 主要聚焦五件事：
 
 1. 从邮件、表单和在线聊天导入工单
-2. 识别工单意图和紧急程度
-3. 召回 FAQ 和历史处理案例
-4. 将工单路由到合适的支持队列
-5. 持久化工单状态，支持后续查询
+1. 识别工单意图和紧急程度
+1. 召回 FAQ 和历史处理案例
+1. 将工单路由到合适的支持队列
+1. 持久化工单状态，支持后续查询
 
 这个 Demo 的目标不是简单打印分类结果，而是要求整条业务链路真正运行在 SAGE runtime 上，并通过显式的算子和状态服务来组织执行。
 
@@ -181,12 +181,12 @@ DemoTicketSource
 如果你想快速理解实现，建议按下面顺序读：
 
 1. `examples/run_ticket_triage.py`
-2. `service.py`
-3. `workflow.py`
-4. `operators.py`
-5. `state_store.py`
-6. `demo_data.py`
-7. `models.py`
+1. `service.py`
+1. `workflow.py`
+1. `operators.py`
+1. `state_store.py`
+1. `demo_data.py`
+1. `models.py`
 
 这个顺序和真实执行路径是一致的：
 
@@ -209,14 +209,14 @@ DemoTicketSource
 推荐断点顺序：
 
 1. `examples/run_ticket_triage.py` 里的 `main`
-2. `service.py` 里的 `run_demo` 和 `ingest_tickets`
-3. `workflow.py` 里的 `ingest_tickets`
-4. `NormalizeTicketStep` 里的 `execute`
-5. `ClassifyIntentStep` 里的 `execute`
-6. `ScoreUrgencyStep` 里的 `execute`
-7. `DecideRouteStep` 里的 `execute`
-8. `PersistTicketStateStep` 里的 `execute`
-9. `state_store.py` 里的 `save_ticket_snapshot`
+1. `service.py` 里的 `run_demo` 和 `ingest_tickets`
+1. `workflow.py` 里的 `ingest_tickets`
+1. `NormalizeTicketStep` 里的 `execute`
+1. `ClassifyIntentStep` 里的 `execute`
+1. `ScoreUrgencyStep` 里的 `execute`
+1. `DecideRouteStep` 里的 `execute`
+1. `PersistTicketStateStep` 里的 `execute`
+1. `state_store.py` 里的 `save_ticket_snapshot`
 
 每一步建议重点看这些数据：
 
@@ -313,10 +313,10 @@ python examples/run_ticket_triage_api.py --storage-path .sage/ticket-triage-stat
 推荐的使用顺序：
 
 1. 如果是对外演示，优先打开 `/dashboard/ui`
-2. 点击“加载演示数据”按钮，把演示工单写入状态仓
-3. 查看顶部指标卡、队列分布和高优先级工单列表
-4. 点击结果列表中的工单编号，查看单票详情和原因链路
-5. 如果要模拟新场景，可以在页面底部直接提交一条自定义工单
+1. 点击“加载演示数据”按钮，把演示工单写入状态仓
+1. 查看顶部指标卡、队列分布和高优先级工单列表
+1. 点击结果列表中的工单编号，查看单票详情和原因链路
+1. 如果要模拟新场景，可以在页面底部直接提交一条自定义工单
 
 Swagger 使用说明：
 
@@ -328,17 +328,17 @@ Swagger 使用说明：
 如果某个路由返回的数据不符合预期，不要只盯着响应体猜。保留浏览器页面，同时回到 workflow 路径里调试会更快。对这个 Demo 来说，最快的方式仍然是：
 
 1. 先确定是哪一个请求载荷导致了错误结果
-2. 在 `ClassifyIntentStep`、`ScoreUrgencyStep` 和 `DecideRouteStep` 上打断点
-3. 用同一个请求重新跑一遍，观察哪一步开始偏离预期
+1. 在 `ClassifyIntentStep`、`ScoreUrgencyStep` 和 `DecideRouteStep` 上打断点
+1. 用同一个请求重新跑一遍，观察哪一步开始偏离预期
 
 推荐的 API 演示顺序：
 
 1. 调用 `POST /demo/reset-and-run`，加载演示数据并生成分诊结果
-2. 调用 `GET /dashboard`，查看整体摘要指标
-3. 调用 `GET /queues`，查看队列分布
-4. 调用 `GET /tickets`，查看全部分诊结果
-5. 调用 `GET /tickets/high-priority`，查看高优先级工单
-6. 调用 `GET /tickets/T-1001`，查看一个具体工单的持久化快照
+1. 调用 `GET /dashboard`，查看整体摘要指标
+1. 调用 `GET /queues`，查看队列分布
+1. 调用 `GET /tickets`，查看全部分诊结果
+1. 调用 `GET /tickets/high-priority`，查看高优先级工单
+1. 调用 `GET /tickets/T-1001`，查看一个具体工单的持久化快照
 
 ## 测试
 

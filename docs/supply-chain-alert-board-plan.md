@@ -7,9 +7,9 @@
 这个软件第一版只解决四件事：
 
 1. 接收供应链事件数据。
-2. 识别订单、库存、物流、供应商履约中的异常。
-3. 评估异常对订单履约和库存安全的影响。
-4. 生成看板摘要、风险预警和处置建议。
+1. 识别订单、库存、物流、供应商履约中的异常。
+1. 评估异常对订单履约和库存安全的影响。
+1. 生成看板摘要、风险预警和处置建议。
 
 第一版不追求真实 ERP 对接，不做复杂前端，也不做企业级权限系统。核心目标是把 SAGE 的以下能力演示出来：
 
@@ -244,13 +244,15 @@ from sage.runtime import BaseService, LocalEnvironment
 工作流 runner 负责：
 
 1. 构建 `LocalEnvironment("supply_chain_alert")`
-2. 注册 `SupplyChainStateService`
-3. 通过 `environment.from_batch(...)` 启动事件源
-4. 串接多个 `.map(...)`
-5. 用 `.sink(...)` 收集结果
-6. 调用 `environment.submit(autostop=True)` 执行
+1. 注册 `SupplyChainStateService`
+1. 通过 `environment.from_batch(...)` 启动事件源
+1. 串接多个 `.map(...)`
+1. 用 `.sink(...)` 收集结果
+1. 调用 `environment.submit(autostop=True)` 执行
 
-这部分建议严格对齐当前仓库里 [sage-examples/apps/src/sage/apps/student_improvement/workflow.py](sage-examples/apps/src/sage/apps/student_improvement/workflow.py) 的模式。
+这部分建议严格对齐当前仓库里
+[sage-examples/apps/src/sage/apps/student_improvement/workflow.py](sage-examples/apps/src/sage/apps/student_improvement/workflow.py)
+的模式。
 
 ## 7. 第一版建议实现的异常规则
 
@@ -259,11 +261,11 @@ from sage.runtime import BaseService, LocalEnvironment
 建议最先实现这 6 条规则：
 
 1. 安全库存不足：现有库存 < 安全库存。
-2. 在途延迟：物流预计到达时间晚于承诺到货时间。
-3. 发货停滞：运单状态超过设定小时数未变化。
-4. 订单积压：未发货订单数量超过阈值。
-5. 单一供应商过度依赖：关键 SKU 的供应集中度过高。
-6. 供应商风险恶化：准时率下降且违约次数上升。
+1. 在途延迟：物流预计到达时间晚于承诺到货时间。
+1. 发货停滞：运单状态超过设定小时数未变化。
+1. 订单积压：未发货订单数量超过阈值。
+1. 单一供应商过度依赖：关键 SKU 的供应集中度过高。
+1. 供应商风险恶化：准时率下降且违约次数上升。
 
 这些规则都很适合拆成显式 `MapFunction` 逻辑，演示时也容易解释“为什么触发”。
 
@@ -309,7 +311,9 @@ SupplyChainAlertApplicationService
 - `GET /suppliers/risk`
 - `POST /demo/reset-and-run`
 
-这部分建议参考 [sage-examples/apps/src/sage/apps/student_improvement/service.py](sage-examples/apps/src/sage/apps/student_improvement/service.py) 的做法。
+这部分建议参考
+[sage-examples/apps/src/sage/apps/student_improvement/service.py](sage-examples/apps/src/sage/apps/student_improvement/service.py)
+的做法。
 
 ## 10. LLM 增强点，且要通过 SAGE 网关接口接入
 
@@ -410,10 +414,10 @@ probe = probe_gateway(gateway_config)
 第一批测试建议如下：
 
 1. 低库存是否能正确触发预警。
-2. 延迟物流是否能正确计算影响等级。
-3. 替代供应商推荐是否按风险分数排序。
-4. 状态仓是否能在多批事件导入后保持一致。
-5. 没有网关时，LLM 增强分支是否自动关闭。
+1. 延迟物流是否能正确计算影响等级。
+1. 替代供应商推荐是否按风险分数排序。
+1. 状态仓是否能在多批事件导入后保持一致。
+1. 没有网关时，LLM 增强分支是否自动关闭。
 
 ## 13. 推荐的演示脚本表现形式
 
@@ -444,4 +448,6 @@ probe = probe_gateway(gateway_config)
 
 最稳的实现路线是：
 
-用 `BatchFunction` 构造供应链事件流，用 `MapFunction` 做标准化、状态更新、异常检测、影响评估和建议生成，用 `SinkFunction` 输出看板结果，用 `BaseService` 持有共享状态，用 `LocalEnvironment` 执行主链路，再在可选阶段通过 `SageServeConfig + probe_gateway` 接入 SAGE 网关做风险解释增强。
+用 `BatchFunction` 构造供应链事件流，用 `MapFunction` 做标准化、状态更新、异常检测、影响评估和建议生成，用 `SinkFunction` 输出看板结果，用
+`BaseService` 持有共享状态，用 `LocalEnvironment` 执行主链路，再在可选阶段通过 `SageServeConfig + probe_gateway` 接入 SAGE
+网关做风险解释增强。

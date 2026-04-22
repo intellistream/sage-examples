@@ -130,7 +130,8 @@ sage-apps/
 ### Core Framework
 
 - `isage>=0.3.0` - Consolidated SAGE core (`sage.foundation`, `sage.stream`, `sage.runtime`)
-- Optional adapters such as `isagellm` / `isage-rag` when a specific app needs external inference or retrieval backends
+- Optional adapters such as `isagellm` / `isage-rag` when a specific app needs external inference or
+  retrieval backends
 
 ### Application-Specific
 
