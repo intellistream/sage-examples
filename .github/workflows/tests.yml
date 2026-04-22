@@ -28,8 +28,19 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-        pip install -e .
-        pip install "pytest>=7.0.0"
+        # This job only validates example entrypoint structure plus the direct third-party
+        # modules listed in examples/test_apps.py. Installing the full package pulls in the
+        # broader isage/isagellm graph, which causes Python 3.10 resolver backtracking.
+        pip install --prefer-binary \
+          "pytest>=7.0.0" \
+          "pyyaml>=6.0" \
+          "requests>=2.25.0" \
+          "pillow>=10.0.0" \
+          "numpy>=1.26.0,<2.3.0" \
+          "scikit-learn>=1.3.0" \
+          "opencv-python-headless>=4.5.0" \
+          "torch==2.7.0" \
+          "torchvision==0.22.0"
 
     - name: Run example tests
       run: |
