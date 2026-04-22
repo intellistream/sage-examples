@@ -53,7 +53,9 @@ def test_wrong_question_bank_changes_dynamically(tmp_path) -> None:
 
     service.import_exam(exams[0])
     service.import_exam(exams[1])
-    wrong_bank = {item.question_id: item for item in service.get_wrong_question_bank(exams[0].student_id)}
+    wrong_bank = {
+        item.question_id: item for item in service.get_wrong_question_bank(exams[0].student_id)
+    }
 
     assert wrong_bank["ALG-EQ-01"].mastery_status == "reviewing"
     assert wrong_bank["ALG-FR-01"].mastery_status == "reviewing"
@@ -71,7 +73,9 @@ def test_study_plan_structure_is_stable(tmp_path) -> None:
     assert len(result.diagnosis.study_plan) >= 3
     assert all(step.title for step in result.diagnosis.study_plan)
     assert all(step.recommended_actions for step in result.diagnosis.study_plan)
-    assert all(isinstance(step.target_knowledge_points, list) for step in result.diagnosis.study_plan)
+    assert all(
+        isinstance(step.target_knowledge_points, list) for step in result.diagnosis.study_plan
+    )
 
 
 def test_knowledge_graph_marks_mastery_status(tmp_path) -> None:

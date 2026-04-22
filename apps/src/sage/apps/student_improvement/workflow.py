@@ -78,7 +78,9 @@ class PrepareExamContextStep(MapFunction):
         exam = data if isinstance(data, ExamRecord) else ExamRecord.from_dict(data)
         curriculum = self.call_service(STATE_SERVICE_NAME, method="get_curriculum")
         if curriculum is None:
-            raise RuntimeError("Curriculum has not been initialized. Run initialize_curriculum first.")
+            raise RuntimeError(
+                "Curriculum has not been initialized. Run initialize_curriculum first."
+            )
 
         knowledge_base = CurriculumKnowledgeBase(curriculum)
         enriched_exam = knowledge_base.enrich_exam_record(exam)
@@ -178,7 +180,9 @@ class StudentImprovementWorkflowRunner:
     def _build_environment(self, name: str) -> LocalEnvironment:
         environment = LocalEnvironment(name)
         environment.set_console_log_level("ERROR")
-        environment.register_service(STATE_SERVICE_NAME, StudentImprovementStateService, self.state_store)
+        environment.register_service(
+            STATE_SERVICE_NAME, StudentImprovementStateService, self.state_store
+        )
         return environment
 
     def initialize_curriculum(self, curriculum: Curriculum) -> CurriculumInitializationResult:

@@ -87,9 +87,7 @@ def test_examples_boundary_no_core_layer_imports():
     """示例入口不应直接依赖核心实现层。"""
     apps_dir = Path(__file__).parent
     retired_prefixes = ("kernel", "platform", "middleware", "libs")
-    forbidden_prefixes = (
-        *(f"sage.{name}" for name in retired_prefixes),
-    )
+    forbidden_prefixes = (*(f"sage.{name}" for name in retired_prefixes),)
 
     violations: list[str] = []
 

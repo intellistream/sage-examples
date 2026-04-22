@@ -13,6 +13,12 @@ This directory contains maintained entry scripts for the `sage.apps` package.
 - `run_work_report.py` — Work report generation demo.
 - `run_patent_landscape_mapper.py` — Patent clustering and whitespace opportunity mapping demo.
 - `run_student_improvement.py` — Personalized score improvement system MVP.
+- `run_supply_chain_alert.py` — Supply chain anomaly alert dashboard MVP.
+- `run_supply_chain_alert_api.py` — FastAPI service for the supply chain anomaly alert dashboard,
+  including a multi-role browser dashboard at `/dashboard/ui`.
+- `run_ticket_triage.py` — Customer support ticket triage MVP with explicit SAGE workflow and queue
+  routing.
+- `run_ticket_triage_api.py` — FastAPI service for the customer support ticket triage MVP.
 - `demo_feature_extraction.py` — Feature extraction demo for medical imaging.
 
 ## Run Examples
@@ -29,6 +35,10 @@ python examples/run_literature_report_assistant.py
 python examples/run_work_report.py
 python examples/run_patent_landscape_mapper.py
 python examples/run_student_improvement.py
+python examples/run_supply_chain_alert.py
+python examples/run_supply_chain_alert_api.py
+python examples/run_ticket_triage.py
+python examples/run_ticket_triage_api.py
 python examples/demo_feature_extraction.py
 ```
 
