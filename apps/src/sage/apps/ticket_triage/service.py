@@ -95,12 +95,15 @@ class TicketTriageApplicationService:
     def get_dashboard_summary(self) -> dict[str, Any]:
         triage_results = self.list_triage_results()
         queue_summaries = self.list_queue_summary()
-        high_priority_count = sum(1 for item in triage_results if item.priority in {"high", "critical"})
+        high_priority_count = sum(
+            1 for item in triage_results if item.priority in {"high", "critical"}
+        )
         auto_reply_count = sum(1 for item in triage_results if item.auto_reply)
         escalated_count = sum(
             1
             for item in triage_results
-            if item.assigned_team == "duty_manager" or item.recommended_action == "supervisor_escalation"
+            if item.assigned_team == "duty_manager"
+            or item.recommended_action == "supervisor_escalation"
         )
         intent_distribution: dict[str, int] = {}
         for item in triage_results:
@@ -132,7 +135,9 @@ def create_fastapi_app(
     service: TicketTriageApplicationService | None = None,
 ) -> FastAPI:
     if FastAPI is None or HTTPException is None or HTMLResponse is None:
-        raise RuntimeError("FastAPI is not installed. Install fastapi to use the ticket triage API.")
+        raise RuntimeError(
+            "FastAPI is not installed. Install fastapi to use the ticket triage API."
+        )
 
     runtime_service = service or TicketTriageApplicationService()
     app = FastAPI(title="SAGE Ticket Triage MVP", version="0.1.0")

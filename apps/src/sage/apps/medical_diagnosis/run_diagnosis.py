@@ -15,7 +15,6 @@ from typing import Any
 
 from sage.apps.medical_diagnosis.agents import DiagnosticAgent
 
-
 DEFAULT_CONFIG_PATH = Path(__file__).parent / "config" / "agent_config.yaml"
 
 

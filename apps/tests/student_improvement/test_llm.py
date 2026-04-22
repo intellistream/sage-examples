@@ -6,13 +6,13 @@ from sage.apps.student_improvement.llm import SageOpenAISettings
 
 def test_llm_settings_from_env(monkeypatch) -> None:
     monkeypatch.setenv("SAGE_OPENAI_BASE_URL", "https://api.sage.org.ai/v1")
-    monkeypatch.setenv("SAGE_OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv("SAGE_OPENAI_API_KEY", "test-key")  # pragma: allowlist secret
     monkeypatch.setenv("SAGE_OPENAI_MODEL", "demo-model")
 
     settings = SageOpenAISettings.from_env()
 
     assert settings.base_url == "https://api.sage.org.ai/v1"
-    assert settings.api_key == "test-key"
+    assert settings.api_key == "test-key"  # pragma: allowlist secret
     assert settings.model == "demo-model"
     assert settings.configured is True
 
@@ -33,7 +33,7 @@ def test_llm_settings_from_dotenv(tmp_path, monkeypatch) -> None:
     monkeypatch.delenv("SAGE_OPENAI_MODEL", raising=False)
     (tmp_path / ".env").write_text(
         "SAGE_OPENAI_BASE_URL=https://api.sage.org.ai/v1\n"
-        "SAGE_OPENAI_API_KEY=dotenv-key\n"
+        "SAGE_OPENAI_API_KEY=dotenv-key\n"  # pragma: allowlist secret
         "SAGE_OPENAI_MODEL=dotenv-model\n",
         encoding="utf-8",
     )
@@ -41,7 +41,7 @@ def test_llm_settings_from_dotenv(tmp_path, monkeypatch) -> None:
     settings = SageOpenAISettings.from_env()
 
     assert settings.base_url == "https://api.sage.org.ai/v1"
-    assert settings.api_key == "dotenv-key"
+    assert settings.api_key == "dotenv-key"  # pragma: allowlist secret
     assert settings.model == "dotenv-model"
     assert settings.configured is True
 

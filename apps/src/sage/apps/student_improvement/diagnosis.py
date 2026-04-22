@@ -22,7 +22,9 @@ def _safe_float(value: str) -> float | None:
         return None
 
 
-def classify_wrong_cause(question_prompt: str, student_answer: str, correct_answer: str) -> list[str]:
+def classify_wrong_cause(
+    question_prompt: str, student_answer: str, correct_answer: str
+) -> list[str]:
     answer = student_answer.strip()
     correct = correct_answer.strip()
     lowered_prompt = question_prompt.lower()
@@ -40,7 +42,10 @@ def classify_wrong_cause(question_prompt: str, student_answer: str, correct_answ
     if "函数" in lowered_prompt and answer.lstrip("-").isdigit():
         return ["概念错误"]
 
-    if any(keyword in lowered_prompt for keyword in ["解方程", "化简", "展开"]) and "=" not in answer:
+    if (
+        any(keyword in lowered_prompt for keyword in ["解方程", "化简", "展开"])
+        and "=" not in answer
+    ):
         return ["步骤缺失"]
 
     if len(answer) < max(1, len(correct) // 2):
@@ -135,7 +140,9 @@ def merge_wrong_question_bank(
                 last_seen_at=item.last_seen_at,
                 occurrence_count=current.occurrence_count + 1,
                 priority=round(current.priority + 0.6, 2),
-                related_exam_ids=list(dict.fromkeys(current.related_exam_ids + item.related_exam_ids)),
+                related_exam_ids=list(
+                    dict.fromkeys(current.related_exam_ids + item.related_exam_ids)
+                ),
                 mastery_status="unmastered",
             )
         else:
@@ -143,7 +150,9 @@ def merge_wrong_question_bank(
 
     latest_wrong_ids = {item.question_id for item in new_items}
     for question_id, item in list(merged.items()):
-        max_mastery = max((mastery_scores.get(kp_id, 0.5) for kp_id in item.knowledge_point_ids), default=0.5)
+        max_mastery = max(
+            (mastery_scores.get(kp_id, 0.5) for kp_id in item.knowledge_point_ids), default=0.5
+        )
         updated_priority = item.priority
         updated_status = item.mastery_status
         if question_id not in latest_wrong_ids:
@@ -156,7 +165,9 @@ def merge_wrong_question_bank(
             updated_status = "unmastered"
             updated_priority = round(item.priority + 0.3, 2)
 
-        merged[question_id] = replace(item, mastery_status=updated_status, priority=updated_priority)
+        merged[question_id] = replace(
+            item, mastery_status=updated_status, priority=updated_priority
+        )
 
     return sorted(merged.values(), key=lambda wrong_item: wrong_item.priority, reverse=True)
 
@@ -169,7 +180,9 @@ def build_risk_ranking(
     latest_wrong_counter: dict[str, int] = {}
     for wrong_item in wrong_questions:
         for knowledge_point_id in wrong_item.knowledge_point_ids:
-            latest_wrong_counter[knowledge_point_id] = latest_wrong_counter.get(knowledge_point_id, 0) + 1
+            latest_wrong_counter[knowledge_point_id] = (
+                latest_wrong_counter.get(knowledge_point_id, 0) + 1
+            )
 
     rows: list[dict[str, object]] = []
     for knowledge_point in knowledge_base.curriculum.knowledge_points:
@@ -202,7 +215,10 @@ def build_study_plan(
     prerequisites: list[str] = []
     for knowledge_point_id in selected_knowledge_point_ids:
         for prerequisite_id in knowledge_base.get_prerequisite_chain(knowledge_point_id):
-            if prerequisite_id not in prerequisites and prerequisite_id not in selected_knowledge_point_ids:
+            if (
+                prerequisite_id not in prerequisites
+                and prerequisite_id not in selected_knowledge_point_ids
+            ):
                 prerequisites.append(prerequisite_id)
 
     if prerequisites:
@@ -309,12 +325,9 @@ def build_student_profile(
     wrong_questions: list[WrongQuestionItem],
     knowledge_base: CurriculumKnowledgeBase,
 ) -> StudentProfile:
-    top_weak_names = [
-        str(item["knowledge_point"]) for item in diagnosis.weak_knowledge_points[:3]
-    ]
-    overview = (
-        "当前最需要优先提升的知识点："
-        + ("、".join(top_weak_names) if top_weak_names else "暂无明显薄弱点")
+    top_weak_names = [str(item["knowledge_point"]) for item in diagnosis.weak_knowledge_points[:3]]
+    overview = "当前最需要优先提升的知识点：" + (
+        "、".join(top_weak_names) if top_weak_names else "暂无明显薄弱点"
     )
     return StudentProfile(
         student_id=exam.student_id,

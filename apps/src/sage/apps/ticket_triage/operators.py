@@ -19,7 +19,6 @@ from .models import (
     coerce_ticket_event,
 )
 
-
 STATE_SERVICE_NAME = "ticket_triage_state"
 
 INTENT_KEYWORDS: dict[str, list[str]] = {
@@ -60,7 +59,9 @@ class DemoTicketSource(BatchFunction):
 class NormalizeTicketStep(MapFunction):
     def execute(self, data: TicketEvent | dict[str, Any]) -> dict[str, Any]:
         ticket = coerce_ticket_event(data)
-        normalized_ticket = NormalizedTicket.from_ticket(ticket, normalized_text=_normalize_text(ticket))
+        normalized_ticket = NormalizedTicket.from_ticket(
+            ticket, normalized_text=_normalize_text(ticket)
+        )
         return {
             "ticket": ticket,
             "normalized_ticket": normalized_ticket,
@@ -98,9 +99,7 @@ class ClassifyIntentStep(MapFunction):
                 intent="complaint_escalation",
                 confidence=0.9,
                 matched_keywords=complaint_keywords,
-                explanation=(
-                    "命中升级类关键词，且该客户已有历史工单，按投诉升级优先处理。"
-                ),
+                explanation=("命中升级类关键词，且该客户已有历史工单，按投诉升级优先处理。"),
             )
             return {
                 **data,

@@ -129,14 +129,10 @@ def build_demo_supply_events() -> list[SupplyEvent]:
 def build_demo_event_summary() -> dict[str, int]:
     events = build_demo_supply_events()
     warehouses = {
-        event.warehouse
-        for event in events
-        if hasattr(event, "warehouse") and getattr(event, "warehouse")
+        event.warehouse for event in events if hasattr(event, "warehouse") and event.warehouse
     }
     suppliers = {
-        event.supplier_id
-        for event in events
-        if hasattr(event, "supplier_id") and getattr(event, "supplier_id")
+        event.supplier_id for event in events if hasattr(event, "supplier_id") and event.supplier_id
     }
     orders = {event.order_id for event in events if isinstance(event, PurchaseOrderEvent)}
     return {

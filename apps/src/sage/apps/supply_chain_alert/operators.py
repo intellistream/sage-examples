@@ -20,7 +20,6 @@ from .models import (
 )
 from .state_store import parse_timestamp
 
-
 STATE_SERVICE_NAME = "supply_chain_state"
 
 
@@ -53,7 +52,11 @@ class DemoEventSource(BatchFunction):
 class NormalizeEventStep(MapFunction):
     def execute(
         self,
-        data: PurchaseOrderEvent | InventoryEvent | ShipmentEvent | SupplierPerformanceEvent | dict[str, Any],
+        data: PurchaseOrderEvent
+        | InventoryEvent
+        | ShipmentEvent
+        | SupplierPerformanceEvent
+        | dict[str, Any],
     ) -> NormalizedSupplyEvent:
         event = coerce_supply_event(data)
         return NormalizedSupplyEvent.from_event(event)
@@ -376,7 +379,9 @@ class AssessImpactStep(MapFunction):
             return 0.0
         open_orders = self.call_service(STATE_SERVICE_NAME, method="get_open_orders")
         same_sku_orders = [
-            item for item in open_orders if item.sku == signal.sku and item.warehouse == signal.warehouse
+            item
+            for item in open_orders
+            if item.sku == signal.sku and item.warehouse == signal.warehouse
         ]
         daily_demand = max(sum(item.quantity for item in same_sku_orders) / 7.0, 1.0)
         return round(shortage / daily_demand, 2)
@@ -436,7 +441,10 @@ class RecommendMitigationStep(MapFunction):
         if signal.rule_id == "order_backlog":
             actions.append("将积压订单提升到优先履约队列")
 
-        if signal.rule_id in {"supplier_concentration", "supplier_risk_deterioration"} and signal.sku:
+        if (
+            signal.rule_id in {"supplier_concentration", "supplier_risk_deterioration"}
+            and signal.sku
+        ):
             supplier_candidates = self.call_service(
                 STATE_SERVICE_NAME,
                 signal.sku,
@@ -445,9 +453,7 @@ class RecommendMitigationStep(MapFunction):
             )
             alternative_suppliers = [item.supplier_id for item in supplier_candidates[:2]]
             if alternative_suppliers:
-                actions.append(
-                    "切换部分后续采购到替代供应商: " + ", ".join(alternative_suppliers)
-                )
+                actions.append("切换部分后续采购到替代供应商: " + ", ".join(alternative_suppliers))
             actions.append("降低单一供应商采购集中度")
 
         if not actions:

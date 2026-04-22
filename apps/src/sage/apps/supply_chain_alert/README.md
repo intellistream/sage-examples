@@ -90,7 +90,8 @@ python examples/run_supply_chain_alert.py --json --explain
 
 ## sage.serving 网关增强
 
-这一层是可选增强，不参与底层规则判定。主链路仍然是本地 SAGE runtime + 显式状态服务；只有在 `probe_gateway(...)` 探测到网关可用时，才会调用 OpenAI-compatible 接口生成中文风险解释。
+这一层是可选增强，不参与底层规则判定。主链路仍然是本地 SAGE runtime + 显式状态服务；只有在 `probe_gateway(...)` 探测到网关可用时，才会调用
+OpenAI-compatible 接口生成中文风险解释。
 
 推荐通过环境变量配置：
 
@@ -98,7 +99,7 @@ python examples/run_supply_chain_alert.py --json --explain
 export SAGE_SUPPLY_CHAIN_GATEWAY_HOST="127.0.0.1"
 export SAGE_SUPPLY_CHAIN_GATEWAY_PORT="19000"
 export SAGE_SUPPLY_CHAIN_MODEL="<optional-model-id>"
-export SAGE_SUPPLY_CHAIN_API_KEY="EMPTY"
+export SAGE_SUPPLY_CHAIN_API_KEY="EMPTY" # pragma: allowlist secret
 ```
 
 如果你们用的是远程 OpenAI-compatible gateway，也可以直接传完整 base URL：
@@ -107,7 +108,7 @@ export SAGE_SUPPLY_CHAIN_API_KEY="EMPTY"
 export SAGE_SUPPLY_CHAIN_BASE_URL="https://api.sage.org.ai/v1"
 export SAGE_SUPPLY_CHAIN_HEALTH_URL="https://api.sage.org.ai/health"
 export SAGE_SUPPLY_CHAIN_MODEL="<optional-model-id>"
-export SAGE_SUPPLY_CHAIN_API_KEY="<your-api-key>"
+export SAGE_SUPPLY_CHAIN_API_KEY="<your-api-key>" # pragma: allowlist secret
 ```
 
 如果要直接验证远程解释链路，推荐先用这两组命令：
@@ -116,7 +117,7 @@ export SAGE_SUPPLY_CHAIN_API_KEY="<your-api-key>"
 export SAGE_SUPPLY_CHAIN_BASE_URL="https://api.sage.org.ai/v1"
 export SAGE_SUPPLY_CHAIN_HEALTH_URL="https://api.sage.org.ai/health"
 export SAGE_SUPPLY_CHAIN_MODEL="Qwen/Qwen2.5-7B-Instruct"
-export SAGE_SUPPLY_CHAIN_API_KEY="<your-api-key>"
+export SAGE_SUPPLY_CHAIN_API_KEY="<your-api-key>" # pragma: allowlist secret
 
 python examples/run_supply_chain_alert.py --json --explain
 ```
@@ -134,8 +135,8 @@ curl -X POST http://127.0.0.1:8010/demo/reset-and-run
 curl "http://127.0.0.1:8010/alerts/explanations?max_alerts=1"
 ```
 
-浏览器里直接打开 `http://127.0.0.1:8010/alerts/explanations?max_alerts=1` 也可以看到 JSON 形式的中文风险解释。
-如果希望查看图形版 dashboard，也可以直接打开 `http://127.0.0.1:8010/dashboard/ui`。
+浏览器里直接打开 `http://127.0.0.1:8010/alerts/explanations?max_alerts=1` 也可以看到 JSON 形式的中文风险解释。 如果希望查看图形版
+dashboard，也可以直接打开 `http://127.0.0.1:8010/dashboard/ui`。
 
 说明：
 

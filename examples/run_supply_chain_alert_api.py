@@ -9,6 +9,7 @@ from pathlib import Path
 
 try:
     import uvicorn
+
     from sage.apps.supply_chain_alert import (
         SupplyChainAlertApplicationService,
         create_fastapi_app,

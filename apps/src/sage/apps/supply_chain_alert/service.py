@@ -44,11 +44,11 @@ def _resolve_last_timestamp(events: list[SupplyEvent]) -> str | None:
     timestamps = []
     for event in events:
         if hasattr(event, "observed_at"):
-            timestamps.append(getattr(event, "observed_at"))
+            timestamps.append(event.observed_at)
         elif hasattr(event, "updated_at"):
-            timestamps.append(getattr(event, "updated_at"))
+            timestamps.append(event.updated_at)
         elif hasattr(event, "recorded_at"):
-            timestamps.append(getattr(event, "recorded_at"))
+            timestamps.append(event.recorded_at)
     return max(timestamps) if timestamps else None
 
 

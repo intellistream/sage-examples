@@ -12,7 +12,9 @@ def test_state_persists_across_service_instances(tmp_path) -> None:
     queue_summary = second_service.list_queue_summary()
     snapshot = second_service.get_ticket("T-1001")
 
-    assert sum(item.open_ticket_count for item in queue_summary) == first_result.processed_event_count
+    assert (
+        sum(item.open_ticket_count for item in queue_summary) == first_result.processed_event_count
+    )
     assert snapshot.intent == "login_issue"
 
 

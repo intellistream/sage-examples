@@ -55,7 +55,9 @@ class InventoryEvent:
     def from_dict(cls, data: dict[str, Any]) -> InventoryEvent:
         updated_at = str(data["updated_at"])
         return cls(
-            event_id=str(data.get("event_id", f"inventory:{data['warehouse']}:{data['sku']}:{updated_at}")),
+            event_id=str(
+                data.get("event_id", f"inventory:{data['warehouse']}:{data['sku']}:{updated_at}")
+            ),
             sku=str(data["sku"]),
             warehouse=str(data["warehouse"]),
             current_stock=int(data["current_stock"]),

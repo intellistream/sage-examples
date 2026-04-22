@@ -15,7 +15,11 @@ from .models import PatentLandscapeReport, PatentLandscapeRequest, PatentRecord
 
 class ValidatePatentLandscapeRequest(MapFunction):
     def execute(self, data: PatentLandscapeRequest | dict[str, Any]) -> PatentLandscapeRequest:
-        request = data if isinstance(data, PatentLandscapeRequest) else PatentLandscapeRequest.from_dict(data)
+        request = (
+            data
+            if isinstance(data, PatentLandscapeRequest)
+            else PatentLandscapeRequest.from_dict(data)
+        )
         if len(request.patents) < 2:
             raise ValueError("Patent landscape mapper requires at least two patents.")
         if request.cluster_count < 2:

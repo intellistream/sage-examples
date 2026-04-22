@@ -223,21 +223,29 @@ class SupplyChainRiskExplainer:
                     payload = response.json()
                 except ValueError:
                     payload = None
-                return type("RemoteProbeResult", (), {
-                    "ok": 200 <= response.status_code < 300,
-                    "url": self.settings.health_url,
-                    "status_code": response.status_code,
-                    "payload": payload,
-                    "error": None if 200 <= response.status_code < 300 else response.text,
-                })()
+                return type(
+                    "RemoteProbeResult",
+                    (),
+                    {
+                        "ok": 200 <= response.status_code < 300,
+                        "url": self.settings.health_url,
+                        "status_code": response.status_code,
+                        "payload": payload,
+                        "error": None if 200 <= response.status_code < 300 else response.text,
+                    },
+                )()
         except Exception as exc:  # noqa: BLE001
-            return type("RemoteProbeResult", (), {
-                "ok": False,
-                "url": self.settings.health_url,
-                "status_code": None,
-                "payload": None,
-                "error": str(exc),
-            })()
+            return type(
+                "RemoteProbeResult",
+                (),
+                {
+                    "ok": False,
+                    "url": self.settings.health_url,
+                    "status_code": None,
+                    "payload": None,
+                    "error": str(exc),
+                },
+            )()
 
     def _build_client(self):
         if httpx is None:

@@ -8,6 +8,7 @@ from sage.runtime import BaseService, LocalEnvironment
 
 from .models import TicketEvent, TicketStatusSnapshot, TicketTriageResult
 from .operators import (
+    STATE_SERVICE_NAME,
     ClassifyIntentStep,
     DecideRouteStep,
     DemoTicketSource,
@@ -17,7 +18,6 @@ from .operators import (
     PersistTicketStateStep,
     RecallSimilarCasesStep,
     ResultCollectorSink,
-    STATE_SERVICE_NAME,
     ScoreUrgencyStep,
 )
 from .state_store import InMemoryTicketTriageStateStore
@@ -71,7 +71,9 @@ class TicketTriageWorkflowRunner:
         self.state_store = state_store or InMemoryTicketTriageStateStore()
 
     @classmethod
-    def from_storage_path(cls, storage_path: str | Path | None = None) -> TicketTriageWorkflowRunner:
+    def from_storage_path(
+        cls, storage_path: str | Path | None = None
+    ) -> TicketTriageWorkflowRunner:
         return cls(InMemoryTicketTriageStateStore(storage_path=storage_path))
 
     def _build_environment(self, name: str) -> LocalEnvironment:

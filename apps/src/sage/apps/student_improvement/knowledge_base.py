@@ -25,7 +25,9 @@ class CurriculumKnowledgeBase:
         self._knowledge_index = {
             knowledge.knowledge_point_id: knowledge for knowledge in curriculum.knowledge_points
         }
-        self._question_index = {question.question_id: question for question in curriculum.question_bank}
+        self._question_index = {
+            question.question_id: question for question in curriculum.question_bank
+        }
         self._question_map = {
             key: list(value) for key, value in curriculum.question_to_knowledge_map.items()
         }
@@ -127,7 +129,9 @@ class CurriculumKnowledgeBase:
         template = self.get_question_template(question.question_id)
         return replace(
             question,
-            prompt=template.prompt if template is not None and not question.prompt else question.prompt,
+            prompt=template.prompt
+            if template is not None and not question.prompt
+            else question.prompt,
             correct_answer=(
                 template.correct_answer
                 if template is not None and not question.correct_answer

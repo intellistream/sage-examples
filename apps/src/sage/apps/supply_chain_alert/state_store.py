@@ -118,7 +118,9 @@ class InMemorySupplyChainStateStore:
 
         all_summaries = self.build_supplier_risk_summary(limit=None)
         if supplier_ids:
-            summaries = [summary for summary in all_summaries if summary.supplier_id in supplier_ids]
+            summaries = [
+                summary for summary in all_summaries if summary.supplier_id in supplier_ids
+            ]
         elif exclude_supplier_id is not None:
             summaries = [
                 summary for summary in all_summaries if summary.supplier_id != exclude_supplier_id
@@ -184,9 +186,7 @@ class InMemorySupplyChainStateStore:
                 2,
             )
 
-        impacted_orders = {
-            alert.order_id for alert in open_alerts if alert.order_id is not None
-        }
+        impacted_orders = {alert.order_id for alert in open_alerts if alert.order_id is not None}
         impacted_orders.update(
             order.order_id
             for order in overdue_orders
@@ -207,7 +207,9 @@ class InMemorySupplyChainStateStore:
             reallocation_suggestion_count=sum(
                 1
                 for item in open_alerts
-                if any("调拨" in action or "transfer" in action for action in item.recommended_actions)
+                if any(
+                    "调拨" in action or "transfer" in action for action in item.recommended_actions
+                )
             ),
             substitute_supplier_suggestion_count=sum(
                 1 for item in open_alerts if item.alternative_suppliers

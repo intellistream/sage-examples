@@ -1,26 +1,25 @@
 import json
 
-from sage.serving import GatewayProbeResult
-
 from sage.apps.supply_chain_alert import SupplyChainAlertApplicationService
 from sage.apps.supply_chain_alert.llm import (
     SupplyChainGatewaySettings,
     SupplyChainRiskExplainer,
 )
+from sage.serving import GatewayProbeResult
 
 
 def test_gateway_settings_from_env(monkeypatch) -> None:
     monkeypatch.setenv("SAGE_SUPPLY_CHAIN_GATEWAY_HOST", "10.0.0.8")
     monkeypatch.setenv("SAGE_SUPPLY_CHAIN_GATEWAY_PORT", "18080")
     monkeypatch.setenv("SAGE_SUPPLY_CHAIN_MODEL", "demo-model")
-    monkeypatch.setenv("SAGE_SUPPLY_CHAIN_API_KEY", "gateway-key")
+    monkeypatch.setenv("SAGE_SUPPLY_CHAIN_API_KEY", "gateway-key")  # pragma: allowlist secret
 
     settings = SupplyChainGatewaySettings.from_env()
 
     assert settings.host == "10.0.0.8"
     assert settings.port == 18080
     assert settings.model == "demo-model"
-    assert settings.api_key == "gateway-key"
+    assert settings.api_key == "gateway-key"  # pragma: allowlist secret
 
 
 def test_gateway_settings_support_remote_base_url(monkeypatch) -> None:
@@ -109,7 +108,7 @@ def test_explainer_probes_remote_base_url(tmp_path, monkeypatch) -> None:
         settings=SupplyChainGatewaySettings(
             base_url_override="https://api.sage.org.ai/v1",
             health_url_override="https://api.sage.org.ai/health",
-            api_key="remote-key",
+            api_key="remote-key",  # pragma: allowlist secret
         ),
     )
 
@@ -168,7 +167,7 @@ def test_explainer_remote_base_url_can_bypass_failed_health_probe(tmp_path, monk
         settings=SupplyChainGatewaySettings(
             base_url_override="https://api.sage.org.ai/v1",
             health_url_override="https://api.sage.org.ai/health",
-            api_key="remote-key",
+            api_key="remote-key",  # pragma: allowlist secret
         ),
     )
 
@@ -230,7 +229,7 @@ def test_explainer_remote_base_url_uses_direct_httpx_calls(tmp_path, monkeypatch
         settings=SupplyChainGatewaySettings(
             base_url_override="https://api.sage.org.ai/v1",
             health_url_override="https://api.sage.org.ai/health",
-            api_key="remote-key",
+            api_key="remote-key",  # pragma: allowlist secret
             model="Qwen/Qwen2.5-7B-Instruct",
         ),
     )
@@ -305,7 +304,7 @@ def test_explainer_remote_base_url_reports_actual_generation_error(tmp_path, mon
         settings=SupplyChainGatewaySettings(
             base_url_override="https://api.sage.org.ai/v1",
             health_url_override="https://api.sage.org.ai/health",
-            api_key="remote-key",
+            api_key="remote-key",  # pragma: allowlist secret
             model="Qwen/Qwen2.5-7B-Instruct",
         ),
     )

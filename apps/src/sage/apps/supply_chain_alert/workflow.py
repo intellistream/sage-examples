@@ -6,15 +6,15 @@ from pathlib import Path
 
 from sage.runtime import BaseService, LocalEnvironment
 
-from .models import DashboardSnapshot, OpenAlert, SupplyEvent, SupplierRiskSummary
+from .models import DashboardSnapshot, OpenAlert, SupplierRiskSummary, SupplyEvent
 from .operators import (
+    STATE_SERVICE_NAME,
     AlertCollectorSink,
     AssessImpactStep,
     DemoEventSource,
     DetectAnomalyStep,
     NormalizeEventStep,
     RecommendMitigationStep,
-    STATE_SERVICE_NAME,
     UpdateStateStep,
 )
 from .state_store import InMemorySupplyChainStateStore

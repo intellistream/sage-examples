@@ -9,6 +9,7 @@ from pathlib import Path
 
 try:
     import uvicorn
+
     from sage.apps.ticket_triage import TicketTriageApplicationService, create_fastapi_app
 except ImportError as exc:
     print(f"Error importing ticket triage API dependencies: {exc}")

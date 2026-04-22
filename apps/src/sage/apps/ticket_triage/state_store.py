@@ -165,9 +165,7 @@ class InMemoryTicketTriageStateStore:
         return summaries
 
     def list_open_high_priority_tickets(self) -> list[TicketStatusSnapshot]:
-        items = [
-            item for item in self.tickets.values() if item.priority in {"high", "critical"}
-        ]
+        items = [item for item in self.tickets.values() if item.priority in {"high", "critical"}]
         items.sort(key=lambda item: (item.priority, item.last_updated), reverse=True)
         return items
 
