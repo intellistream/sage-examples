@@ -38,7 +38,7 @@ python examples/run_video_intelligence.py
 
 ## 📁 Repository Structure
 
-```
+```text
 sage-examples/
 ├── examples/                  # 🎯 Production application examples
 │   ├── run_video_intelligence.py
@@ -81,7 +81,21 @@ Complete, runnable applications demonstrating real-world use cases:
 | 🎫 **Ticket Triage**             | Stateful customer support ticket classification, urgency scoring, and routing | `examples/run_ticket_triage.py`               |
 | 🌐 **Ticket Triage API**         | FastAPI service for triage ingestion, queue queries, and ticket lookup        | `examples/run_ticket_triage_api.py`           |
 
-See `examples/README.md` for details.
+The repository also includes the full 53-91 domain app suite across research, education, healthcare,
+enterprise operations, public service, sustainability, and infrastructure monitoring.
+
+Representative newer entry points include:
+
+- `examples/run_patent_competition_monitor.py`
+- `examples/run_campus_aid_gap_alert.py`
+- `examples/run_lab_turnaround_alert.py`
+- `examples/run_policy_search_helper.py`
+- `examples/run_community_hotspot_drift.py`
+- `examples/run_budget_variance_alert.py`
+- `examples/run_carbon_collection.py`
+- `examples/run_data_center_watch.py`
+
+See `examples/README.md` for the complete runnable script index.
 
 ## 📦 Installation
 
@@ -107,7 +121,7 @@ pip install -e .[dev]
 
 SAGE uses a strict 6-layer architecture with unidirectional dependencies:
 
-```
+```text
 ┌─────────────────────────────────────────────┐
 │ L6: Interface                                │  CLI, Web UI, Tools
 ├─────────────────────────────────────────────┤
@@ -180,7 +194,7 @@ See `docs/DEVELOPMENT.md` for complete development guide.
 - **Development Guide**: `docs/DEVELOPMENT.md` - Contributing
 - **SAGE Tutorials**: [SAGE/tutorials](https://github.com/intellistream/SAGE/tree/main/tutorials) -
   Learn SAGE
-- **SAGE Docs**: https://intellistream.github.io/SAGE
+- **SAGE Docs**: [intellistream.github.io/SAGE](https://intellistream.github.io/SAGE)
 
 ## 🤝 Contributing
 
@@ -188,7 +202,8 @@ We welcome contributions! Please see:
 
 1. **Development Guide**: `docs/DEVELOPMENT.md`
 1. **Code of Conduct**: Follow respectful collaboration
-1. **Issue Tracker**: https://github.com/intellistream/sage-examples/issues
+1. **Issue Tracker**:
+   [github.com/intellistream/sage-examples/issues](https://github.com/intellistream/sage-examples/issues)
 
 ### Adding Examples
 
@@ -201,9 +216,10 @@ We welcome contributions! Please see:
 
 ## 🔗 Related Repositories
 
-- **SAGE Main**: https://github.com/intellistream/SAGE
-- **SAGE Benchmark**: https://github.com/intellistream/sage-benchmark
-- **PyPI Packages**: https://pypi.org/search/?q=isage
+- **SAGE Main**: [github.com/intellistream/SAGE](https://github.com/intellistream/SAGE)
+- **SAGE Benchmark**:
+  [github.com/intellistream/sage-benchmark](https://github.com/intellistream/sage-benchmark)
+- **PyPI Packages**: [pypi.org/search/?q=isage](https://pypi.org/search/?q=isage)
 
 ## 📄 License
 
@@ -221,4 +237,4 @@ If you find this project helpful, please consider giving it a ⭐️!
 
 ______________________________________________________________________
 
-**Made with ❤️ by the IntelliStream Team**
+Made with ❤️ by the IntelliStream Team.
