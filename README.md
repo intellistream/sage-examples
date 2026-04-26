@@ -202,7 +202,8 @@ We welcome contributions! Please see:
 
 1. **Development Guide**: `docs/DEVELOPMENT.md`
 1. **Code of Conduct**: Follow respectful collaboration
-1. **Issue Tracker**: [github.com/intellistream/sage-examples/issues](https://github.com/intellistream/sage-examples/issues)
+1. **Issue Tracker**:
+   [github.com/intellistream/sage-examples/issues](https://github.com/intellistream/sage-examples/issues)
 
 ### Adding Examples
 
@@ -216,7 +217,8 @@ We welcome contributions! Please see:
 ## 🔗 Related Repositories
 
 - **SAGE Main**: [github.com/intellistream/SAGE](https://github.com/intellistream/SAGE)
-- **SAGE Benchmark**: [github.com/intellistream/sage-benchmark](https://github.com/intellistream/sage-benchmark)
+- **SAGE Benchmark**:
+  [github.com/intellistream/sage-benchmark](https://github.com/intellistream/sage-benchmark)
 - **PyPI Packages**: [pypi.org/search/?q=isage](https://pypi.org/search/?q=isage)
 
 ## 📄 License
