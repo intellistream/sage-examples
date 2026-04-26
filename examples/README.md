@@ -65,7 +65,8 @@ This directory contains maintained entry scripts for the `sage.apps` package.
 - `run_export_transformer.py` — Export payload transformation demo.
 - `run_api_log_analytics.py` — API log metric and anomaly analysis demo.
 - `run_backup_sync.py` — Backup increment and consistency sync demo.
-- `run_patent_competition_monitor.py` — Patent infringement signal monitoring and competitor digest demo.
+- `run_patent_competition_monitor.py` — Patent infringement signal monitoring and competitor digest
+  demo.
 - `run_grant_subscription.py` — Grant subscription matching and alert prioritization demo.
 - `run_experiment_review.py` — Experiment review and anomaly tagging demo.
 - `run_repro_audit.py` — Reproducibility audit and manifest risk scoring demo.
