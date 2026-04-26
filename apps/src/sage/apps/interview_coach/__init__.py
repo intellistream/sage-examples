@@ -1,4 +1,4 @@
-'''岗位面试模拟教练系统 application.'''
+"""岗位面试模拟教练系统 application."""
 
 from .pipeline import run_interview_coach_pipeline
 

@@ -1,4 +1,4 @@
-﻿"""Operators for voucher classification."""
+"""Operators for voucher classification."""
 
 from __future__ import annotations
 

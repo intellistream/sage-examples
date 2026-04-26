@@ -1,4 +1,4 @@
-﻿"""Operators for permission audit."""
+"""Operators for permission audit."""
 
 from __future__ import annotations
 

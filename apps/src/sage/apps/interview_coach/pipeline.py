@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_interview_coach_pipeline(answer_file: str, rubric_file: str, output_file: str) -> None:
-    env = LocalEnvironment('interview_coach')
+    env = LocalEnvironment("interview_coach")
     (
         env.from_batch(InterviewAnswerSource, answer_file=answer_file, rubric_file=rubric_file)
         .map(InterviewQuestionMapper)

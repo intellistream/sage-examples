@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_campus_emission_report_pipeline(input_dir: str, output_file: str) -> None:
-    env = LocalEnvironment('campus_emission_report')
+    env = LocalEnvironment("campus_emission_report")
     (
         env.from_batch(CampusEmissionSource, input_dir=input_dir)
         .map(EmissionFactorMapper)

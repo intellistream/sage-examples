@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_return_reason_mining_pipeline(return_file: str, output_file: str) -> None:
-    env = LocalEnvironment('return_reason_mining')
+    env = LocalEnvironment("return_reason_mining")
     (
         env.from_batch(ReturnRecordSource, return_file=return_file)
         .map(ReturnFeatureFusion)

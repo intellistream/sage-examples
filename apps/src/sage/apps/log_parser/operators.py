@@ -1,4 +1,4 @@
-﻿"""
+"""
 Log Parser Operators
 
 Custom operators for log parsing and structuring.

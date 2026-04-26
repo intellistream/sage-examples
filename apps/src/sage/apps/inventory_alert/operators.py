@@ -1,4 +1,4 @@
-﻿"""Operators for inventory alerting."""
+"""Operators for inventory alerting."""
 
 from __future__ import annotations
 

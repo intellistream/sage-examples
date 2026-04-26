@@ -1,4 +1,4 @@
-﻿"""Operators for quality defect normalization."""
+"""Operators for quality defect normalization."""
 
 from __future__ import annotations
 

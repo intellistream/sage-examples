@@ -1,4 +1,4 @@
-﻿"""Operators for RSS aggregation and deduplication."""
+"""Operators for RSS aggregation and deduplication."""
 
 from __future__ import annotations
 

@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_knowledge_cleanup_pipeline(article_dir: str, output_file: str) -> None:
-    env = LocalEnvironment('knowledge_cleanup')
+    env = LocalEnvironment("knowledge_cleanup")
     (
         env.from_batch(KnowledgeArticleSource, article_dir=article_dir)
         .map(KnowledgeFingerprintBuilder)

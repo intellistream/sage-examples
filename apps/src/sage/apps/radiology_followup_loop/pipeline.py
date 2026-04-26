@@ -11,8 +11,10 @@ from .operators import (
 )
 
 
-def run_radiology_followup_loop_pipeline(report_file: str, patient_file: str, output_file: str) -> None:
-    env = LocalEnvironment('radiology_followup_loop')
+def run_radiology_followup_loop_pipeline(
+    report_file: str, patient_file: str, output_file: str
+) -> None:
+    env = LocalEnvironment("radiology_followup_loop")
     (
         env.from_batch(RadiologyReportSource, report_file=report_file, patient_file=patient_file)
         .map(FollowupExtractor)

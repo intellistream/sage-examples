@@ -1,4 +1,4 @@
-'''实验记录异常回顾系统 application.'''
+"""实验记录异常回顾系统 application."""
 
 from .pipeline import run_experiment_review_pipeline
 

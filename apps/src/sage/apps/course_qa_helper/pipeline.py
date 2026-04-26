@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_course_qa_helper_pipeline(doc_dir: str, question_file: str, output_file: str) -> None:
-    env = LocalEnvironment('course_qa_helper')
+    env = LocalEnvironment("course_qa_helper")
     (
         env.from_batch(CourseDocSource, doc_dir=doc_dir, question_file=question_file)
         .flatmap(CourseChunker)

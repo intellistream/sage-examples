@@ -1,4 +1,4 @@
-'''字幕术语质检系统 application.'''
+"""字幕术语质检系统 application."""
 
 from .pipeline import run_subtitle_qc_pipeline
 

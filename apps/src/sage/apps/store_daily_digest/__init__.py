@@ -1,4 +1,4 @@
-'''门店运营日报生成系统 application.'''
+"""门店运营日报生成系统 application."""
 
 from .pipeline import run_store_daily_digest_pipeline
 

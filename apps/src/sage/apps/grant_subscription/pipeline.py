@@ -11,10 +11,14 @@ from .operators import (
 )
 
 
-def run_grant_subscription_pipeline(announcement_file: str, profile_file: str, output_file: str) -> None:
-    env = LocalEnvironment('grant_subscription')
+def run_grant_subscription_pipeline(
+    announcement_file: str, profile_file: str, output_file: str
+) -> None:
+    env = LocalEnvironment("grant_subscription")
     (
-        env.from_batch(GrantAnnouncementSource, announcement_file=announcement_file, profile_file=profile_file)
+        env.from_batch(
+            GrantAnnouncementSource, announcement_file=announcement_file, profile_file=profile_file
+        )
         .map(GrantRuleExtractor)
         .map(TeamProfileMatcher)
         .map(GrantPriorityScorer)

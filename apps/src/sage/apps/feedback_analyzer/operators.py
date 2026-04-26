@@ -1,4 +1,4 @@
-﻿"""
+"""
 Feedback Analyzer Operators
 
 Custom operators for customer feedback analysis and keyword extraction.

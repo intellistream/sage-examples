@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_experiment_review_pipeline(log_file: str, output_file: str) -> None:
-    env = LocalEnvironment('experiment_review')
+    env = LocalEnvironment("experiment_review")
     (
         env.from_batch(ExperimentLogSource, log_file=log_file)
         .flatmap(ExperimentStepSplitter)

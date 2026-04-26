@@ -1,4 +1,4 @@
-﻿"""
+"""
 Resume Parser Operators
 
 Custom operators for resume parsing and standardization.

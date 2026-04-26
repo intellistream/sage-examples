@@ -1,4 +1,4 @@
-﻿"""Operators for customer deduplication."""
+"""Operators for customer deduplication."""
 
 from __future__ import annotations
 

@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_traffic_briefing_pipeline(event_file: str, output_file: str) -> None:
-    env = LocalEnvironment('traffic_briefing')
+    env = LocalEnvironment("traffic_briefing")
     (
         env.from_batch(TrafficEventSource, event_file=event_file)
         .map(TrafficEventMerger)

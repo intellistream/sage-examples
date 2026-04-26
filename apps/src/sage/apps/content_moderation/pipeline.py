@@ -1,4 +1,4 @@
-﻿"""Content moderation pipeline."""
+"""Content moderation pipeline."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-﻿"""Operators for clause-level contract risk detection."""
+"""Operators for clause-level contract risk detection."""
 
 from __future__ import annotations
 

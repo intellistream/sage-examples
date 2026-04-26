@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_policy_search_helper_pipeline(doc_dir: str, question_file: str, output_file: str) -> None:
-    env = LocalEnvironment('policy_search_helper')
+    env = LocalEnvironment("policy_search_helper")
     (
         env.from_batch(PolicyDocSource, doc_dir=doc_dir, question_file=question_file)
         .flatmap(PolicyChunker)

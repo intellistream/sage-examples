@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_cashflow_watch_pipeline(input_dir: str, output_file: str) -> None:
-    env = LocalEnvironment('cashflow_watch')
+    env = LocalEnvironment("cashflow_watch")
     (
         env.from_batch(CashflowSource, input_dir=input_dir)
         .map(CashflowFeatureBuilder)

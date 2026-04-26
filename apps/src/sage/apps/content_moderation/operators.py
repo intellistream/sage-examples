@@ -1,4 +1,4 @@
-﻿"""Operators for text moderation."""
+"""Operators for text moderation."""
 
 from __future__ import annotations
 

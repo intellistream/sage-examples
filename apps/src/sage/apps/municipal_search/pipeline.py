@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_municipal_search_pipeline(doc_dir: str, question_file: str, output_file: str) -> None:
-    env = LocalEnvironment('municipal_search')
+    env = LocalEnvironment("municipal_search")
     (
         env.from_batch(MunicipalDocSource, doc_dir=doc_dir, question_file=question_file)
         .flatmap(MunicipalChunker)

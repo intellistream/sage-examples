@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_solar_alerting_pipeline(sensor_file: str, weather_file: str, output_file: str) -> None:
-    env = LocalEnvironment('solar_alerting')
+    env = LocalEnvironment("solar_alerting")
     (
         env.from_batch(SolarSignalSource, sensor_file=sensor_file, weather_file=weather_file)
         .map(SolarWeatherJoiner)

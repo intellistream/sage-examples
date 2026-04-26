@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_patent_competition_monitor_pipeline(input_file: str, output_dir: str) -> None:
-    env = LocalEnvironment('patent_competition_monitor')
+    env = LocalEnvironment("patent_competition_monitor")
     (
         env.from_batch(PatentSource, input_file=input_file)
         .map(PatentFieldExtractor)

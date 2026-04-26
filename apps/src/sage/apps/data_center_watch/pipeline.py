@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_data_center_watch_pipeline(metric_file: str, alert_file: str, output_file: str) -> None:
-    env = LocalEnvironment('data_center_watch')
+    env = LocalEnvironment("data_center_watch")
     (
         env.from_batch(DataCenterMetricSource, metric_file=metric_file, alert_file=alert_file)
         .map(RackMapper)

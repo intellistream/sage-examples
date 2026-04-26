@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_triage_structurer_pipeline(input_file: str, output_file: str) -> None:
-    env = LocalEnvironment('triage_structurer')
+    env = LocalEnvironment("triage_structurer")
     (
         env.from_batch(TriageRecordSource, input_file=input_file)
         .map(TriageFieldExtractor)

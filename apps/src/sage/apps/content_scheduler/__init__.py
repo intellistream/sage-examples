@@ -1,4 +1,4 @@
-'''多渠道内容排期系统 application.'''
+"""多渠道内容排期系统 application."""
 
 from .pipeline import run_content_scheduler_pipeline
 

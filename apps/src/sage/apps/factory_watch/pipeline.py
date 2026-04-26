@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_factory_watch_pipeline(sensor_file: str, output_file: str) -> None:
-    env = LocalEnvironment('factory_watch')
+    env = LocalEnvironment("factory_watch")
     (
         env.from_batch(SensorSource, sensor_file=sensor_file)
         .map(SensorDeviceMapper)

@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_skill_gap_diagnosis_pipeline(record_dir: str, output_file: str) -> None:
-    env = LocalEnvironment('skill_gap_diagnosis')
+    env = LocalEnvironment("skill_gap_diagnosis")
     (
         env.from_batch(LearningRecordSource, record_dir=record_dir)
         .map(SkillMapper)

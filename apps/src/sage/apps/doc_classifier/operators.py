@@ -1,4 +1,4 @@
-﻿"""Operators for rule-based document classification."""
+"""Operators for rule-based document classification."""
 
 from __future__ import annotations
 

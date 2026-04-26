@@ -1,4 +1,4 @@
-﻿"""Quality defect filter pipeline."""
+"""Quality defect filter pipeline."""
 
 from __future__ import annotations
 

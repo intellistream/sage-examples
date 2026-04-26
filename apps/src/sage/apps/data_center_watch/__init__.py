@@ -1,4 +1,4 @@
-'''数据中心容量与冷却监测系统 application.'''
+"""数据中心容量与冷却监测系统 application."""
 
 from .pipeline import run_data_center_watch_pipeline
 

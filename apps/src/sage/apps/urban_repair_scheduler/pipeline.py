@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_urban_repair_scheduler_pipeline(ticket_file: str, output_file: str) -> None:
-    env = LocalEnvironment('urban_repair_scheduler')
+    env = LocalEnvironment("urban_repair_scheduler")
     (
         env.from_batch(RepairTicketSource, ticket_file=ticket_file)
         .map(RepairGeoMapper)

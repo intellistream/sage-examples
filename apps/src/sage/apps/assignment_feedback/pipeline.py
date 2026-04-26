@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_assignment_feedback_pipeline(draft_file: str, rubric_file: str, output_file: str) -> None:
-    env = LocalEnvironment('assignment_feedback')
+    env = LocalEnvironment("assignment_feedback")
     (
         env.from_batch(AssignmentDraftSource, draft_file=draft_file, rubric_file=rubric_file)
         .map(AssignmentSectionParser)

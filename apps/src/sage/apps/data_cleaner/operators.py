@@ -1,4 +1,4 @@
-﻿"""
+"""
 Data Cleaner Operators
 
 Custom operators for CSV/Excel data cleaning and standardization.

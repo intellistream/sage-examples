@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_benchmark_watch_pipeline(input_file: str, output_file: str) -> None:
-    env = LocalEnvironment('benchmark_watch')
+    env = LocalEnvironment("benchmark_watch")
     (
         env.from_batch(BenchmarkSource, input_file=input_file)
         .map(BenchmarkParser)

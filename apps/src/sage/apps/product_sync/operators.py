@@ -1,4 +1,4 @@
-﻿"""Operators for product synchronization."""
+"""Operators for product synchronization."""
 
 from __future__ import annotations
 

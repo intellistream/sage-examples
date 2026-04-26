@@ -1,4 +1,4 @@
-﻿"""Operators for matching contract templates."""
+"""Operators for matching contract templates."""
 
 from __future__ import annotations
 

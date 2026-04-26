@@ -1,4 +1,4 @@
-﻿"""Operators for routing service tickets."""
+"""Operators for routing service tickets."""
 
 from __future__ import annotations
 

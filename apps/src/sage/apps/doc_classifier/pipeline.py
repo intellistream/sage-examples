@@ -1,4 +1,4 @@
-﻿"""Document classifier pipeline."""
+"""Document classifier pipeline."""
 
 from __future__ import annotations
 

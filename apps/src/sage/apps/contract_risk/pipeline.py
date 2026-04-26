@@ -1,4 +1,4 @@
-﻿"""Contract risk pipeline."""
+"""Contract risk pipeline."""
 
 from __future__ import annotations
 

@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_brand_compliance_review_pipeline(asset_dir: str, output_file: str) -> None:
-    env = LocalEnvironment('brand_compliance_review')
+    env = LocalEnvironment("brand_compliance_review")
     (
         env.from_batch(BrandAssetSource, asset_dir=asset_dir)
         .map(BrandAssetParser)

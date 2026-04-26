@@ -1,4 +1,4 @@
-﻿"""
+"""
 Web Scraper Operators
 
 Lightweight operators for web scraping and table extraction.

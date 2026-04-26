@@ -1,4 +1,4 @@
-﻿"""Operators for user behavior analytics."""
+"""Operators for user behavior analytics."""
 
 from __future__ import annotations
 

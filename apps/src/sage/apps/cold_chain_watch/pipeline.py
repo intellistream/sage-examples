@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_cold_chain_watch_pipeline(record_file: str, output_file: str) -> None:
-    env = LocalEnvironment('cold_chain_watch')
+    env = LocalEnvironment("cold_chain_watch")
     (
         env.from_batch(ColdChainRecordSource, record_file=record_file)
         .map(ColdChainBatchMatcher)

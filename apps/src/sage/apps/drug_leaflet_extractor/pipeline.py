@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_drug_leaflet_extractor_pipeline(input_dir: str, output_file: str) -> None:
-    env = LocalEnvironment('drug_leaflet_extractor')
+    env = LocalEnvironment("drug_leaflet_extractor")
     (
         env.from_batch(DrugLeafletSource, input_dir=input_dir)
         .map(DrugLeafletTextExtractor)

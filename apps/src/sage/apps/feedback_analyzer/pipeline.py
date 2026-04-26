@@ -1,4 +1,4 @@
-﻿"""
+"""
 Feedback Analyzer Pipeline
 
 Main pipeline implementation using SAGE operators for customer feedback analysis.

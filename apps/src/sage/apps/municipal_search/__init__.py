@@ -1,4 +1,4 @@
-'''市政协同文档检索系统 application.'''
+"""市政协同文档检索系统 application."""
 
 from .pipeline import run_municipal_search_pipeline
 

@@ -12,7 +12,7 @@ from .operators import (
 
 
 def run_podcast_highlight_pipeline(transcript_file: str, output_file: str) -> None:
-    env = LocalEnvironment('podcast_highlight')
+    env = LocalEnvironment("podcast_highlight")
     (
         env.from_batch(PodcastTranscriptSource, transcript_file=transcript_file)
         .flatmap(PodcastSegmenter)
