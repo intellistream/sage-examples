@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import DrugLeafletSink, DrugLeafletSource, DrugLeafletTextExtractor, DrugFieldExtractor, DrugUnitNormalizer
+from .operators import (
+    DrugFieldExtractor,
+    DrugLeafletSink,
+    DrugLeafletSource,
+    DrugLeafletTextExtractor,
+    DrugUnitNormalizer,
+)
 
 
 def run_drug_leaflet_extractor_pipeline(input_dir: str, output_file: str) -> None:

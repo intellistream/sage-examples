@@ -93,7 +93,7 @@ Examples:
 
     if args.verbose:
         logger = CustomLogger("ResumeParserExample")
-        logger.info(f"Starting Resume Parser with:")
+        logger.info("Starting Resume Parser with:")
         logger.info(f"  Resume dir: {args.resume_dir}")
         logger.info(f"  Resume files: {args.resume_files}")
         logger.info(f"  Output file: {args.output}")

@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Any
 
 from sage.apps._batch import ListBatchSource
-from sage.foundation import BatchFunction, CustomLogger, FlatMapFunction, MapFunction, SinkFunction
+from sage.foundation import CustomLogger, MapFunction, SinkFunction
 
 
 class ResumeSource(ListBatchSource):
@@ -50,7 +50,7 @@ class ResumeSource(ListBatchSource):
 
         for file_path in files_to_process:
             try:
-                with open(file_path, "r", encoding="utf-8") as f:
+                with open(file_path, encoding="utf-8") as f:
                     content = f.read()
                     resumes.append(
                         {
@@ -97,7 +97,7 @@ class ResumeInfoExtractor(MapFunction):
 
         # Extract name (usually at the beginning)
         lines = content.split("\n")
-        name_candidates = [l.strip() for l in lines[:5] if l.strip()]
+        name_candidates = [line.strip() for line in lines[:5] if line.strip()]
         result["name"] = name_candidates[0] if name_candidates else "Unknown"
 
         # Extract email
@@ -199,7 +199,7 @@ class ResumeNormalizer(MapFunction):
 
         # Normalize skills (lowercase, deduplicate)
         if "skills" in resume:
-            resume["skills"] = list(set([s.lower() for s in resume["skills"]]))
+            resume["skills"] = list({skill.lower() for skill in resume["skills"]})
 
         # Add processing timestamp
         resume["processed_at"] = datetime.now().isoformat()

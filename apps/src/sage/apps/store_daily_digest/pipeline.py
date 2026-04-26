@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import StoreDigestSink, StoreOpsSource, StoreMetricAggregator, StoreExceptionDetector, StoreActionBuilder
+from .operators import (
+    StoreActionBuilder,
+    StoreDigestSink,
+    StoreExceptionDetector,
+    StoreMetricAggregator,
+    StoreOpsSource,
+)
 
 
 def run_store_daily_digest_pipeline(input_dir: str, output_file: str) -> None:

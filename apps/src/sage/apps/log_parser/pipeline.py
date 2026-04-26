@@ -51,7 +51,7 @@ def run_log_parser_pipeline(
         error_levels = ["ERROR", "CRITICAL", "WARN"]
 
     if verbose:
-        logger.info(f"Starting log parser pipeline")
+        logger.info("Starting log parser pipeline")
         logger.info(f"  Log file: {log_file}")
         logger.info(f"  Output file: {output_file}")
         logger.info(f"  Error levels: {error_levels}")

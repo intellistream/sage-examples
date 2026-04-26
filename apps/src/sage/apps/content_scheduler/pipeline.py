@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import ContentScheduleSink, CampaignPlanSource, ChannelRuleMapper, TopicAllocator, ScheduleConflictDetector
+from .operators import (
+    CampaignPlanSource,
+    ChannelRuleMapper,
+    ContentScheduleSink,
+    ScheduleConflictDetector,
+    TopicAllocator,
+)
 
 
 def run_content_scheduler_pipeline(plan_file: str, channel_file: str, output_file: str) -> None:

@@ -101,7 +101,7 @@ Examples:
 
     if args.verbose:
         logger = CustomLogger("LogParserExample")
-        logger.info(f"Starting Log Parser with:")
+        logger.info("Starting Log Parser with:")
         logger.info(f"  Log file: {args.log_file}")
         logger.info(f"  Output file: {args.output}")
         logger.info(f"  Error levels: {error_levels}")

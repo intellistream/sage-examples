@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from sage.apps._batch import ListBatchSource
-from sage.foundation import BatchFunction, CustomLogger, FlatMapFunction, MapFunction, SinkFunction
+from sage.foundation import CustomLogger, MapFunction, SinkFunction
 
 
 class PdfSource(ListBatchSource):

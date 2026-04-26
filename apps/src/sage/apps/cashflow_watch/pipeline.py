@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import CashflowSink, CashflowSource, CashflowFeatureBuilder, CashflowForecaster, CashflowRiskMarker
+from .operators import (
+    CashflowFeatureBuilder,
+    CashflowForecaster,
+    CashflowRiskMarker,
+    CashflowSink,
+    CashflowSource,
+)
 
 
 def run_cashflow_watch_pipeline(input_dir: str, output_file: str) -> None:

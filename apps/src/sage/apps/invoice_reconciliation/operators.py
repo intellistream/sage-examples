@@ -6,11 +6,11 @@ from pathlib import Path
 from typing import Any
 
 from sage.apps._batch import ListBatchSource
-from sage.foundation import BatchFunction, CustomLogger, FlatMapFunction, MapFunction, SinkFunction
+from sage.foundation import MapFunction, SinkFunction
 
 
 def _load_records(input_file: str) -> list[dict[str, Any]]:
-    with open(input_file, "r", encoding="utf-8", newline="") as handle:
+    with open(input_file, encoding="utf-8", newline="") as handle:
         if input_file.lower().endswith(".json"):
             return json.load(handle)
         return list(csv.DictReader(handle))

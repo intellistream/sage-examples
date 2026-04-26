@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import ReproAuditSink, ReproManifestSource, ReproMetadataExtractor, ReproConsistencyChecker, ReproRiskScorer
+from .operators import (
+    ReproAuditSink,
+    ReproConsistencyChecker,
+    ReproManifestSource,
+    ReproMetadataExtractor,
+    ReproRiskScorer,
+)
 
 
 def run_repro_audit_pipeline(manifest_file: str, output_dir: str) -> None:

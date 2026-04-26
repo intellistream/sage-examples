@@ -13,7 +13,7 @@ from datetime import datetime
 from typing import Any
 
 from sage.apps._batch import ListBatchSource
-from sage.foundation import BatchFunction, CustomLogger, FlatMapFunction, MapFunction, SinkFunction
+from sage.foundation import CustomLogger, FlatMapFunction, MapFunction, SinkFunction
 
 
 class FeedbackSource(ListBatchSource):
@@ -37,7 +37,7 @@ class FeedbackSource(ListBatchSource):
 
         feedbacks = []
         try:
-            with open(self.feedback_file, "r", encoding="utf-8") as f:
+            with open(self.feedback_file, encoding="utf-8") as f:
                 # Try CSV format first
                 reader = csv.DictReader(f, delimiter=self.delimiter)
                 if reader.fieldnames and len(reader.fieldnames) > 1:

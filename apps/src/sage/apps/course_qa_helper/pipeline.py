@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import CourseAnswerSink, CourseDocSource, CourseChunker, CourseQuestionMatcher, CourseAnswerFormatter
+from .operators import (
+    CourseAnswerFormatter,
+    CourseAnswerSink,
+    CourseChunker,
+    CourseDocSource,
+    CourseQuestionMatcher,
+)
 
 
 def run_course_qa_helper_pipeline(doc_dir: str, question_file: str, output_file: str) -> None:

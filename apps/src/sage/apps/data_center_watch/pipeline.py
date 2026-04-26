@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import DataCenterWatchSink, DataCenterMetricSource, RackMapper, CapacityCoolingScorer, DataCenterRiskMarker
+from .operators import (
+    CapacityCoolingScorer,
+    DataCenterMetricSource,
+    DataCenterRiskMarker,
+    DataCenterWatchSink,
+    RackMapper,
+)
 
 
 def run_data_center_watch_pipeline(metric_file: str, alert_file: str, output_file: str) -> None:

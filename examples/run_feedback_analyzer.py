@@ -96,7 +96,7 @@ Examples:
 
     if args.verbose:
         logger = CustomLogger("FeedbackAnalyzerExample")
-        logger.info(f"Starting Feedback Analyzer with:")
+        logger.info("Starting Feedback Analyzer with:")
         logger.info(f"  Feedback file: {args.feedback_file}")
         logger.info(f"  Output file: {args.output}")
         logger.info(f"  Top keywords: {args.top_n}")

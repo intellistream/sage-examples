@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import KnowledgeCleanupSink, KnowledgeArticleSource, KnowledgeFingerprintBuilder, KnowledgeDuplicateDetector, KnowledgeFreshnessScorer
+from .operators import (
+    KnowledgeArticleSource,
+    KnowledgeCleanupSink,
+    KnowledgeDuplicateDetector,
+    KnowledgeFingerprintBuilder,
+    KnowledgeFreshnessScorer,
+)
 
 
 def run_knowledge_cleanup_pipeline(article_dir: str, output_file: str) -> None:

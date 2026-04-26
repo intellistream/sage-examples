@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Any
 
 from sage.apps._batch import ListBatchSource
-from sage.foundation import BatchFunction, CustomLogger, FlatMapFunction, MapFunction, SinkFunction
+from sage.foundation import CustomLogger, MapFunction, SinkFunction
 
 
 class LogSource(ListBatchSource):
@@ -31,7 +31,7 @@ class LogSource(ListBatchSource):
     def load_items(self) -> list[str]:
         """Read and return all log lines."""
         try:
-            with open(self.log_file, "r", encoding="utf-8") as f:
+            with open(self.log_file, encoding="utf-8") as f:
                 lines = [line.rstrip("\n") for line in f if line.strip()]
             self.logger.info(f"Read {len(lines)} log lines from {self.log_file}")
             return lines

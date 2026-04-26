@@ -41,7 +41,7 @@ def _load_records(path_str: str) -> list[dict[str, Any]]:
 
 
 def _tokenize(text: str) -> set[str]:
-    return {token for token in re.findall(r"[a-zA-Z][a-zA-Z0-9_-]{2,}", text.lower())}
+    return set(re.findall(r"[a-zA-Z][a-zA-Z0-9_-]{2,}", text.lower()))
 
 
 class InterviewAnswerSource(ListBatchSource):

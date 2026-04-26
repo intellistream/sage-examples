@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import ReturnMiningSink, ReturnRecordSource, ReturnFeatureFusion, ReturnReasonClusterer, ReturnImprovementBuilder
+from .operators import (
+    ReturnFeatureFusion,
+    ReturnImprovementBuilder,
+    ReturnMiningSink,
+    ReturnReasonClusterer,
+    ReturnRecordSource,
+)
 
 
 def run_return_reason_mining_pipeline(return_file: str, output_file: str) -> None:

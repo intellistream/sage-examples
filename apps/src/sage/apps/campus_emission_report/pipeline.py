@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import CampusReportSink, CampusEmissionSource, EmissionFactorMapper, CampusEmissionAggregator, CampusReportFormatter
+from .operators import (
+    CampusEmissionAggregator,
+    CampusEmissionSource,
+    CampusReportFormatter,
+    CampusReportSink,
+    EmissionFactorMapper,
+)
 
 
 def run_campus_emission_report_pipeline(input_dir: str, output_file: str) -> None:

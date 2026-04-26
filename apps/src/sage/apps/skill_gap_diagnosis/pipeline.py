@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import SkillGapSink, LearningRecordSource, SkillMapper, SkillGapDetector, PracticePathBuilder
+from .operators import (
+    LearningRecordSource,
+    PracticePathBuilder,
+    SkillGapDetector,
+    SkillGapSink,
+    SkillMapper,
+)
 
 
 def run_skill_gap_diagnosis_pipeline(record_dir: str, output_file: str) -> None:

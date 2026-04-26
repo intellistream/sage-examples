@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import LessonScheduleSink, TeachingRequirementSource, TeachingConstraintParser, LessonPlanScorer, LessonConflictChecker
+from .operators import (
+    LessonConflictChecker,
+    LessonPlanScorer,
+    LessonScheduleSink,
+    TeachingConstraintParser,
+    TeachingRequirementSource,
+)
 
 
 def run_lesson_scheduler_pipeline(plan_file: str, resource_file: str, output_file: str) -> None:

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import csv
 import json
-import re
 from hashlib import sha1
 from pathlib import Path
 from typing import Any

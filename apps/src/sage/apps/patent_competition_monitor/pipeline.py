@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import PatentDigestSink, PatentSource, PatentFieldExtractor, PatentTopicClassifier, CompetitorAggregator
+from .operators import (
+    CompetitorAggregator,
+    PatentDigestSink,
+    PatentFieldExtractor,
+    PatentSource,
+    PatentTopicClassifier,
+)
 
 
 def run_patent_competition_monitor_pipeline(input_file: str, output_dir: str) -> None:

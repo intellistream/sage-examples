@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from sage.apps._batch import ListBatchSource
-from sage.foundation import BatchFunction, CustomLogger, FlatMapFunction, MapFunction, SinkFunction
+from sage.foundation import MapFunction, SinkFunction
 
 
 class VisitorFlowSource(ListBatchSource):
@@ -15,7 +15,7 @@ class VisitorFlowSource(ListBatchSource):
         self.flow_file = flow_file
 
     def load_items(self) -> list[dict[str, Any]]:
-        with open(self.flow_file, "r", encoding="utf-8", newline="") as handle:
+        with open(self.flow_file, encoding="utf-8", newline="") as handle:
             if self.flow_file.lower().endswith(".json"):
                 return json.load(handle)
             return list(csv.DictReader(handle))

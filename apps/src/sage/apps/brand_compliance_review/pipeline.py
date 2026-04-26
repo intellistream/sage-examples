@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import BrandReviewSink, BrandAssetSource, BrandAssetParser, BrandRuleMatcher, BrandRiskScorer
+from .operators import (
+    BrandAssetParser,
+    BrandAssetSource,
+    BrandReviewSink,
+    BrandRiskScorer,
+    BrandRuleMatcher,
+)
 
 
 def run_brand_compliance_review_pipeline(asset_dir: str, output_file: str) -> None:

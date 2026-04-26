@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import PermitReviewSink, PermitMaterialSource, PermitDocumentClassifier, PermitChecklistChecker, PermitReviewFormatter
+from .operators import (
+    PermitChecklistChecker,
+    PermitDocumentClassifier,
+    PermitMaterialSource,
+    PermitReviewFormatter,
+    PermitReviewSink,
+)
 
 
 def run_permit_material_review_pipeline(input_dir: str, output_file: str) -> None:

@@ -45,7 +45,7 @@ def run_feedback_analyzer_pipeline(
     logger = CustomLogger("FeedbackAnalyzerPipeline")
 
     if verbose:
-        logger.info(f"Starting feedback analyzer pipeline")
+        logger.info("Starting feedback analyzer pipeline")
         logger.info(f"  Feedback file: {feedback_file}")
         logger.info(f"  Output file: {output_file}")
         logger.info(f"  Top keywords: {top_n}")
@@ -55,7 +55,7 @@ def run_feedback_analyzer_pipeline(
 
     try:
         # Build pipeline
-        pipeline = (
+        (
             env.from_batch(FeedbackSource, feedback_file=feedback_file)
             .map(TextCleaner)
             .flatmap(SimpleTokenizer, min_length=2)

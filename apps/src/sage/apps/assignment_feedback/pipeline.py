@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import AssignmentFeedbackSink, AssignmentDraftSource, AssignmentSectionParser, RubricMatcher, FeedbackComposer
+from .operators import (
+    AssignmentDraftSource,
+    AssignmentFeedbackSink,
+    AssignmentSectionParser,
+    FeedbackComposer,
+    RubricMatcher,
+)
 
 
 def run_assignment_feedback_pipeline(draft_file: str, rubric_file: str, output_file: str) -> None:

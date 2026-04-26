@@ -8,7 +8,7 @@ from difflib import SequenceMatcher
 from typing import Any
 
 from sage.apps._batch import ListBatchSource
-from sage.foundation import BatchFunction, CustomLogger, FlatMapFunction, MapFunction, SinkFunction
+from sage.foundation import MapFunction, SinkFunction
 
 
 class CustomerSource(ListBatchSource):
@@ -17,7 +17,7 @@ class CustomerSource(ListBatchSource):
         self.input_file = input_file
 
     def load_items(self) -> list[dict[str, Any]]:
-        with open(self.input_file, "r", encoding="utf-8", newline="") as handle:
+        with open(self.input_file, encoding="utf-8", newline="") as handle:
             return list(csv.DictReader(handle))
 
 

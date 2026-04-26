@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import MediaArchiveSink, MediaAssetSource, MediaMetadataExtractor, MediaTagger, MediaDuplicateDetector
+from .operators import (
+    MediaArchiveSink,
+    MediaAssetSource,
+    MediaDuplicateDetector,
+    MediaMetadataExtractor,
+    MediaTagger,
+)
 
 
 def run_media_archive_search_pipeline(asset_dir: str, output_dir: str) -> None:

@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import CarbonCollectionSink, CarbonDataSource, CarbonFieldExtractor, CarbonUnitNormalizer, CarbonLedgerBuilder
+from .operators import (
+    CarbonCollectionSink,
+    CarbonDataSource,
+    CarbonFieldExtractor,
+    CarbonLedgerBuilder,
+    CarbonUnitNormalizer,
+)
 
 
 def run_carbon_collection_pipeline(input_dir: str, output_file: str) -> None:

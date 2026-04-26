@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import ExperimentReviewSink, ExperimentLogSource, ExperimentStepSplitter, ExperimentParameterExtractor, ExperimentAnomalyMarker
+from .operators import (
+    ExperimentAnomalyMarker,
+    ExperimentLogSource,
+    ExperimentParameterExtractor,
+    ExperimentReviewSink,
+    ExperimentStepSplitter,
+)
 
 
 def run_experiment_review_pipeline(log_file: str, output_file: str) -> None:

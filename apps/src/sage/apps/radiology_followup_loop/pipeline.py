@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import FollowupSink, RadiologyReportSource, FollowupExtractor, PatientMatcher, FollowupDeadlineChecker
+from .operators import (
+    FollowupDeadlineChecker,
+    FollowupExtractor,
+    FollowupSink,
+    PatientMatcher,
+    RadiologyReportSource,
+)
 
 
 def run_radiology_followup_loop_pipeline(report_file: str, patient_file: str, output_file: str) -> None:

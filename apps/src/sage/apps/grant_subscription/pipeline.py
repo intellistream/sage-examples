@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import GrantAlertSink, GrantAnnouncementSource, GrantRuleExtractor, TeamProfileMatcher, GrantPriorityScorer
+from .operators import (
+    GrantAlertSink,
+    GrantAnnouncementSource,
+    GrantPriorityScorer,
+    GrantRuleExtractor,
+    TeamProfileMatcher,
+)
 
 
 def run_grant_subscription_pipeline(announcement_file: str, profile_file: str, output_file: str) -> None:

@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import QuoteCompareSink, QuoteSource, QuoteNormalizer, QuoteConditionComparer, QuoteScorer
+from .operators import (
+    QuoteCompareSink,
+    QuoteConditionComparer,
+    QuoteNormalizer,
+    QuoteScorer,
+    QuoteSource,
+)
 
 
 def run_quote_compare_pipeline(input_dir: str, output_file: str) -> None:

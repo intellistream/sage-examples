@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import PolicyAnswerSink, PolicyDocSource, PolicyChunker, PolicyQuestionMatcher, PolicyAnswerComposer
+from .operators import (
+    PolicyAnswerComposer,
+    PolicyAnswerSink,
+    PolicyChunker,
+    PolicyDocSource,
+    PolicyQuestionMatcher,
+)
 
 
 def run_policy_search_helper_pipeline(doc_dir: str, question_file: str, output_file: str) -> None:

@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import MunicipalSearchSink, MunicipalDocSource, MunicipalChunker, MunicipalQuestionMatcher, MunicipalAnswerFormatter
+from .operators import (
+    MunicipalAnswerFormatter,
+    MunicipalChunker,
+    MunicipalDocSource,
+    MunicipalQuestionMatcher,
+    MunicipalSearchSink,
+)
 
 
 def run_municipal_search_pipeline(doc_dir: str, question_file: str, output_file: str) -> None:

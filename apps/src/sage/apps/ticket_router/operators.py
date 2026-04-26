@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from sage.apps._batch import ListBatchSource
-from sage.foundation import BatchFunction, CustomLogger, FlatMapFunction, MapFunction, SinkFunction
+from sage.foundation import MapFunction, SinkFunction
 
 
 class TicketSource(ListBatchSource):
@@ -17,7 +17,7 @@ class TicketSource(ListBatchSource):
         self.input_file = input_file
 
     def load_items(self) -> list[dict[str, Any]]:
-        with open(self.input_file, "r", encoding="utf-8", newline="") as handle:
+        with open(self.input_file, encoding="utf-8", newline="") as handle:
             if self.input_file.lower().endswith(".json"):
                 return json.load(handle)
             return list(csv.DictReader(handle))
@@ -62,7 +62,7 @@ class LoadBalancer(MapFunction):
     def __init__(self, agents: list[str] | None = None, **kwargs):
         super().__init__(**kwargs)
         self.agents = agents or ["agent_a", "agent_b", "agent_c"]
-        self.load = {agent: 0 for agent in self.agents}
+        self.load = dict.fromkeys(self.agents, 0)
 
     def execute(self, item: dict[str, Any]) -> dict[str, Any]:
         assignee = min(self.load, key=self.load.get)

@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import SensorWatchSink, SensorSource, SensorDeviceMapper, SensorAnomalyScorer, SensorAlertLeveler
+from .operators import (
+    SensorAlertLeveler,
+    SensorAnomalyScorer,
+    SensorDeviceMapper,
+    SensorSource,
+    SensorWatchSink,
+)
 
 
 def run_factory_watch_pipeline(sensor_file: str, output_file: str) -> None:

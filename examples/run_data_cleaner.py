@@ -163,7 +163,7 @@ Examples:
 
     if args.verbose:
         logger = CustomLogger("DataCleanerExample")
-        logger.info(f"Starting Data Cleaner with:")
+        logger.info("Starting Data Cleaner with:")
         logger.info(f"  Input file: {args.input}")
         logger.info(f"  Output file: {args.output}")
         logger.info(f"  Type rules: {type_rules}")

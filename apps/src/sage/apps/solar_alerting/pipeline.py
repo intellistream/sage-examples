@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import SolarAlertSink, SolarSignalSource, SolarWeatherJoiner, SolarAnomalyDetector, SolarPriorityScorer
+from .operators import (
+    SolarAlertSink,
+    SolarAnomalyDetector,
+    SolarPriorityScorer,
+    SolarSignalSource,
+    SolarWeatherJoiner,
+)
 
 
 def run_solar_alerting_pipeline(sensor_file: str, weather_file: str, output_file: str) -> None:

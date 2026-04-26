@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import RepairScheduleSink, RepairTicketSource, RepairGeoMapper, RepairPriorityScorer, RepairRoutePlanner
+from .operators import (
+    RepairGeoMapper,
+    RepairPriorityScorer,
+    RepairRoutePlanner,
+    RepairScheduleSink,
+    RepairTicketSource,
+)
 
 
 def run_urban_repair_scheduler_pipeline(ticket_file: str, output_file: str) -> None:

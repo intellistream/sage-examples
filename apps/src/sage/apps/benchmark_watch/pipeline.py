@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import BenchmarkWatchSink, BenchmarkSource, BenchmarkParser, BenchmarkDiffDetector, BenchmarkTrendTagger
+from .operators import (
+    BenchmarkDiffDetector,
+    BenchmarkParser,
+    BenchmarkSource,
+    BenchmarkTrendTagger,
+    BenchmarkWatchSink,
+)
 
 
 def run_benchmark_watch_pipeline(input_file: str, output_file: str) -> None:

@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import TrafficBriefSink, TrafficEventSource, TrafficEventMerger, TrafficImpactScorer, TrafficBriefFormatter
+from .operators import (
+    TrafficBriefFormatter,
+    TrafficBriefSink,
+    TrafficEventMerger,
+    TrafficEventSource,
+    TrafficImpactScorer,
+)
 
 
 def run_traffic_briefing_pipeline(event_file: str, output_file: str) -> None:

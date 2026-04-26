@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import InterviewReportSink, InterviewAnswerSource, InterviewQuestionMapper, InterviewScorer, InterviewAdviceBuilder
+from .operators import (
+    InterviewAdviceBuilder,
+    InterviewAnswerSource,
+    InterviewQuestionMapper,
+    InterviewReportSink,
+    InterviewScorer,
+)
 
 
 def run_interview_coach_pipeline(answer_file: str, rubric_file: str, output_file: str) -> None:

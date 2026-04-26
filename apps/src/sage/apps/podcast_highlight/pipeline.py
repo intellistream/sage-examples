@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from sage.runtime import LocalEnvironment
 
-from .operators import HighlightSink, PodcastTranscriptSource, PodcastSegmenter, HighlightScorer, HighlightTitleBuilder
+from .operators import (
+    HighlightScorer,
+    HighlightSink,
+    HighlightTitleBuilder,
+    PodcastSegmenter,
+    PodcastTranscriptSource,
+)
 
 
 def run_podcast_highlight_pipeline(transcript_file: str, output_file: str) -> None:

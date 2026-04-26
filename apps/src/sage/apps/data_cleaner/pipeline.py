@@ -56,7 +56,7 @@ def run_data_cleaner_pipeline(
     logger = CustomLogger("DataCleanerPipeline")
 
     if verbose:
-        logger.info(f"Starting data cleaner pipeline")
+        logger.info("Starting data cleaner pipeline")
         logger.info(f"  Input file: {input_file}")
         logger.info(f"  Output file: {output_file}")
         logger.info(f"  Type rules: {type_rules}")

@@ -8,12 +8,11 @@ from __future__ import annotations
 
 import csv
 import json
-import re
 from datetime import datetime
 from typing import Any
 
 from sage.apps._batch import ListBatchSource
-from sage.foundation import BatchFunction, CustomLogger, FlatMapFunction, MapFunction, SinkFunction
+from sage.foundation import CustomLogger, MapFunction, SinkFunction
 
 
 class CsvSource(ListBatchSource):
@@ -35,7 +34,7 @@ class CsvSource(ListBatchSource):
         """Read and return all CSV rows as dictionaries."""
         try:
             rows = []
-            with open(self.input_file, "r", encoding="utf-8") as f:
+            with open(self.input_file, encoding="utf-8") as f:
                 reader = csv.DictReader(f, delimiter=self.delimiter)
                 if reader.fieldnames is None:
                     self.logger.error(f"Empty CSV file: {self.input_file}")
@@ -239,7 +238,7 @@ class AnomalyDetector(MapFunction):
                 continue
 
             # Check for negative values where not expected
-            if value < 0 and not field.lower() in ["change", "delta", "difference"]:
+            if value < 0 and field.lower() not in ["change", "delta", "difference"]:
                 row["has_anomaly"] = True
                 row["anomaly_fields"].append(field)
                 row["anomalies"][field] = f"negative_value: {value}"

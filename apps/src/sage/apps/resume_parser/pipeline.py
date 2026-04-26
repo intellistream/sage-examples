@@ -43,7 +43,7 @@ def run_resume_parser_pipeline(
     logger = CustomLogger("ResumeParserPipeline")
 
     if verbose:
-        logger.info(f"Starting resume parser pipeline")
+        logger.info("Starting resume parser pipeline")
         logger.info(f"  Resume dir: {resume_dir}")
         logger.info(f"  Output file: {output_file}")
 
@@ -52,7 +52,7 @@ def run_resume_parser_pipeline(
 
     try:
         # Build pipeline
-        pipeline = (
+        (
             env.from_batch(ResumeSource, resume_dir=resume_dir, resume_files=resume_files)
             .map(TextExtractor)
             .map(InfoExtractor)
