@@ -16,6 +16,7 @@ This directory contains maintained entry scripts for the `sage.apps` package.
 - `run_supply_chain_alert.py` — Supply chain anomaly alert dashboard MVP.
 - `run_supply_chain_alert_api.py` — FastAPI service for the supply chain anomaly alert dashboard,
   including a multi-role browser dashboard at `/dashboard/ui`.
+- `run_sageflow_service_demo.py` — 将 sageFlow 作为向量快照 service 接入 SAGE，演示持续向量流与中间快照联动。
 - `run_ticket_triage.py` — Customer support ticket triage MVP with explicit SAGE workflow and queue
   routing.
 - `run_ticket_triage_api.py` — FastAPI service for the customer support ticket triage MVP.
@@ -37,6 +38,7 @@ python examples/run_patent_landscape_mapper.py
 python examples/run_student_improvement.py
 python examples/run_supply_chain_alert.py
 python examples/run_supply_chain_alert_api.py
+python examples/run_sageflow_service_demo.py
 python examples/run_ticket_triage.py
 python examples/run_ticket_triage_api.py
 python examples/demo_feature_extraction.py

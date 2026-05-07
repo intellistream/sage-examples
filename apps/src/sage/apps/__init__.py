@@ -6,6 +6,7 @@ capabilities across various domains:
 - video: Video intelligence and analysis
 - medical_diagnosis: AI-assisted medical imaging diagnosis
 - patent_landscape_mapper: Patent clustering, whitespace analysis, and assignee mapping
+- sageflow_service_demo: Treat sageFlow as a vector snapshot service inside a SAGE workflow
 - student_improvement: Personalized score improvement with stateful learning workflows
 - ticket_triage: Customer support ticket triage with explicit stateful routing
 - work_report_generator: Weekly/daily work report generator with GitHub integration

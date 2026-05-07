@@ -1,0 +1,395 @@
+{
+  "baseline": {
+    "snapshot_primary_ids": [
+      "cve-2024-3400-nvd",
+      "cve-2024-3094-nvd",
+      "cve-2024-6387-nvd"
+    ],
+    "replay_order": [
+      "cve-2024-3400-nvd",
+      "pan-2024-3400-vendor",
+      "cisa-2024-3400-kev",
+      "cve-2024-3094-nvd",
+      "redhat-2024-3094-advisory",
+      "cisa-2024-3094-alert",
+      "cve-2024-6387-nvd"
+    ],
+    "events": [
+      {
+        "event_id": "pan-2024-3400-vendor",
+        "source": "vendor_advisory",
+        "timestamp": "2024-04-12T08:00:00Z",
+        "summary": "Palo Alto Networks advisory PAN-SA-2024-0002 warns that CVE-2024-3400 in PAN-OS GlobalProtect with device telemetry enabled can allow unauthenticated command execution.",
+        "severity": 0.97,
+        "tags": ["pan-os", "globalprotect", "telemetry", "command-injection", "cve-2024-3400"],
+        "metadata": {"vendor": "Palo Alto Networks", "bulletin": "PAN-SA-2024-0002"}
+      },
+      {
+        "event_id": "cisa-2024-3400-kev",
+        "source": "cisa_kev",
+        "timestamp": "2024-04-14T09:30:00Z",
+        "summary": "CISA added CVE-2024-3400 to the Known Exploited Vulnerabilities catalog after reporting active exploitation against internet-facing PAN-OS appliances.",
+        "severity": 0.99,
+        "tags": ["pan-os", "globalprotect", "exploited", "kev", "cve-2024-3400"],
+        "metadata": {"catalog": "KEV", "agency": "CISA"}
+      },
+      {
+        "event_id": "cve-2024-3400-nvd",
+        "source": "nvd",
+        "timestamp": "2024-04-15T12:00:00Z",
+        "summary": "NVD describes CVE-2024-3400 as a PAN-OS command injection vulnerability in the GlobalProtect gateway and telemetry path that may lead to remote code execution.",
+        "severity": 0.98,
+        "tags": ["pan-os", "globalprotect", "telemetry", "command-injection", "cve-2024-3400"],
+        "metadata": {"feed": "NVD", "product": "PAN-OS"}
+      },
+      {
+        "event_id": "redhat-2024-3094-advisory",
+        "source": "vendor_advisory",
+        "timestamp": "2024-03-29T10:00:00Z",
+        "summary": "Red Hat security guidance for CVE-2024-3094 explains that malicious XZ Utils packages introduced a backdoor in liblzma and recommends downgrading affected builds.",
+        "severity": 0.93,
+        "tags": ["xz-utils", "liblzma", "supply-chain", "ssh-backdoor", "cve-2024-3094"],
+        "metadata": {"vendor": "Red Hat", "package": "xz-utils"}
+      },
+      {
+        "event_id": "cisa-2024-3094-alert",
+        "source": "cisa_alert",
+        "timestamp": "2024-03-29T14:00:00Z",
+        "summary": "CISA alert AA24-084A covers the XZ Utils compromise and advises defenders to hunt for tampered OpenSSH authentication behavior on Linux servers.",
+        "severity": 0.95,
+        "tags": ["xz-utils", "liblzma", "supply-chain", "ssh-backdoor", "cve-2024-3094"],
+        "metadata": {"agency": "CISA", "alert": "AA24-084A"}
+      },
+      {
+        "event_id": "cve-2024-3094-nvd",
+        "source": "nvd",
+        "timestamp": "2024-03-30T08:30:00Z",
+        "summary": "NVD records CVE-2024-3094 as the XZ Utils backdoor that can compromise liblzma and expose downstream OpenSSH authentication flows to remote code execution.",
+        "severity": 0.96,
+        "tags": ["xz-utils", "liblzma", "supply-chain", "ssh-backdoor", "cve-2024-3094"],
+        "metadata": {"feed": "NVD", "package": "xz-utils"}
+      },
+      {
+        "event_id": "cve-2024-6387-nvd",
+        "source": "nvd",
+        "timestamp": "2024-07-01T11:00:00Z",
+        "summary": "NVD describes CVE-2024-6387, regreSSHion, as a signal-handler race in OpenSSH server that can lead to unauthenticated remote code execution on glibc-based systems.",
+        "severity": 0.97,
+        "tags": ["openssh", "regresshion", "signal-race", "sshd", "cve-2024-6387"],
+        "metadata": {"feed": "NVD", "product": "OpenSSH"}
+      }
+    ],
+    "security_extra_events": [
+      {
+        "event_id": "qualys-2024-6387-research",
+        "source": "research_blog",
+        "timestamp": "2024-07-03T09:00:00Z",
+        "summary": "Qualys research shows how regreSSHion can be exploited on exposed OpenSSH servers and recommends rapid patching plus internet-exposure review.",
+        "severity": 0.97,
+        "tags": ["openssh", "regresshion", "signal-race", "sshd", "cve-2024-6387"],
+        "metadata": {"publisher": "Qualys", "artifact": "research bulletin"}
+      },
+      {
+        "event_id": "ubuntu-2024-6387-notice",
+        "source": "vendor_advisory",
+        "timestamp": "2024-07-04T07:30:00Z",
+        "summary": "Ubuntu published a security notice for CVE-2024-6387 with affected OpenSSH package versions and patched releases for supported distributions.",
+        "severity": 0.94,
+        "tags": ["openssh", "regresshion", "signal-race", "sshd", "cve-2024-6387"],
+        "metadata": {"vendor": "Ubuntu", "product": "OpenSSH"}
+      }
+    ]
+  },
+  "medium": {
+    "snapshot_primary_ids": [
+      "cve-2024-3400-nvd",
+      "cve-2024-3094-nvd",
+      "cve-2024-6387-nvd",
+      "cve-2024-4577-nvd",
+      "cve-2024-21762-nvd",
+      "cve-2024-27198-nvd"
+    ],
+    "replay_order": [
+      "cve-2024-3400-nvd",
+      "pan-2024-3400-vendor",
+      "cisa-2024-3400-kev",
+      "unit42-2024-3400-report",
+      "cve-2024-3094-nvd",
+      "redhat-2024-3094-advisory",
+      "cisa-2024-3094-alert",
+      "freund-2024-3094-analysis",
+      "cve-2024-6387-nvd",
+      "qualys-2024-6387-research",
+      "ubuntu-2024-6387-notice",
+      "debian-2024-6387-tracker",
+      "cve-2024-4577-nvd",
+      "php-2024-4577-advisory",
+      "cisa-2024-4577-kev",
+      "watchtowr-2024-4577-analysis",
+      "cve-2024-21762-nvd",
+      "fortinet-2024-21762-advisory",
+      "cisa-2024-21762-kev",
+      "arcticwolf-2024-21762-analysis",
+      "cve-2024-27198-nvd",
+      "jetbrains-2024-27198-advisory",
+      "cisa-2024-27198-kev",
+      "rapid7-2024-27198-analysis"
+    ],
+    "events": [
+      {
+        "event_id": "pan-2024-3400-vendor",
+        "source": "vendor_advisory",
+        "timestamp": "2024-04-12T08:00:00Z",
+        "summary": "Palo Alto Networks advisory PAN-SA-2024-0002 warns that CVE-2024-3400 in PAN-OS GlobalProtect with device telemetry enabled can allow unauthenticated command execution.",
+        "severity": 0.97,
+        "tags": ["pan-os", "globalprotect", "telemetry", "command-injection", "cve-2024-3400"],
+        "metadata": {"vendor": "Palo Alto Networks", "bulletin": "PAN-SA-2024-0002"}
+      },
+      {
+        "event_id": "cisa-2024-3400-kev",
+        "source": "cisa_kev",
+        "timestamp": "2024-04-14T09:30:00Z",
+        "summary": "CISA added CVE-2024-3400 to the Known Exploited Vulnerabilities catalog after reporting active exploitation against internet-facing PAN-OS appliances.",
+        "severity": 0.99,
+        "tags": ["pan-os", "globalprotect", "exploited", "kev", "cve-2024-3400"],
+        "metadata": {"catalog": "KEV", "agency": "CISA"}
+      },
+      {
+        "event_id": "cve-2024-3400-nvd",
+        "source": "nvd",
+        "timestamp": "2024-04-15T12:00:00Z",
+        "summary": "NVD describes CVE-2024-3400 as a PAN-OS command injection vulnerability in the GlobalProtect gateway and telemetry path that may lead to remote code execution.",
+        "severity": 0.98,
+        "tags": ["pan-os", "globalprotect", "telemetry", "command-injection", "cve-2024-3400"],
+        "metadata": {"feed": "NVD", "product": "PAN-OS"}
+      },
+      {
+        "event_id": "unit42-2024-3400-report",
+        "source": "research_blog",
+        "timestamp": "2024-04-16T10:00:00Z",
+        "summary": "Unit 42 incident response notes observed exploitation chains for CVE-2024-3400 against PAN-OS GlobalProtect appliances and recommends immediate patching plus device telemetry review.",
+        "severity": 0.96,
+        "tags": ["pan-os", "globalprotect", "telemetry", "exploitation", "cve-2024-3400"],
+        "metadata": {"publisher": "Unit 42", "artifact": "incident report"}
+      },
+      {
+        "event_id": "redhat-2024-3094-advisory",
+        "source": "vendor_advisory",
+        "timestamp": "2024-03-29T10:00:00Z",
+        "summary": "Red Hat security guidance for CVE-2024-3094 explains that malicious XZ Utils packages introduced a backdoor in liblzma and recommends downgrading affected builds.",
+        "severity": 0.93,
+        "tags": ["xz-utils", "liblzma", "supply-chain", "ssh-backdoor", "cve-2024-3094"],
+        "metadata": {"vendor": "Red Hat", "package": "xz-utils"}
+      },
+      {
+        "event_id": "cisa-2024-3094-alert",
+        "source": "cisa_alert",
+        "timestamp": "2024-03-29T14:00:00Z",
+        "summary": "CISA alert AA24-084A covers the XZ Utils compromise and advises defenders to hunt for tampered OpenSSH authentication behavior on Linux servers.",
+        "severity": 0.95,
+        "tags": ["xz-utils", "liblzma", "supply-chain", "ssh-backdoor", "cve-2024-3094"],
+        "metadata": {"agency": "CISA", "alert": "AA24-084A"}
+      },
+      {
+        "event_id": "cve-2024-3094-nvd",
+        "source": "nvd",
+        "timestamp": "2024-03-30T08:30:00Z",
+        "summary": "NVD records CVE-2024-3094 as the XZ Utils backdoor that can compromise liblzma and expose downstream OpenSSH authentication flows to remote code execution.",
+        "severity": 0.96,
+        "tags": ["xz-utils", "liblzma", "supply-chain", "ssh-backdoor", "cve-2024-3094"],
+        "metadata": {"feed": "NVD", "package": "xz-utils"}
+      },
+      {
+        "event_id": "freund-2024-3094-analysis",
+        "source": "research_blog",
+        "timestamp": "2024-03-30T12:15:00Z",
+        "summary": "Public technical analysis of CVE-2024-3094 highlights that the XZ Utils backdoor modifies liblzma code paths used by OpenSSH authentication and should be treated as a supply-chain compromise.",
+        "severity": 0.94,
+        "tags": ["xz-utils", "liblzma", "supply-chain", "openssh", "cve-2024-3094"],
+        "metadata": {"publisher": "Open source disclosure", "artifact": "technical analysis"}
+      },
+      {
+        "event_id": "cve-2024-6387-nvd",
+        "source": "nvd",
+        "timestamp": "2024-07-01T11:00:00Z",
+        "summary": "NVD describes CVE-2024-6387, regreSSHion, as a signal-handler race in OpenSSH server that can lead to unauthenticated remote code execution on glibc-based systems.",
+        "severity": 0.97,
+        "tags": ["openssh", "regresshion", "signal-race", "sshd", "cve-2024-6387"],
+        "metadata": {"feed": "NVD", "product": "OpenSSH"}
+      },
+      {
+        "event_id": "qualys-2024-6387-research",
+        "source": "research_blog",
+        "timestamp": "2024-07-03T09:00:00Z",
+        "summary": "Qualys research shows how regreSSHion can be exploited on exposed OpenSSH servers and recommends rapid patching plus internet-exposure review.",
+        "severity": 0.97,
+        "tags": ["openssh", "regresshion", "signal-race", "sshd", "cve-2024-6387"],
+        "metadata": {"publisher": "Qualys", "artifact": "research bulletin"}
+      },
+      {
+        "event_id": "ubuntu-2024-6387-notice",
+        "source": "vendor_advisory",
+        "timestamp": "2024-07-04T07:30:00Z",
+        "summary": "Ubuntu published a security notice for CVE-2024-6387 with affected OpenSSH package versions and patched releases for supported distributions.",
+        "severity": 0.94,
+        "tags": ["openssh", "regresshion", "signal-race", "sshd", "cve-2024-6387"],
+        "metadata": {"vendor": "Ubuntu", "product": "OpenSSH"}
+      },
+      {
+        "event_id": "debian-2024-6387-tracker",
+        "source": "vendor_advisory",
+        "timestamp": "2024-07-04T10:45:00Z",
+        "summary": "Debian tracking entries for CVE-2024-6387 mark vulnerable OpenSSH releases and document package updates for supported branches.",
+        "severity": 0.92,
+        "tags": ["openssh", "regresshion", "signal-race", "package-fix", "cve-2024-6387"],
+        "metadata": {"vendor": "Debian", "artifact": "security tracker"}
+      },
+      {
+        "event_id": "cve-2024-4577-nvd",
+        "source": "nvd",
+        "timestamp": "2024-06-07T06:00:00Z",
+        "summary": "NVD describes CVE-2024-4577 as a PHP-CGI argument injection issue on Windows locales that can allow remote code execution under common deployment patterns.",
+        "severity": 0.95,
+        "tags": ["php", "php-cgi", "windows", "argument-injection", "cve-2024-4577"],
+        "metadata": {"feed": "NVD", "product": "PHP"}
+      },
+      {
+        "event_id": "php-2024-4577-advisory",
+        "source": "vendor_advisory",
+        "timestamp": "2024-06-07T07:30:00Z",
+        "summary": "The PHP project released fixes for CVE-2024-4577 and warned that CGI deployments on Windows with certain code pages can be exposed to argument injection.",
+        "severity": 0.94,
+        "tags": ["php", "php-cgi", "windows", "argument-injection", "cve-2024-4577"],
+        "metadata": {"vendor": "PHP", "artifact": "security release"}
+      },
+      {
+        "event_id": "cisa-2024-4577-kev",
+        "source": "cisa_kev",
+        "timestamp": "2024-06-12T09:00:00Z",
+        "summary": "CISA added CVE-2024-4577 to KEV after public exploitation reports against exposed PHP-CGI services on Windows hosts.",
+        "severity": 0.98,
+        "tags": ["php", "php-cgi", "windows", "kev", "cve-2024-4577"],
+        "metadata": {"catalog": "KEV", "agency": "CISA"}
+      },
+      {
+        "event_id": "watchtowr-2024-4577-analysis",
+        "source": "research_blog",
+        "timestamp": "2024-06-12T12:00:00Z",
+        "summary": "Public exploit analysis for CVE-2024-4577 shows that PHP-CGI on Windows can be coerced into remote command execution via crafted argument injection requests.",
+        "severity": 0.96,
+        "tags": ["php", "php-cgi", "windows", "rce", "cve-2024-4577"],
+        "metadata": {"publisher": "watchTowr", "artifact": "exploit analysis"}
+      },
+      {
+        "event_id": "cve-2024-21762-nvd",
+        "source": "nvd",
+        "timestamp": "2024-02-08T08:00:00Z",
+        "summary": "NVD records CVE-2024-21762 as an out-of-bounds write in Fortinet FortiOS and FortiProxy SSL-VPN that can lead to remote code execution.",
+        "severity": 0.97,
+        "tags": ["fortios", "fortiproxy", "ssl-vpn", "out-of-bounds-write", "cve-2024-21762"],
+        "metadata": {"feed": "NVD", "product": "FortiOS"}
+      },
+      {
+        "event_id": "fortinet-2024-21762-advisory",
+        "source": "vendor_advisory",
+        "timestamp": "2024-02-08T09:00:00Z",
+        "summary": "Fortinet advisory FG-IR-24-015 warns that CVE-2024-21762 in FortiOS SSL-VPN can enable unauthenticated code execution and provides fixed firmware versions.",
+        "severity": 0.96,
+        "tags": ["fortios", "fortiproxy", "ssl-vpn", "firmware-fix", "cve-2024-21762"],
+        "metadata": {"vendor": "Fortinet", "bulletin": "FG-IR-24-015"}
+      },
+      {
+        "event_id": "cisa-2024-21762-kev",
+        "source": "cisa_kev",
+        "timestamp": "2024-02-09T10:15:00Z",
+        "summary": "CISA listed CVE-2024-21762 in KEV, signaling active exploitation risk for internet-facing FortiOS and FortiProxy SSL-VPN deployments.",
+        "severity": 0.99,
+        "tags": ["fortios", "fortiproxy", "ssl-vpn", "kev", "cve-2024-21762"],
+        "metadata": {"catalog": "KEV", "agency": "CISA"}
+      },
+      {
+        "event_id": "arcticwolf-2024-21762-analysis",
+        "source": "research_blog",
+        "timestamp": "2024-02-12T11:30:00Z",
+        "summary": "Incident response analysis for CVE-2024-21762 emphasizes urgent patching of FortiOS SSL-VPN edge nodes and validation of exposure on remote access gateways.",
+        "severity": 0.95,
+        "tags": ["fortios", "fortiproxy", "ssl-vpn", "edge-gateway", "cve-2024-21762"],
+        "metadata": {"publisher": "Arctic Wolf", "artifact": "incident response note"}
+      },
+      {
+        "event_id": "cve-2024-27198-nvd",
+        "source": "nvd",
+        "timestamp": "2024-03-04T07:45:00Z",
+        "summary": "NVD describes CVE-2024-27198 as an authentication bypass in JetBrains TeamCity that can give remote attackers administrative control over CI servers.",
+        "severity": 0.97,
+        "tags": ["teamcity", "ci-cd", "auth-bypass", "build-server", "cve-2024-27198"],
+        "metadata": {"feed": "NVD", "product": "TeamCity"}
+      },
+      {
+        "event_id": "jetbrains-2024-27198-advisory",
+        "source": "vendor_advisory",
+        "timestamp": "2024-03-04T08:10:00Z",
+        "summary": "JetBrains security advisory for CVE-2024-27198 documents authentication bypass risk in TeamCity and recommends immediate upgrade of exposed build servers.",
+        "severity": 0.96,
+        "tags": ["teamcity", "ci-cd", "auth-bypass", "build-server", "cve-2024-27198"],
+        "metadata": {"vendor": "JetBrains", "artifact": "security advisory"}
+      },
+      {
+        "event_id": "cisa-2024-27198-kev",
+        "source": "cisa_kev",
+        "timestamp": "2024-03-07T09:00:00Z",
+        "summary": "CISA added CVE-2024-27198 to KEV after exploitation concerns around publicly reachable TeamCity instances that manage CI and deployment credentials.",
+        "severity": 0.98,
+        "tags": ["teamcity", "ci-cd", "auth-bypass", "kev", "cve-2024-27198"],
+        "metadata": {"catalog": "KEV", "agency": "CISA"}
+      },
+      {
+        "event_id": "rapid7-2024-27198-analysis",
+        "source": "research_blog",
+        "timestamp": "2024-03-08T10:30:00Z",
+        "summary": "Public analysis of CVE-2024-27198 explains how TeamCity authentication bypass can expose build pipelines, credentials, and deployment automation to remote takeover.",
+        "severity": 0.95,
+        "tags": ["teamcity", "ci-cd", "auth-bypass", "credential-exposure", "cve-2024-27198"],
+        "metadata": {"publisher": "Rapid7", "artifact": "technical analysis"}
+      }
+    ],
+    "security_extra_events": [
+      {
+        "event_id": "msrc-2024-3400-hunting",
+        "source": "research_blog",
+        "timestamp": "2024-04-17T08:00:00Z",
+        "summary": "Threat hunting guidance for CVE-2024-3400 recommends reviewing PAN-OS command history, GlobalProtect exposure, and post-exploitation artifacts on firewall appliances.",
+        "severity": 0.94,
+        "tags": ["pan-os", "globalprotect", "telemetry", "threat-hunting", "cve-2024-3400"],
+        "metadata": {"publisher": "Defender guidance", "artifact": "hunting note"}
+      },
+      {
+        "event_id": "redhat-2024-6387-rhsa",
+        "source": "vendor_advisory",
+        "timestamp": "2024-07-05T09:10:00Z",
+        "summary": "Enterprise Linux guidance for CVE-2024-6387 tracks patched OpenSSH builds and prioritizes exposed SSH endpoints for emergency maintenance windows.",
+        "severity": 0.93,
+        "tags": ["openssh", "regresshion", "signal-race", "maintenance", "cve-2024-6387"],
+        "metadata": {"vendor": "Red Hat", "artifact": "security guidance"}
+      },
+      {
+        "event_id": "crowdstrike-2024-21762-hunt",
+        "source": "research_blog",
+        "timestamp": "2024-02-13T09:40:00Z",
+        "summary": "Exposure review guidance for CVE-2024-21762 focuses on FortiOS SSL-VPN internet edges, emergency patching, and validation of suspicious remote access activity.",
+        "severity": 0.94,
+        "tags": ["fortios", "fortiproxy", "ssl-vpn", "threat-hunting", "cve-2024-21762"],
+        "metadata": {"publisher": "CrowdStrike", "artifact": "hunting note"}
+      },
+      {
+        "event_id": "mandiant-2024-27198-ir",
+        "source": "research_blog",
+        "timestamp": "2024-03-09T09:20:00Z",
+        "summary": "Incident response guidance for CVE-2024-27198 recommends isolating exposed TeamCity servers, rotating CI credentials, and reviewing build pipeline integrity.",
+        "severity": 0.95,
+        "tags": ["teamcity", "ci-cd", "auth-bypass", "incident-response", "cve-2024-27198"],
+        "metadata": {"publisher": "Mandiant", "artifact": "incident response guidance"}
+      }
+    ]
+  }
+}
