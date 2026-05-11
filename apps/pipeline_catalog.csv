@@ -1,0 +1,103 @@
+pipeline_name,display_name,function
+academic_metadata,Academic Metadata,学术文献元数据抽取应用。
+api_log_analytics,API Log Analytics,读取 API 日志，解析状态码和时延并识别异常请求。
+arbitrage_detector,Arbitrage Detector,实时汇率转换与套利检测应用。
+article_monitoring,Article Monitoring System,An intelligent article monitoring system built on SAGE framework that continuously fetches papers
+assignment_feedback,作业初稿反馈系统,作业初稿反馈系统
+attendance_alert,Attendance Alert,员工出勤异常预警应用。
+auto_scaling_chat,Auto-Scaling Chat System,An intelligent auto-scaling chat system built on SAGE framework demonstrating elastic resource
+backup_sync,Backup Sync,读取备份状态，识别增量变化并输出同步一致性报告。
+benchmark_watch,模型评测榜单波动监控系统,模型评测榜单波动监控系统
+brand_compliance_review,品牌物料合规审核系统,品牌物料合规审核系统
+budget_variance_alert,预算执行偏差预警系统,预算执行偏差预警系统
+campus_aid_gap_alert,校园奖助申请缺口预警系统,校园奖助申请缺口预警系统
+campus_emission_report,校园碳排报告系统,校园碳排报告系统
+carbon_collection,碳排数据采集归集系统,碳排数据采集归集系统
+cashflow_watch,企业现金流预测系统,企业现金流预测系统
+cold_chain_watch,冷链运输越界监控系统,冷链运输越界监控系统
+community_hotspot_drift,社区民生热点漂移监测系统,社区民生热点漂移监测系统
+company_credit,Company Credit,读取企业名单，抽取风险因子并输出信用评分报告。
+compliance_doc_manager,Compliance Doc Manager,读取合规文档，分类文档类型并检查复核截止时间。
+content_moderation,Content Moderation,社交媒体内容审核应用。
+content_scheduler,多渠道内容排期系统,多渠道内容排期系统
+content_tagger,Content Tagger,读取内容文本，清洗文本并生成推荐标签。
+contract_matcher,Contract Matcher,法律文案模板匹配应用。
+contract_risk,Contract Risk,合同条款风险识别应用。
+contract_versioning,Contract Versioning,读取合同模板版本，解析版本号并分析文本差异。
+course_qa_helper,课程资料问答助手,课程资料问答助手
+customer_deduplication,Customer Deduplication,客户数据去重应用。
+data_center_watch,数据中心容量与冷却监测系统,数据中心容量与冷却监测系统
+data_cleaner,Data Cleaner,CSV 数据清洗与标准化示例应用。
+doc_classifier,Doc Classifier,文档分类应用。
+dorm_energy_optimizer,Dorm Energy Optimizer,宿舍能耗监测优化应用。
+drug_leaflet_extractor,药品说明书结构化抽取系统,药品说明书结构化抽取系统
+exhibition_heatmap,Exhibition Heatmap,读取客流数据，完成区域映射、热度计算和拥堵判定。
+experiment_review,实验记录异常回顾系统,实验记录异常回顾系统
+export_transformer,Export Transformer,读取导出请求，统一字段并转换成目标导出格式。
+factory_watch,产线传感器异常看护系统,产线传感器异常看护系统
+feedback_analyzer,Feedback Analyzer,客户反馈关键词提取示例应用。
+geo_recommendation,Geo Recommendation,地理位置智能推荐应用。
+grant_subscription,科研资助机会订阅系统,科研资助机会订阅系统
+greenhouse_assistant,温室种植协同助手,温室种植协同助手
+interview_coach,岗位面试模拟教练系统,岗位面试模拟教练系统
+inventory_alert,Inventory Alert,库存异常告警应用。
+invoice_reconciliation,Invoice Reconciliation,读取发票和订单数据，统一字段后做金额对账。
+knowledge_cleanup,内部知识库去重整理系统,内部知识库去重整理系统
+lab_turnaround_alert,检验样本周转异常预警系统,检验样本周转异常预警系统
+lead_scoring,Lead Scoring,销售机会评分应用。
+learning_record_hub,Learning Record Hub,读取学习记录，映射员工信息并识别认证缺口。
+lesson_scheduler,周课时计划排布系统,周课时计划排布系统
+literature_report_assistant,Literature Report Assistant,个性化文献推荐与综述报告生成。
+log_parser,Log Parser,日志解析与结构化示例应用。
+logistics_cost_optimizer,Logistics Cost Optimizer,物流成本优化应用。
+mail_classifier,Mail Classifier,读取邮件记录，解析正文并输出类别与优先级。
+media_archive_search,媒体资料归档检索系统,媒体资料归档检索系统
+medical_diagnosis,Medical Diagnosis Application,SAGE 医疗诊断应用示例 - 展示如何使用 SAGE 构建多智能体医疗诊断系统。
+medical_registration_optimizer,Medical Registration Optimizer,医疗挂号优化应用。
+meeting_minutes,Meeting Minutes,读取会议转录文本，切分议程片段并提取行动项。
+movie_scheduling_optimizer,Movie Scheduling Optimizer,电影库存与排片优化应用。
+multi_factor_credit_score,Multi Factor Credit Score,多维用户信用评分应用。
+municipal_search,市政协同文档检索系统,市政协同文档检索系统
+news_aggregator,News Aggregator,新闻聚合与去重应用。
+order_anomaly_detector,Order Anomaly Detector,订单异常检测应用。
+paper_classifier,Paper Classifier,读取论文标题、摘要或关键词，提取关键词并输出主题分类结果。
+partner_profile_hub,Partner Profile Hub,读取合作伙伴资料，统一字段、检测重复并生成档案视图。
+patent_competition_monitor,专利竞争格局监测系统,专利竞争格局监测系统
+patent_landscape_mapper,Patent Landscape Mapper,Patent Landscape Mapper
+permission_audit,Permission Audit,用户权限变更审计应用。
+permit_material_review,许可申报材料审查系统,许可申报材料审查系统
+podcast_highlight,播客高光切片系统,播客高光切片系统
+policy_search_helper,企业制度检索助手,企业制度检索助手
+policy_update_notifier,Policy Update Notifier,读取制度版本内容，抽取差异并输出影响提醒。
+product_sync,Product Sync,商品信息同步应用。
+project_risk_monitor,Project Risk Monitor,读取项目日志，抽取风险关键词并输出风险等级。
+quality_defect_filter,Quality Defect Filter,生产质量缺陷过滤与标准化应用。
+quote_compare,供应商报价对比系统,供应商报价对比系统
+radiology_followup_loop,影像报告随访闭环系统,影像报告随访闭环系统
+real_estate_valuation,Real Estate Valuation,房产智能估价应用。
+repro_audit,科研交付复现审计系统,科研交付复现审计系统
+restaurant_sales_analysis,Restaurant Sales Analysis,餐厅菜品销售分析应用。
+resume_parser,Resume Parser,简历解析与标准化示例应用。
+return_reason_mining,电商退货原因挖掘系统,电商退货原因挖掘系统
+skill_gap_diagnosis,学员能力缺口诊断系统,学员能力缺口诊断系统
+smart_home,Smart Home System,A distributed IoT-based smart home automation system built on SAGE framework demonstrating
+solar_alerting,光伏场站告警系统,光伏场站告警系统
+store_daily_digest,门店运营日报生成系统,门店运营日报生成系统
+student_improvement,Student Improvement MVP,这是一个基于 SAGE 本地运行时与显式状态服务实现的“个性化提分系统”MVP。
+subscription_dispatch,Subscription Dispatch,读取发布内容，匹配订阅关系并输出分发目标。
+subtitle_qc,字幕术语质检系统,字幕术语质检系统
+supply_chain_alert,Supply Chain Alert Dashboard MVP,这是一个基于 SAGE 本地运行时与显式状态服务实现的“供应链异常预警看板”第一版。
+supply_chain_tracker,Supply Chain Tracker,读取供应链状态更新，构建时间线并评估延误风险。
+ticket_router,Ticket Router,客服工单自动路由应用。
+ticket_triage,客服工单分诊 MVP,这个应用是一个基于 SAGE 构建的、可直接运行的客服工单分诊 Demo。
+traffic_briefing,交通突发事件简报系统,交通突发事件简报系统
+triage_structurer,门急诊分诊整理系统,门急诊分诊整理系统
+urban_repair_scheduler,城市设施维修调度系统,城市设施维修调度系统
+user_behavior_analytics,User Behavior Analytics,用户行为事件采集与分析应用。
+vendor_evaluation_standardizer,Vendor Evaluation Standardizer,读取供应商评估数据，统一字段、标准化评分并标记风险等级。
+video,Video Intelligence,视频分析与智能处理 pipeline。
+voucher_classifier,Voucher Classifier,财务凭证自动分类应用。
+warehouse_slot_optimizer,Warehouse Slot Optimizer,仓库货位优化应用。
+weather_sales_forecast,Weather Sales Forecast,天气驱动销量预测应用。
+web_scraper,Web Scraper,网页内容抓取与表格抽取应用。
+work_report_generator,Work Report Generator,基于 SAGE 框架的周报/日报自动生成器。

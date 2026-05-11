@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SAGE OPC</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script defer src="/static/app.js"></script>
+  </head>
+  <body>
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <h1>SAGE Runtime Console</h1>
+          <p class="brand-copy">Run, monitor, and review reusable AI workflows.</p>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="#overview">Overview</a>
+          <a href="#catalog">Apps</a>
+          <a href="#launch">Launch App</a>
+          <a href="#request-lab">Request Lab</a>
+          <a href="#instances">Running Instance</a>
+          <a href="#compatibility">Compatibility</a>
+          <a href="#experiments">Experiments</a>
+          <a href="#ports">Ports</a>
+          <a href="#settings">Settings</a>
+        </nav>
+
+        <div class="sidebar-card">
+          <div class="meta-row">
+            <span>Repo Root</span>
+            <strong id="sidebar-root">Loading...</strong>
+          </div>
+          <div class="meta-row">
+            <span>Python</span>
+            <strong id="sidebar-python">Loading...</strong>
+          </div>
+          <div class="meta-row">
+            <span>Port Pool</span>
+            <strong id="sidebar-port-range">Loading...</strong>
+          </div>
+        </div>
+
+        <div class="sidebar-card sidebar-actions">
+          <a class="ghost-button" href="/api/reports/inventory" target="_blank" rel="noreferrer">Export Inventory</a>
+          <a class="ghost-button" href="/api/reports/compatibility" target="_blank" rel="noreferrer">Export Compatibility</a>
+          <a class="ghost-button" href="/api/reports/experiments" target="_blank" rel="noreferrer">Export Experiments</a>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Application selection -> runtime visibility -> lightweight control</p>
+            <h2>SAGE Runtime Console for One-Person Companies</h2>
+          </div>
+          <div class="topbar-actions">
+            <label class="search-box">
+              <span>Search</span>
+              <input id="search-input" type="search" placeholder="Filter apps by name, scenario, or purpose" />
+            </label>
+            <button id="launch-shortcut" class="primary-button">Go to Launch</button>
+          </div>
+        </header>
+
+        <section id="overview" class="page-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">System State</p>
+              <h3>Overview</h3>
+            </div>
+          </div>
+
+          <div id="summary-cards" class="summary-grid"></div>
+
+          <div class="split-grid two-up">
+            <article class="panel-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Runtime</p>
+                  <h4>Running Instances</h4>
+                </div>
+              </div>
+              <div id="overview-instances"></div>
+            </article>
+
+            <article class="panel-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Lifecycle</p>
+                  <h4>Recent Activity</h4>
+                </div>
+              </div>
+              <div id="recent-activity"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="catalog" class="page-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Discovery</p>
+              <h3>App Catalog</h3>
+            </div>
+            <div class="section-actions">
+              <span id="catalog-count" class="pill"></span>
+            </div>
+          </div>
+
+          <div id="catalog-grid" class="catalog-grid"></div>
+        </section>
+
+        <section id="launch" class="page-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Preflight</p>
+              <h3>Launch App</h3>
+            </div>
+          </div>
+
+          <div class="split-grid launch-grid">
+            <article class="panel-card form-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Configuration</p>
+                  <h4>Launch Form</h4>
+                </div>
+              </div>
+
+              <div class="field-grid">
+                <label>
+                  <span>App</span>
+                  <select id="launch-app-select"></select>
+                </label>
+
+                <label>
+                  <span>Host</span>
+                  <input id="launch-host" type="text" value="127.0.0.1" />
+                </label>
+
+                <label class="checkbox-field">
+                  <input id="launch-auto-port" type="checkbox" checked />
+                  <span>Auto assign port</span>
+                </label>
+
+                <label>
+                  <span>Manual Port</span>
+                  <input id="launch-port" type="number" min="1" max="65535" placeholder="Use default or auto" />
+                </label>
+
+                <label class="field-span-2">
+                  <span>Storage Path</span>
+                  <input id="launch-storage-path" type="text" placeholder="Optional state or output path" />
+                </label>
+
+                <label class="field-span-2">
+                  <span>Detected Script Arguments</span>
+                  <div id="dynamic-args" class="dynamic-args"></div>
+                </label>
+
+                <label class="field-span-2">
+                  <span>Environment Variables</span>
+                  <div id="launch-env-hints" class="field-help"></div>
+                  <textarea id="launch-env" rows="4" placeholder="One KEY=VALUE per line"></textarea>
+                </label>
+
+                <label class="field-span-2">
+                  <span>Custom Args</span>
+                  <textarea id="launch-args" rows="3" placeholder="One extra argument per line"></textarea>
+                </label>
+              </div>
+
+              <details class="advanced-block">
+                <summary>Advanced</summary>
+                <div class="field-grid advanced-grid">
+                  <label>
+                    <span>Startup Timeout (s)</span>
+                    <input id="launch-timeout" type="number" min="1" step="1" value="12" />
+                  </label>
+
+                  <label class="checkbox-field">
+                    <input id="launch-service-mode" type="checkbox" />
+                    <span>Service mode: launch reusable invoke endpoint</span>
+                  </label>
+
+                  <label class="checkbox-field">
+                    <input id="launch-allow-duplicate" type="checkbox" />
+                    <span>Allow duplicate instance</span>
+                  </label>
+                </div>
+              </details>
+
+              <div class="stack-block">
+                <div class="info-block">
+                  <p class="eyebrow">Selected App</p>
+                  <div id="launch-app-facts"></div>
+                </div>
+
+                <div class="launch-actions">
+                  <button id="dry-run-button" class="secondary-button">Dry Run</button>
+                  <button id="copy-command-button" class="ghost-button" type="button">Copy Command</button>
+                  <button id="launch-button" class="primary-button">Launch</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel-card preview-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Preview</p>
+                  <h4>Command + Checklist</h4>
+                </div>
+              </div>
+
+              <div class="stack-block">
+                <div class="info-block">
+                  <p class="eyebrow">Endpoint</p>
+                  <div id="endpoint-preview" class="endpoint-preview">Select an app to preview.</div>
+                </div>
+
+                <div class="info-block">
+                  <p class="eyebrow">Command Preview</p>
+                  <pre id="command-preview" class="command-block">Waiting for validation...</pre>
+                </div>
+
+                <div class="info-block">
+                  <p class="eyebrow">Environment</p>
+                  <div id="environment-preview" class="key-value-list"></div>
+                </div>
+
+                <div class="info-block">
+                  <p class="eyebrow">Preflight Checklist</p>
+                  <div id="preflight-checks" class="checklist"></div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="request-lab" class="page-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Representative Requests</p>
+              <h3>Request Lab</h3>
+            </div>
+          </div>
+
+          <div class="split-grid request-grid">
+            <article class="panel-card form-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Runtime Exercise</p>
+                  <h4>Invoke a Representative Path</h4>
+                </div>
+              </div>
+
+              <div class="field-grid">
+                <label>
+                  <span>Route</span>
+                  <select id="request-route"></select>
+                </label>
+
+                <label>
+                  <span>Payload Mode</span>
+                  <select id="request-payload-mode">
+                    <option value="prompt">prompt</option>
+                    <option value="source">source</option>
+                  </select>
+                </label>
+
+                <label>
+                  <span>Request Class</span>
+                  <select id="request-template">
+                    <option value="retrieval">retrieval-only</option>
+                    <option value="tool">tool-backed</option>
+                    <option value="follow_up">follow-up</option>
+                  </select>
+                </label>
+
+                <label>
+                  <span>Argument Override</span>
+                  <input id="request-argument" type="text" placeholder="Optional target argument" />
+                </label>
+
+                <label>
+                  <span>Filename</span>
+                  <input id="request-filename" type="text" placeholder="input.txt" />
+                </label>
+
+                <label>
+                  <span>Timeout (s)</span>
+                  <input id="request-timeout" type="number" min="1" step="1" value="30" />
+                </label>
+
+                <label class="field-span-2">
+                  <span>Extra Args</span>
+                  <textarea id="request-extra-args" rows="3" placeholder="One extra argument per line"></textarea>
+                </label>
+
+                <label class="field-span-2">
+                  <span>Environment Variables</span>
+                  <textarea id="request-env" rows="3" placeholder="One KEY=VALUE per line"></textarea>
+                </label>
+
+                <label class="field-span-2">
+                  <span>Request Content</span>
+                  <textarea id="request-content" rows="10" placeholder="Inline prompt or source material"></textarea>
+                </label>
+              </div>
+
+              <div class="stack-block">
+                <div class="info-block">
+                  <p class="eyebrow">Route Preview</p>
+                  <div id="request-target-facts"></div>
+                </div>
+
+                <div class="info-block">
+                  <p class="eyebrow">Request Class Guidance</p>
+                  <div id="request-template-hint" class="request-hint-copy"></div>
+                </div>
+
+                <div class="launch-actions">
+                  <button id="apply-request-template" class="secondary-button" type="button">Load Template</button>
+                  <button id="copy-request-curl" class="ghost-button" type="button">Copy curl</button>
+                  <button id="send-request-button" class="primary-button" type="button">Run Request</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel-card preview-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Evidence</p>
+                  <h4>cURL + Result</h4>
+                </div>
+              </div>
+
+              <div class="stack-block">
+                <div class="info-block">
+                  <p class="eyebrow">cURL Preview</p>
+                  <pre id="request-curl-preview" class="command-block">Waiting for an available invoke route...</pre>
+                </div>
+
+                <div class="info-block">
+                  <p class="eyebrow">Result Summary</p>
+                  <div id="request-result-summary"></div>
+                </div>
+
+                <div class="info-block">
+                  <p class="eyebrow">Artifacts + Output</p>
+                  <div id="request-result-body"></div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="instances" class="page-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Operations</p>
+              <h3>Running Instance</h3>
+            </div>
+          </div>
+
+          <div class="split-grid instances-grid">
+            <article class="panel-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Live Table</p>
+                  <h4>Instances</h4>
+                </div>
+              </div>
+              <div id="instances-table"></div>
+            </article>
+
+            <article class="panel-card detail-card">
+              <div id="instance-detail"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="compatibility" class="page-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Verification</p>
+              <h3>Compatibility</h3>
+            </div>
+          </div>
+          <article class="panel-card">
+            <div id="compatibility-table"></div>
+          </article>
+        </section>
+
+        <section id="experiments" class="page-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Experimentation</p>
+              <h3>Experiment Workspace</h3>
+            </div>
+            <div class="section-actions">
+              <a class="ghost-button" href="/api/reports/experiments" target="_blank" rel="noreferrer">Export JSON</a>
+              <button id="clear-experiments-button" class="secondary-button" type="button">Clear Records</button>
+            </div>
+          </div>
+
+          <div class="split-grid two-up">
+            <article class="panel-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Captured Data</p>
+                  <h4>Experiment Summary</h4>
+                </div>
+              </div>
+              <div id="experiment-summary" class="experiment-summary-grid"></div>
+            </article>
+
+            <article class="panel-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Protocol</p>
+                  <h4>Suggested Experiment Flow</h4>
+                </div>
+              </div>
+              <div class="experiment-guidance">
+                <div class="info-block">
+                  <p class="eyebrow">Step 1</p>
+                  <strong>Pick one representative pipeline family.</strong>
+                  <div>Prefer one HTTP app, one batch pipeline, and one service-mode invoke path so you cover different runtime behaviors instead of only screenshotting the catalog.</div>
+                </div>
+                <div class="info-block">
+                  <p class="eyebrow">Step 2</p>
+                  <strong>Record launch, invoke, compatibility, and stop actions.</strong>
+                  <div>This page now captures those actions automatically so you can export a JSON trace instead of manually copying terminal fragments.</div>
+                </div>
+                <div class="info-block">
+                  <p class="eyebrow">Step 3</p>
+                  <strong>Compare runtime-visible outcomes.</strong>
+                  <div>Use endpoint readiness, uptime, compatibility probes, returned artifacts, and logs as the baseline evidence before you claim higher-level application quality.</div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <article class="panel-card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Trace</p>
+                <h4>Recent Experiment Events</h4>
+              </div>
+            </div>
+            <div id="experiment-log"></div>
+          </article>
+        </section>
+
+        <section id="ports" class="page-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Allocation</p>
+              <h3>Ports</h3>
+            </div>
+          </div>
+          <div class="split-grid two-up">
+            <article class="panel-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Usage</p>
+                  <h4>Used Ports</h4>
+                </div>
+              </div>
+              <div id="ports-used"></div>
+            </article>
+
+            <article class="panel-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">Preview</p>
+                  <h4>Available Ports</h4>
+                </div>
+              </div>
+              <div id="ports-available"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="settings" class="page-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Runtime</p>
+              <h3>Settings</h3>
+            </div>
+          </div>
+          <article class="panel-card">
+            <div id="settings-grid" class="settings-grid"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+  </body>
+</html>
