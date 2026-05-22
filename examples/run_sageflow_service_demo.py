@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the SageFlow-as-a-service snapshot handoff demo."""
+"""Run the BriskSnapshot vector-window handoff demo."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ try:
     from sage.apps.sageflow_service_demo import (
         SageFlowServiceDemoApplication,
         available_demo_datasets,
+        build_scaled_demo_vector_events,
         describe_demo_dataset,
     )
 except ImportError as exc:
@@ -35,7 +36,7 @@ def _redirect_stdout_to_stderr():
 
 def print_console_report(result, demo_summary: dict[str, int], dataset: str) -> None:
     print("=" * 76)
-    print("SAGE + SageFlow Service Demo")
+    print("BriskSnapshot Service Demo")
     print("=" * 76)
     print("运行配置")
     print("-" * 76)
@@ -45,7 +46,7 @@ def print_console_report(result, demo_summary: dict[str, int], dataset: str) -> 
     print(f"高严重度事件数: {demo_summary['high_severity_events']}")
     print()
 
-    print("SAGE 从 SageFlow 快照里提炼出的中间结论")
+    print("????????????????")
     print("-" * 76)
     for insight in result.insights:
         print(f"[{insight.severity.upper()}] {insight.title}")
@@ -78,7 +79,7 @@ def print_console_report(result, demo_summary: dict[str, int], dataset: str) -> 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="SAGE demo that treats SageFlow as a vector snapshot service.",
+        description="BriskSnapshot demo that exposes a vector snapshot service.",
     )
     parser.add_argument(
         "--json",
@@ -97,6 +98,12 @@ def main() -> None:
         default=None,
         help="Override the adapter window size. Defaults to the dataset recommendation.",
     )
+    parser.add_argument(
+        "--repeat",
+        type=int,
+        default=1,
+        help="Deterministically repeat the replay for prepared scale runs.",
+    )
     args = parser.parse_args()
 
     dataset_info = describe_demo_dataset(args.dataset)
@@ -106,15 +113,19 @@ def main() -> None:
 
     if args.json:
         with _redirect_stdout_to_stderr():
-            result = service.run_demo(reset=True, dataset=args.dataset)
+            events = build_scaled_demo_vector_events(args.dataset, repetitions=args.repeat)
+            result = service.ingest_events(events)
     else:
-        result = service.run_demo(reset=True, dataset=args.dataset)
+        events = build_scaled_demo_vector_events(args.dataset, repetitions=args.repeat)
+        result = service.ingest_events(events)
 
     if args.json:
         print(json.dumps(service.to_payload(result), ensure_ascii=False, indent=2))
         return
 
-    print_console_report(result, service.get_demo_summary(args.dataset), args.dataset)
+    summary = service.get_demo_summary(args.dataset)
+    summary["event_count"] = result.processed_event_count
+    print_console_report(result, summary, args.dataset)
 
 
 if __name__ == "__main__":

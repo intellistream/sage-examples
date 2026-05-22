@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import datetime as dt
 from pathlib import Path
 from typing import Any
 
@@ -54,6 +55,37 @@ def build_demo_raw_events(dataset: str = "baseline") -> list[dict[str, Any]]:
     return [dict(event_by_id[event_id]) for event_id in ordered_ids]
 
 
+def build_scaled_demo_raw_events(
+    dataset: str = "baseline",
+    *,
+    repetitions: int = 1,
+) -> list[dict[str, Any]]:
+    """Deterministically expand the public demo replay for prepared scale runs."""
+
+    if repetitions <= 0:
+        raise ValueError("repetitions must be positive")
+
+    base_events = build_demo_raw_events(dataset)
+    if repetitions == 1:
+        return base_events
+
+    expanded: list[dict[str, Any]] = []
+    for repeat_index in range(repetitions):
+        for item in base_events:
+            clone = dict(item)
+            event_id = str(item["event_id"])
+            clone["event_id"] = f"{event_id}--r{repeat_index + 1:03d}"
+            clone["summary"] = f"{item['summary']} [prepared replay copy {repeat_index + 1}]"
+            clone["tags"] = [*item.get("tags", []), f"replay-{repeat_index + 1:03d}"]
+            clone["timestamp"] = _offset_timestamp(str(item["timestamp"]), repeat_index)
+            metadata = dict(item.get("metadata", {}))
+            metadata["base_event_id"] = event_id
+            metadata["prepared_replay_copy"] = repeat_index + 1
+            clone["metadata"] = metadata
+            expanded.append(clone)
+    return expanded
+
+
 def build_security_demo_raw_events(dataset: str = "baseline") -> list[dict[str, Any]]:
     event_by_id = _events_by_id(dataset, include_security_extra=True)
     ordered_ids = [*build_replay_order(dataset)]
@@ -78,6 +110,14 @@ def build_demo_vector_events(dataset: str = "baseline") -> list[VectorStreamEven
     return [_to_vector_event(item) for item in build_demo_raw_events(dataset)]
 
 
+def build_scaled_demo_vector_events(
+    dataset: str = "baseline",
+    *,
+    repetitions: int = 1,
+) -> list[VectorStreamEvent]:
+    return [_to_vector_event(item) for item in build_scaled_demo_raw_events(dataset, repetitions=repetitions)]
+
+
 def build_security_demo_vector_events(dataset: str = "baseline") -> list[VectorStreamEvent]:
     return [_to_vector_event(item) for item in build_security_demo_raw_events(dataset)]
 
@@ -89,6 +129,17 @@ def build_demo_summary(dataset: str = "baseline") -> dict[str, int]:
         "event_count": len(events),
         "source_count": len(unique_sources),
         "high_severity_events": sum(1 for event in events if event.severity >= 0.90),
+    }
+
+
+def build_scaled_demo_summary(dataset: str = "baseline", *, repetitions: int = 1) -> dict[str, int]:
+    events = build_scaled_demo_vector_events(dataset, repetitions=repetitions)
+    unique_sources = {event.source for event in events}
+    return {
+        "event_count": len(events),
+        "source_count": len(unique_sources),
+        "high_severity_events": sum(1 for event in events if event.severity >= 0.90),
+        "repetitions": repetitions,
     }
 
 
@@ -114,6 +165,15 @@ def _to_vector_event(payload: dict[str, Any]) -> VectorStreamEvent:
     enriched = dict(payload)
     enriched["embedding"] = _embed_event(payload)
     return VectorStreamEvent.from_dict(enriched)
+
+
+def _offset_timestamp(timestamp: str, repeat_index: int) -> str:
+    try:
+        parsed = dt.datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+    except ValueError:
+        return timestamp
+    shifted = parsed + dt.timedelta(days=repeat_index * 7)
+    return shifted.isoformat().replace("+00:00", "Z")
 
 
 def _embed_event(payload: dict[str, Any]) -> list[float]:

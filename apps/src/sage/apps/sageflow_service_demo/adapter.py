@@ -5,10 +5,12 @@ from __future__ import annotations
 import datetime as dt
 import importlib
 import math
+import sys
 import threading
 import time
 import zlib
 from collections import Counter
+from pathlib import Path
 from typing import Literal
 
 import numpy as np
@@ -27,13 +29,37 @@ Side = Literal["left", "right"]
 
 
 def _load_sage_flow_module():
+    build_paths = [
+        Path("/root/sageFlow/build/lib"),
+        Path(__file__).resolve().parents[7].joinpath("sageFlow/build/lib"),
+    ]
+
+    for build_path in build_paths:
+        if not build_path.exists():
+            continue
+        build_path_str = str(build_path)
+        if build_path_str not in sys.path:
+            sys.path.insert(0, build_path_str)
+        try:
+            module = importlib.import_module("_sage_flow")
+        except ImportError:
+            continue
+        if hasattr(module, "PersistentVectorJoinRuntime"):
+            return module
+
     try:
-        return importlib.import_module("sage_flow")
+        module = importlib.import_module("sage_flow")
+        if hasattr(module, "PersistentVectorJoinRuntime"):
+            return module
     except ImportError as exc:  # pragma: no cover - environment dependent
-        raise RuntimeError(
-            "sage_flow is required for this demo. Install isage-flow or add the sageFlow "
-            "repository to PYTHONPATH before running the example."
-        ) from exc
+        import_error = exc
+    else:
+        import_error = None
+
+    raise RuntimeError(
+        "sage_flow with PersistentVectorJoinRuntime is required for this demo. "
+        "Build the sageFlow pybind extension or add its build/lib directory to PYTHONPATH."
+    ) from import_error
 
 
 class InMemorySageFlowSnapshotAdapter:

@@ -71,10 +71,10 @@ class DeriveOperationalInsightStep(MapFunction):
                 VectorSnapshotInsight(
                     insight_id=f"correlated-{data.event.event_id}",
                     insight_type="correlated_incident",
-                    title="SageFlow 检测到跨源高密度事件簇",
+                    title="Window runtime detected a cross-source evidence cluster",
                     summary=(
                         f"{cluster.cluster_id} 已聚合 {cluster.size} 条相似事件，来源覆盖 "
-                        f"{', '.join(sorted(cluster.source_breakdown))}，适合直接作为 SAGE 的中间"
+                        f"{', '.join(sorted(cluster.source_breakdown))}，适合直接作为 upper layer 的中间"
                         "快照输入给后续诊断或生成式解释节点。"
                     ),
                     severity="high",
@@ -89,10 +89,10 @@ class DeriveOperationalInsightStep(MapFunction):
                 VectorSnapshotInsight(
                     insight_id=f"emerging-{data.event.event_id}",
                     insight_type="emerging_pattern",
-                    title="SageFlow 暴露出新的高风险向量模式",
+                    title="Window runtime surfaced a high-risk vector pattern",
                     summary=(
                         f"事件 {data.event.event_id} 的新颖度为 {data.novelty_score:.2f}，尚未被现有"
-                        "热点簇吸收，适合触发 SAGE 的优先级升级、告警编排或 LLM 解释。"
+                        "热点簇吸收，适合触发 upper layer 的优先级升级、告警编排或 LLM 解释。"
                     ),
                     severity="critical",
                     related_event_id=data.event.event_id,
