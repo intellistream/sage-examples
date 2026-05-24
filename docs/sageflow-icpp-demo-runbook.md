@@ -35,6 +35,18 @@ embedding model or service.
 ```bash
 PYTHONPATH=/path/to/SAGE/src:/path/to/sage-examples/apps/src \
 python -m sage.apps.sageflow_service_demo.build_embeddings \
+  --provider sentence-transformers \
+  --events data/icpp_demo/vuln_public_1k/events.jsonl \
+  --out data/icpp_demo/vuln_public_1k/embeddings.jsonl \
+  --model BAAI/bge-small-en-v1.5
+```
+
+If an OpenAI-compatible embedding service is preferred, use:
+
+```bash
+PYTHONPATH=/path/to/SAGE/src:/path/to/sage-examples/apps/src \
+python -m sage.apps.sageflow_service_demo.build_embeddings \
+  --provider openai \
   --events data/icpp_demo/vuln_public_1k/events.jsonl \
   --out data/icpp_demo/vuln_public_1k/embeddings.jsonl \
   --base-url http://127.0.0.1:8000/v1 \
