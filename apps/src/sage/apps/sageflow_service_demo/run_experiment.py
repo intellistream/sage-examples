@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import re
 import statistics
 import time
 from collections import Counter
@@ -134,6 +135,7 @@ def _run_one_config(
                     "runtime": contract.runtime.to_dict() if contract.runtime is not None else None,
                     "quality": _contract_quality(contract, event_by_id),
                     "llm": answer.to_dict() if answer is not None else None,
+                    "faithfulness": _answer_faithfulness(answer.to_dict(), contract) if answer is not None else None,
                 }
                 rows.append(row)
                 handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
@@ -147,6 +149,11 @@ def _run_one_config(
         row["quality"]["weak_label_purity"]
         for row in rows
         if row.get("quality") and row["quality"]["weak_label_purity"] is not None
+    ]
+    faithfulness_values = [
+        row["faithfulness"]["cited_ids_are_contract_evidence"]
+        for row in rows
+        if row.get("faithfulness") and row["faithfulness"]["cited_ids_are_contract_evidence"] is not None
     ]
     wall_seconds = max(time.perf_counter() - started_run, 1e-9)
     return {
@@ -168,6 +175,9 @@ def _run_one_config(
         "llm_p50_ms": _percentile(llm_latencies, 50) if llm_latencies else None,
         "llm_p95_ms": _percentile(llm_latencies, 95) if llm_latencies else None,
         "avg_weak_label_purity": round(statistics.mean(quality_values), 4) if quality_values else None,
+        "answer_evidence_faithfulness": round(statistics.mean(faithfulness_values), 4)
+        if faithfulness_values
+        else None,
         "generated_llm_answers": sum(1 for row in rows if row.get("llm") and row["llm"]["status"] == "generated"),
         "template_fallback_answers": sum(
             1 for row in rows if row.get("llm") and row["llm"]["status"] == "template_fallback"
@@ -204,6 +214,28 @@ def _contract_quality(contract: Any, event_by_id: dict[str, VectorStreamEvent]) 
     return {"weak_label": label, "weak_label_purity": round(label_count / len(labels), 4)}
 
 
+def _answer_faithfulness(answer: dict[str, Any], contract: Any) -> dict[str, Any]:
+    text = str(answer.get("answer", ""))
+    contract_ids = set(contract_evidence_ids(contract, limit=16))
+    contract_ids.update(contract.cluster.member_ids)
+    cited_ids = sorted(item for item in contract_ids if item in text)
+    if not text:
+        return {
+            "cited_event_ids": [],
+            "cited_ids_are_contract_evidence": None,
+            "cites_at_least_one_contract_id": False,
+        }
+
+    candidate_ids = set(_extract_event_like_ids(text))
+    unsupported = sorted(candidate_ids - contract_ids)
+    return {
+        "cited_event_ids": cited_ids,
+        "unsupported_event_like_ids": unsupported,
+        "cited_ids_are_contract_evidence": 1.0 if not unsupported else 0.0,
+        "cites_at_least_one_contract_id": bool(cited_ids),
+    }
+
+
 def _weak_label(event: VectorStreamEvent) -> str:
     vendor = str(event.metadata.get("vendor", "")).strip().lower()
     product = str(event.metadata.get("product", "")).strip().lower()
@@ -213,6 +245,10 @@ def _weak_label(event: VectorStreamEvent) -> str:
         if tag not in {"cisa-kev", "known-exploited"}:
             return tag
     return event.source
+
+
+def _extract_event_like_ids(text: str) -> list[str]:
+    return re.findall(r"\b(?:CVE|cve)-\d{4}-\d{4,7}(?:-[a-z0-9-]+)?\b", text)
 
 
 def _elapsed_ms(started: float) -> float:
