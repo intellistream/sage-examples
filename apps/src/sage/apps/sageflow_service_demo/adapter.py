@@ -5,6 +5,7 @@ from __future__ import annotations
 import datetime as dt
 import importlib
 import math
+import os
 import sys
 import threading
 import time
@@ -29,9 +30,11 @@ Side = Literal["left", "right"]
 
 
 def _load_sage_flow_module():
+    workspace_root = Path(os.environ.get("ICPP_DEMO_ROOT", Path(__file__).resolve().parents[6])).resolve()
+    sageflow_root = Path(os.environ.get("SAGEFLOW_ROOT", workspace_root / "sageFlow")).resolve()
     build_paths = [
-        Path("/root/sageFlow/build/lib"),
-        Path(__file__).resolve().parents[7].joinpath("sageFlow/build/lib"),
+        sageflow_root / "build" / "lib",
+        sageflow_root / "python",
     ]
 
     for build_path in build_paths:
@@ -107,6 +110,8 @@ class InMemorySageFlowSnapshotAdapter:
         self._active_events: list[VectorStreamEvent] = []
         self._event_by_uid: dict[int, VectorStreamEvent] = {}
         self._join_pairs: list[tuple[int, int, float]] = []
+        self._join_pair_keys: set[tuple[int, int]] = set()
+        self._runtime_pair_cursor = 0
         self._lock = threading.RLock()
         self._sage_flow = _load_sage_flow_module()
         self._runtime = None
@@ -124,6 +129,8 @@ class InMemorySageFlowSnapshotAdapter:
             self._active_events.clear()
             self._event_by_uid.clear()
             self._join_pairs.clear()
+            self._join_pair_keys.clear()
+            self._runtime_pair_cursor = 0
             self._seen_right_uids.clear()
             self._seen_left_uids.clear()
 
@@ -209,7 +216,7 @@ class InMemorySageFlowSnapshotAdapter:
             self._add_left_locked(uid, event)
 
         self._runtime.wait_for_pair_count(cursor + 1, 50)
-        time.sleep(0.005)
+        time.sleep(0.001)
         self._drain_pairs_locked()
 
         active_uids = {_stable_uid(item.event_id) for item in self._active_events}
@@ -273,7 +280,7 @@ class InMemorySageFlowSnapshotAdapter:
     def _drain_pairs_locked(self) -> None:
         if self._runtime is None:
             return
-        cursor = len(self._join_pairs)
+        cursor = self._runtime_pair_cursor
         for pair in self._runtime.pairs_since(cursor):
             left_uid = int(pair.left_uid)
             right_uid = int(pair.right_uid)
@@ -281,8 +288,10 @@ class InMemorySageFlowSnapshotAdapter:
                 continue
             key = tuple(sorted((left_uid, right_uid)))
             similarity = float(pair.similarity)
-            if not any(tuple(sorted((existing[0], existing[1]))) == key for existing in self._join_pairs):
+            if key not in self._join_pair_keys:
+                self._join_pair_keys.add(key)
                 self._join_pairs.append((left_uid, right_uid, similarity))
+        self._runtime_pair_cursor = self._runtime.emitted_pair_count()
 
     def _nearest_neighbors_for_event(
         self,
