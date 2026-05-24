@@ -5,14 +5,17 @@ from __future__ import annotations
 from sage.runtime import BaseService, LocalEnvironment
 
 from .adapter import InMemorySageFlowSnapshotAdapter
-from .models import SageFlowWindowSnapshot, VectorSnapshotInsight, VectorStreamEvent
+from .models import LLMGenerationResult, SageFlowWindowSnapshot, SnapshotContract, VectorSnapshotInsight, VectorStreamEvent
 from .operators import (
+    BuildSnapshotContractStep,
     DeriveOperationalInsightStep,
     DemoVectorEventSource,
     EmbedTextSignalStep,
+    GenerateLLMAnswerStep,
     InsightCollectorSink,
     NormalizeVectorEventStep,
     QuerySageFlowWindowJoinStep,
+    RealEmbeddingStep,
     SAGEFLOW_SERVICE_NAME,
 )
 
@@ -56,19 +59,29 @@ class SageFlowServiceWorkflowRunner:
     def ingest_events(
         self,
         events: list[VectorStreamEvent | dict],
-    ) -> list[VectorSnapshotInsight]:
+        *,
+        use_real_embeddings: bool = False,
+        generate_llm: bool = False,
+        allow_template_fallback: bool = False,
+    ) -> tuple[list[VectorSnapshotInsight], list[SnapshotContract], list[LLMGenerationResult]]:
         insights: list[VectorSnapshotInsight] = []
+        contracts: list[SnapshotContract] = []
+        answers: list[LLMGenerationResult] = []
         environment = self._build_environment("sageflow_service_demo_ingest")
-        (
+        embedding_step = RealEmbeddingStep if use_real_embeddings else EmbedTextSignalStep
+        stream = (
             environment.from_batch(DemoVectorEventSource, events=events)
-            .map(EmbedTextSignalStep)
+            .map(embedding_step)
             .map(NormalizeVectorEventStep)
             .map(QuerySageFlowWindowJoinStep)
             .map(DeriveOperationalInsightStep)
-            .sink(InsightCollectorSink, results=insights)
+            .map(BuildSnapshotContractStep)
         )
+        if generate_llm:
+            stream = stream.map(GenerateLLMAnswerStep, allow_template_fallback=allow_template_fallback)
+        stream.sink(InsightCollectorSink, results=insights, contracts=contracts, answers=answers)
         environment.submit(autostop=True)
-        return insights
+        return insights, contracts, answers
 
     def get_latest_snapshot(self) -> SageFlowWindowSnapshot | None:
         return self.adapter.get_latest_snapshot()

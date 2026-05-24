@@ -240,6 +240,7 @@ class InMemorySageFlowSnapshotAdapter:
             novelty_score=novelty_score,
             nearest_neighbors=nearest_neighbors,
             window_snapshot=window_snapshot,
+            runtime_info=self.runtime_info(),
         )
 
     def _ensure_runtime_locked(self, event: VectorStreamEvent) -> None:

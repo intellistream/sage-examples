@@ -26,3 +26,15 @@ def test_latest_snapshot_exposes_source_breakdown() -> None:
     assert snapshot.window_size == 7
     assert snapshot.source_breakdown["nvd"] == 3
     assert snapshot.source_breakdown["vendor_advisory"] == 2
+
+
+def test_pipeline_can_materialize_contracts_and_explicit_llm_fallback() -> None:
+    service = SageFlowServiceDemoApplication()
+
+    result = service.run_demo(reset=True, generate_llm=True, allow_template_fallback=True)
+
+    assert len(result.contracts) == result.processed_event_count
+    assert len(result.llm_answers) == result.processed_event_count
+    assert result.llm_answers[-1].status == "template_fallback"
+    assert result.llm_answers[-1].evidence_ids
+    assert result.llm_answers[-1].contract_id == result.contracts[-1].contract_id

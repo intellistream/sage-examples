@@ -16,6 +16,7 @@ from .demo_data import (
 )
 from .models import (
     ClusterSnapshot,
+    LLMGenerationResult,
     NearestNeighbor,
     SageFlowDemoRunResult,
     SageFlowRuntimeInfo,
@@ -23,6 +24,7 @@ from .models import (
     SageFlowWindowSnapshot,
     SecurityEscalationSignal,
     TriageRouteDecision,
+    SnapshotContract,
     VectorSnapshotInsight,
     VectorStreamEvent,
     coerce_vector_stream_event,
@@ -35,6 +37,7 @@ from .service import (
 
 __all__ = [
     "ClusterSnapshot",
+    "LLMGenerationResult",
     "NearestNeighbor",
     "SageFlowDemoRunResult",
     "SageFlowRuntimeInfo",
@@ -44,6 +47,7 @@ __all__ = [
     "SageFlowTriageRoutingApplication",
     "SageFlowWindowSnapshot",
     "SecurityEscalationSignal",
+    "SnapshotContract",
     "TriageRouteDecision",
     "VectorSnapshotInsight",
     "VectorStreamEvent",

@@ -55,23 +55,47 @@ class SageFlowServiceDemoApplication:
     def ingest_events(
         self,
         events: list[VectorStreamEvent | dict[str, Any]],
+        *,
+        use_real_embeddings: bool = False,
+        generate_llm: bool = False,
+        allow_template_fallback: bool = False,
     ) -> SageFlowDemoRunResult:
         resolved_events = [
             item if isinstance(item, dict) else coerce_vector_stream_event(item)
             for item in events
         ]
-        insights = self.workflow.ingest_events(resolved_events)
+        insights, contracts, answers = self.workflow.ingest_events(
+            resolved_events,
+            use_real_embeddings=use_real_embeddings,
+            generate_llm=generate_llm,
+            allow_template_fallback=allow_template_fallback,
+        )
         return SageFlowDemoRunResult(
             processed_event_count=len(resolved_events),
             insight_count=len(insights),
             insights=insights,
             final_snapshot=self.workflow.get_latest_snapshot(),
+            contracts=contracts,
+            llm_answers=answers,
         )
 
-    def run_demo(self, *, reset: bool = True, dataset: str = "baseline") -> SageFlowDemoRunResult:
+    def run_demo(
+        self,
+        *,
+        reset: bool = True,
+        dataset: str = "baseline",
+        use_real_embeddings: bool = False,
+        generate_llm: bool = False,
+        allow_template_fallback: bool = False,
+    ) -> SageFlowDemoRunResult:
         if reset:
             self.reset()
-        return self.ingest_events(build_demo_vector_events(dataset))
+        return self.ingest_events(
+            build_demo_vector_events(dataset),
+            use_real_embeddings=use_real_embeddings,
+            generate_llm=generate_llm,
+            allow_template_fallback=allow_template_fallback,
+        )
 
     def get_latest_snapshot(self) -> SageFlowWindowSnapshot | None:
         return self.workflow.get_latest_snapshot()

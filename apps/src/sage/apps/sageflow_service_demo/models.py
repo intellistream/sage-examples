@@ -113,6 +113,7 @@ class SageFlowServiceResponse:
     novelty_score: float
     nearest_neighbors: list[NearestNeighbor]
     window_snapshot: SageFlowWindowSnapshot
+    runtime_info: "SageFlowRuntimeInfo | None" = None
 
     def to_dict(self) -> dict[str, Any]:
         return _to_payload(asdict(self))
@@ -151,6 +152,40 @@ class VectorSnapshotInsight:
 
 
 @dataclass(frozen=True)
+class SnapshotContract:
+    contract_id: str
+    latest_event_id: str
+    query_event: VectorStreamEvent
+    neighbors: list[NearestNeighbor]
+    cluster: ClusterSnapshot
+    runtime: SageFlowRuntimeInfo | None
+    contract_type: str = "snapshot"
+
+    def to_dict(self) -> dict[str, Any]:
+        return _to_payload(asdict(self))
+
+
+@dataclass(frozen=True)
+class LLMGenerationResult:
+    answer_id: str
+    contract_id: str
+    model: str
+    base_url: str
+    status: str
+    headline: str
+    answer: str
+    evidence_ids: list[str]
+    prompt_hash: str
+    latency_ms: float
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    error: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
 class TriageRouteDecision:
     event_id: str
     route: str
@@ -182,6 +217,8 @@ class SecurityEscalationSignal:
 class InsightEnvelope:
     response: SageFlowServiceResponse
     insights: list[VectorSnapshotInsight]
+    contract: SnapshotContract | None = None
+    llm_answer: LLMGenerationResult | None = None
 
 
 @dataclass(frozen=True)
@@ -190,6 +227,8 @@ class SageFlowDemoRunResult:
     insight_count: int
     insights: list[VectorSnapshotInsight]
     final_snapshot: SageFlowWindowSnapshot | None
+    contracts: list[SnapshotContract] = field(default_factory=list)
+    llm_answers: list[LLMGenerationResult] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return _to_payload(asdict(self))

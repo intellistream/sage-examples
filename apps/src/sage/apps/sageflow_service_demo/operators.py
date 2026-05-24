@@ -10,11 +10,16 @@ from sage.foundation import BatchFunction, MapFunction, SinkFunction
 
 from .models import (
     InsightEnvelope,
+    LLMGenerationResult,
     SageFlowServiceResponse,
+    SnapshotContract,
     VectorSnapshotInsight,
     VectorStreamEvent,
     coerce_vector_stream_event,
 )
+from .contracts import build_snapshot_contract
+from .embeddings import create_embedding_client_from_env, event_text, load_cache_from_env
+from .llm import generate_answer_from_contract
 
 SAGEFLOW_SERVICE_NAME = "sageflow_vector_snapshot"
 
@@ -48,6 +53,44 @@ class EmbedTextSignalStep(MapFunction):
             return coerce_vector_stream_event(data)
         payload = dict(data)
         payload["embedding"] = _embed_payload(payload)
+        return coerce_vector_stream_event(payload)
+
+
+class RealEmbeddingStep(MapFunction):
+    """Attach real cached/service embeddings to raw records.
+
+    This step is the paper/demo path. `EmbedTextSignalStep` remains available
+    only for deterministic unit fixtures.
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.cache = load_cache_from_env()
+        self.client = create_embedding_client_from_env()
+
+    def execute(self, data: VectorStreamEvent | dict[str, Any]) -> VectorStreamEvent:
+        if isinstance(data, VectorStreamEvent):
+            return data
+        if "embedding" in data:
+            return coerce_vector_stream_event(data)
+
+        event_id = str(data.get("event_id", ""))
+        embedding = self.cache.get(event_id) if self.cache is not None else None
+        if embedding is None and self.client is not None:
+            embedding = self.client.embed(event_text(data))
+        if embedding is None:
+            raise ValueError(
+                "RealEmbeddingStep requires either an embedding field, "
+                "SAGEFLOW_DEMO_EMBEDDING_CACHE, or an embedding service configuration."
+            )
+
+        payload = dict(data)
+        payload["embedding"] = embedding
+        metadata = dict(payload.get("metadata", {}))
+        if self.cache is not None:
+            metadata["embedding_cache"] = str(self.cache.path)
+            metadata["embedding_cache_metadata"] = self.cache.metadata
+        payload["metadata"] = metadata
         return coerce_vector_stream_event(payload)
 
 
@@ -104,13 +147,57 @@ class DeriveOperationalInsightStep(MapFunction):
         return InsightEnvelope(response=data, insights=insights)
 
 
+class BuildSnapshotContractStep(MapFunction):
+    def execute(self, data: InsightEnvelope | SageFlowServiceResponse) -> InsightEnvelope:
+        if isinstance(data, InsightEnvelope):
+            return InsightEnvelope(
+                response=data.response,
+                insights=data.insights,
+                contract=build_snapshot_contract(data.response),
+                llm_answer=data.llm_answer,
+            )
+        return InsightEnvelope(response=data, insights=[], contract=build_snapshot_contract(data))
+
+
+class GenerateLLMAnswerStep(MapFunction):
+    def __init__(self, *, allow_template_fallback: bool = False, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.allow_template_fallback = allow_template_fallback
+
+    def execute(self, data: InsightEnvelope) -> InsightEnvelope:
+        if data.contract is None:
+            raise ValueError("GenerateLLMAnswerStep requires a snapshot contract")
+        answer = generate_answer_from_contract(
+            data.contract,
+            allow_template_fallback=self.allow_template_fallback,
+        )
+        return InsightEnvelope(
+            response=data.response,
+            insights=data.insights,
+            contract=data.contract,
+            llm_answer=answer,
+        )
+
+
 class InsightCollectorSink(SinkFunction):
-    def __init__(self, results: list[VectorSnapshotInsight], **kwargs) -> None:
+    def __init__(
+        self,
+        results: list[VectorSnapshotInsight],
+        contracts: list[SnapshotContract] | None = None,
+        answers: list[LLMGenerationResult] | None = None,
+        **kwargs,
+    ) -> None:
         super().__init__(**kwargs)
         self.results = results
+        self.contracts = contracts
+        self.answers = answers
 
     def execute(self, data: InsightEnvelope) -> None:
         self.results.extend(data.insights)
+        if self.contracts is not None and data.contract is not None:
+            self.contracts.append(data.contract)
+        if self.answers is not None and data.llm_answer is not None:
+            self.answers.append(data.llm_answer)
 
 
 def _embed_payload(payload: dict[str, Any]) -> list[float]:
