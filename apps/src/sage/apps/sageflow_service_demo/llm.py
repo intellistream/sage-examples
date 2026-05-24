@@ -20,9 +20,11 @@ class LLMClientConfig:
     base_url: str
     model: str
     api_key: str = ""
+    provider: str = "openai-compatible"
     timeout_seconds: float = 60.0
     temperature: float = 0.2
     max_tokens: int = 512
+    extra_request_json: dict[str, Any] | None = None
 
     @classmethod
     def from_env(cls, prefix: str = "SAGEFLOW_DEMO_LLM") -> "LLMClientConfig | None":
@@ -30,13 +32,16 @@ class LLMClientConfig:
         model = os.environ.get(f"{prefix}_MODEL") or os.environ.get("VLLM_MODEL")
         if not base_url or not model:
             return None
+        provider = os.environ.get(f"{prefix}_PROVIDER", "openai-compatible")
         return cls(
             base_url=base_url.rstrip("/"),
             model=model,
             api_key=os.environ.get(f"{prefix}_API_KEY", os.environ.get("OPENAI_API_KEY", "")),
+            provider=provider,
             timeout_seconds=float(os.environ.get(f"{prefix}_TIMEOUT_SECONDS", "60")),
             temperature=float(os.environ.get(f"{prefix}_TEMPERATURE", "0.2")),
             max_tokens=int(os.environ.get(f"{prefix}_MAX_TOKENS", "512")),
+            extra_request_json=_extra_request_json(prefix, provider),
         )
 
 
@@ -60,6 +65,8 @@ class OpenAICompatibleChatClient:
             "temperature": self.config.temperature,
             "max_tokens": self.config.max_tokens,
         }
+        if self.config.extra_request_json:
+            payload.update(self.config.extra_request_json)
         headers = {"Content-Type": "application/json"}
         if self.config.api_key:
             headers["Authorization"] = f"Bearer {self.config.api_key}"
@@ -185,3 +192,15 @@ def _int_or_none(value: Any) -> int | None:
         return int(value)
     except (TypeError, ValueError):
         return None
+
+
+def _extra_request_json(prefix: str, provider: str) -> dict[str, Any] | None:
+    raw = os.environ.get(f"{prefix}_EXTRA_JSON")
+    if raw:
+        parsed = json.loads(raw)
+        if not isinstance(parsed, dict):
+            raise ValueError(f"{prefix}_EXTRA_JSON must decode to a JSON object")
+        return parsed
+    if provider.lower() in {"zhipu", "bigmodel", "zai", "z.ai"}:
+        return {"thinking": {"type": "disabled"}}
+    return None

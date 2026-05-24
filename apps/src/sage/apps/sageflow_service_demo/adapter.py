@@ -317,6 +317,7 @@ class InMemorySageFlowSnapshotAdapter:
                     source=candidate.source,
                     similarity=round(similarity, 4),
                     summary=candidate.summary,
+                    metadata=dict(candidate.metadata),
                 )
             )
         neighbors.sort(key=lambda item: item.similarity, reverse=True)

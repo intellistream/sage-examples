@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from .adapter import InMemorySageFlowSnapshotAdapter
-from .contracts import build_snapshot_contract, contract_evidence_ids
+from .contracts import build_snapshot_contract, contract_allowed_evidence_ids, contract_evidence_ids
 from .dataset_builder import read_jsonl
 from .embeddings import EmbeddingCache
 from .llm import generate_answer_from_contract
@@ -216,24 +216,54 @@ def _contract_quality(contract: Any, event_by_id: dict[str, VectorStreamEvent]) 
 
 def _answer_faithfulness(answer: dict[str, Any], contract: Any) -> dict[str, Any]:
     text = str(answer.get("answer", ""))
-    contract_ids = set(contract_evidence_ids(contract, limit=16))
-    contract_ids.update(contract.cluster.member_ids)
-    cited_ids = sorted(item for item in contract_ids if item in text)
+    contract_ids = set(contract_allowed_evidence_ids(contract, neighbor_limit=16))
+    alias_to_contract_id = _contract_id_aliases(contract, contract_ids)
     if not text:
         return {
             "cited_event_ids": [],
             "cited_ids_are_contract_evidence": None,
             "cites_at_least_one_contract_id": False,
+            "unsupported_event_like_ids": [],
         }
 
     candidate_ids = set(_extract_event_like_ids(text))
-    unsupported = sorted(candidate_ids - contract_ids)
+    if not candidate_ids:
+        return {
+            "cited_event_ids": [],
+            "cited_ids_are_contract_evidence": None,
+            "cites_at_least_one_contract_id": False,
+            "unsupported_event_like_ids": [],
+        }
+    cited_ids: set[str] = set()
+    unsupported: list[str] = []
+    for candidate_id in candidate_ids:
+        mapped = alias_to_contract_id.get(candidate_id.lower())
+        if mapped is None:
+            unsupported.append(candidate_id)
+        else:
+            cited_ids.add(mapped)
     return {
-        "cited_event_ids": cited_ids,
-        "unsupported_event_like_ids": unsupported,
+        "cited_event_ids": sorted(cited_ids),
+        "unsupported_event_like_ids": sorted(unsupported),
         "cited_ids_are_contract_evidence": 1.0 if not unsupported else 0.0,
         "cites_at_least_one_contract_id": bool(cited_ids),
     }
+
+
+def _contract_id_aliases(contract: Any, contract_ids: set[str]) -> dict[str, str]:
+    aliases = {event_id.lower(): event_id for event_id in contract_ids}
+    for item in [contract.query_event, *contract.neighbors]:
+        event_id = str(getattr(item, "event_id", ""))
+        if not event_id:
+            continue
+        aliases[event_id.lower()] = event_id
+        metadata = getattr(item, "metadata", {}) or {}
+        if isinstance(metadata, dict):
+            for key in ("cve_id", "cve"):
+                cve_id = metadata.get(key)
+                if cve_id:
+                    aliases[str(cve_id).lower()] = event_id
+    return aliases
 
 
 def _weak_label(event: VectorStreamEvent) -> str:

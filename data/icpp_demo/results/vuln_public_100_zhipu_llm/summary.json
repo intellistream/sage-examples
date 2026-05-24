@@ -1,0 +1,28 @@
+{
+  "runs": [
+    {
+      "answer_evidence_faithfulness": 0.95,
+      "avg_weak_label_purity": 0.3118,
+      "created_at": "2026-05-24T17:00:35.541719+00:00",
+      "embedding_dim": 384,
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "end_to_end_p50_ms": 5708.394,
+      "end_to_end_p95_ms": 6805.335,
+      "event_count": 20,
+      "generated_llm_answers": 20,
+      "join_method": "bruteforce_lazy",
+      "join_p50_ms": 2.274,
+      "join_p95_ms": 5.391,
+      "llm_errors": 0,
+      "llm_p50_ms": 5706.086,
+      "llm_p95_ms": 6803.368,
+      "parallelism": 1,
+      "rows_path": "data/icpp_demo/results/vuln_public_100_zhipu_llm/ws64-p1-t0_85-bruteforce_lazy.jsonl",
+      "run_id": "ws64-p1-t0_85-bruteforce_lazy",
+      "similarity_threshold": 0.85,
+      "template_fallback_answers": 0,
+      "throughput_events_per_sec": 0.174,
+      "window_size": 64
+    }
+  ]
+}

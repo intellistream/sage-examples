@@ -89,15 +89,31 @@ python -m sage.apps.sageflow_service_demo.run_experiment \
 The harness writes one JSONL file per runtime configuration and a summary file
 with throughput, p50/p95 latency, runtime counters, and weak-label purity.
 
-## 4. Run vLLM-backed Generation
+## 4. Run API-backed Generation
 
-Start a vLLM/OpenAI-compatible chat service separately, then run:
+The paper/demo path uses an OpenAI-compatible chat endpoint after the
+SageFlow runtime emits a bounded evidence contract. For the current demo, the
+recommended cloud profile is Zhipu GLM:
+
+```bash
+export SAGEFLOW_DEMO_LLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4
+export SAGEFLOW_DEMO_LLM_MODEL=glm-4.5
+export SAGEFLOW_DEMO_LLM_PROVIDER=zhipu
+export SAGEFLOW_DEMO_LLM_API_KEY=<your-api-key>
+export SAGEFLOW_DEMO_LLM_MAX_TOKENS=384
+```
+
+The `zhipu` provider profile sends `thinking={"type":"disabled"}` so the demo
+receives a concise answer in `choices[0].message.content`. A local vLLM service
+can still be used by setting `SAGEFLOW_DEMO_LLM_BASE_URL` to the vLLM
+OpenAI-compatible endpoint and `SAGEFLOW_DEMO_LLM_MODEL` to the served model,
+for example `Qwen/Qwen2.5-1.5B-Instruct`.
+
+Run the LLM evidence experiment:
 
 ```bash
 PYTHONPATH=/path/to/SAGE/src:/path/to/sage-examples/apps/src:/path/to/sageFlow/build/lib \
 SAGEFLOW_ROOT=/path/to/sageFlow \
-SAGEFLOW_DEMO_LLM_BASE_URL=http://127.0.0.1:8000/v1 \
-SAGEFLOW_DEMO_LLM_MODEL=Qwen/Qwen2.5-3B-Instruct \
 python -m sage.apps.sageflow_service_demo.run_experiment \
   --events data/icpp_demo/vuln_public_1k/events.jsonl \
   --embedding-cache data/icpp_demo/vuln_public_1k/embeddings.jsonl \
@@ -122,8 +138,10 @@ PYTHONPATH=/path/to/SAGE/src:/path/to/sage-examples/apps/src:/path/to/sageFlow/b
 SAGEFLOW_ROOT=/path/to/sageFlow \
 BRISKSNAPSHOT_LIVE_EVENTS_JSONL=/path/to/sage-examples/data/icpp_demo/vuln_public_1k/events.jsonl \
 SAGEFLOW_DEMO_EMBEDDING_CACHE=/path/to/sage-examples/data/icpp_demo/vuln_public_1k/embeddings.jsonl \
-SAGEFLOW_DEMO_LLM_BASE_URL=http://127.0.0.1:8000/v1 \
-SAGEFLOW_DEMO_LLM_MODEL=Qwen/Qwen2.5-3B-Instruct \
+SAGEFLOW_DEMO_LLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4 \
+SAGEFLOW_DEMO_LLM_MODEL=glm-4.5 \
+SAGEFLOW_DEMO_LLM_PROVIDER=zhipu \
+SAGEFLOW_DEMO_LLM_API_KEY=<your-api-key> \
 python backend/live_demo_server.py
 ```
 
@@ -134,14 +152,15 @@ npm run dev -- --host 127.0.0.1 --port 4173
 ```
 
 The UI should show the real dataset path, cached embedding metadata, SageFlow
-runtime counters, snapshot contract, vLLM metadata, prompt hash, evidence ids,
-and generated answer.
+runtime counters, snapshot contract, LLM API metadata, prompt hash, evidence
+ids, and generated answer.
 
 ## 6. Paper Evidence Checklist
 
 - Dataset table row is backed by `manifest.json`.
 - Embedding model/dimension comes from `embeddings.jsonl` metadata.
 - Runtime latency/throughput comes from `summary.json`.
-- LLM latency/token counts come from generated answer rows.
+- LLM latency/token counts come from generated answer rows and are reported
+  separately from SageFlow runtime throughput.
 - UI figure is a direct screenshot of the live run, not a generated mockup.
 - Any disconnected fallback run is excluded from paper results.
