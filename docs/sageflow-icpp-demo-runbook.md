@@ -95,11 +95,29 @@ The harness writes one result artifact per runtime configuration and a summary
 file with throughput, latency, runtime counters, and weak-label purity where the
 selected measurement mode exposes it.
 The runtime experiment intentionally uses `runtime_timestamp_mode=sequence`, so
-`window_size=128/512` maps to the most recent 128/512 vector arrivals instead
-of years of CVE publication time. This keeps SageFlow's indexed strategies in a
+`window_size=512/1024` maps to the most recent 512/1024 vector arrivals instead
+of years of CVE publication time. This keeps SageFlow's join strategies in a
 streaming regime and makes the parallelism sweep meaningful. The current paper
-profile uses the indexed `ivf` strategy over parallelism `1,2,4`; do not
-report `bruteforce_lazy` as the main result.
+profile uses `clustered_join` with low threshold (`0.5`) and multicast
+(`clustered_multicast_k=2`) over parallelism `1,2,4,8`; do not report
+`bruteforce_lazy` as the main result.
+
+Current measured clustered runtime summary on `nvd_2024_q1_3k`:
+
+| Window | Parallelism | Throughput | Speedup vs p=1 | Feed+drain | Emitted pairs |
+|---:|---:|---:|---:|---:|---:|
+| 512 | 1 | 22.7k events/s | 1.00x | 132.294 ms | 6,480 |
+| 512 | 2 | 26.4k events/s | 1.16x | 113.684 ms | 8,450 |
+| 512 | 4 | 20.1k events/s | 0.89x | 149.403 ms | 12,841 |
+| 512 | 8 | 11.9k events/s | 0.52x | 252.467 ms | 28,509 |
+| 1024 | 1 | 18.0k events/s | 1.00x | 166.907 ms | 9,025 |
+| 1024 | 2 | 28.1k events/s | 1.57x | 106.575 ms | 7,260 |
+| 1024 | 4 | 20.8k events/s | 1.16x | 144.362 ms | 12,667 |
+| 1024 | 8 | 12.3k events/s | 0.69x | 243.084 ms | 30,137 |
+
+The paper should phrase this as a measured clustered-multicast profile: p=2 is
+the strongest setting in the current prototype, while p=4/p=8 expose additional
+candidate coverage and multicast overhead. Do not claim linear scaling.
 
 `measurement_mode=engine` is used for the runtime table. It bypasses the
 service-level contract builder and measures SageFlow ingest plus drain time over

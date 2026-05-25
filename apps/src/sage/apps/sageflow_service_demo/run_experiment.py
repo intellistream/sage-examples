@@ -85,6 +85,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     measurement_mode = str(_coalesce(args.measurement_mode, selected_experiment.get("measurement_mode", "service")))
     queue_capacity = int(selected_experiment.get("queue_capacity", max(4096, len(events) * 2 + 16)))
+    clustered_multicast_k = int(selected_experiment.get("clustered_multicast_k", 0))
+    clustered_overlap_ratio = float(selected_experiment.get("clustered_overlap_ratio", 0.1))
+    clustered_training_samples = int(selected_experiment.get("clustered_training_samples", 1000))
+    clustered_index_type = str(selected_experiment.get("clustered_index_type", "bruteforce"))
     generate_llm = _bool_coalesce(args.generate_llm, selected_experiment.get("generate_llm"), False)
     allow_template_fallback = _bool_coalesce(
         args.allow_template_fallback,
@@ -111,7 +115,14 @@ def main(argv: list[str] | None = None) -> int:
                         embedding_cache_metadata=cache.metadata,
                     )
                     if measurement_mode == "engine":
-                        summary = _run_engine_config(queue_capacity=queue_capacity, **run_args)
+                        summary = _run_engine_config(
+                            queue_capacity=queue_capacity,
+                            clustered_multicast_k=clustered_multicast_k,
+                            clustered_overlap_ratio=clustered_overlap_ratio,
+                            clustered_training_samples=clustered_training_samples,
+                            clustered_index_type=clustered_index_type,
+                            **run_args,
+                        )
                     else:
                         summary = _run_one_config(
                             generate_llm=generate_llm,
@@ -308,6 +319,10 @@ def _run_engine_config(
     runtime_event_interval_ms: int,
     embedding_cache_metadata: dict[str, Any],
     queue_capacity: int,
+    clustered_multicast_k: int,
+    clustered_overlap_ratio: float,
+    clustered_training_samples: int,
+    clustered_index_type: str,
 ) -> dict[str, Any]:
     effective_runtime_window_ms = _runtime_window_ms_for_config(
         runtime_window_ms=runtime_window_ms,
@@ -337,6 +352,10 @@ def _run_engine_config(
         effective_runtime_window_ms,
         queue_capacity,
         parallelism,
+        clustered_multicast_k,
+        clustered_overlap_ratio,
+        clustered_training_samples,
+        clustered_index_type,
     )
 
     startup_started = time.perf_counter()
@@ -371,6 +390,10 @@ def _run_engine_config(
         "parallelism": parallelism,
         "similarity_threshold": similarity_threshold,
         "queue_capacity": queue_capacity,
+        "clustered_multicast_k": clustered_multicast_k if _is_clustered_join(join_method) else None,
+        "clustered_overlap_ratio": clustered_overlap_ratio if _is_clustered_join(join_method) else None,
+        "clustered_training_samples": clustered_training_samples if _is_clustered_join(join_method) else None,
+        "clustered_index_type": clustered_index_type if _is_clustered_join(join_method) else None,
         "startup_ms": startup_ms,
         "feed_and_drain_ms": round(feed_and_drain_seconds * 1000, 3),
         "throughput_events_per_sec": round(len(events) / feed_and_drain_seconds, 3),
@@ -380,6 +403,11 @@ def _run_engine_config(
     }
     rows_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
     return summary
+
+
+def _is_clustered_join(join_method: str) -> bool:
+    normalized = join_method.lower()
+    return normalized in {"clustered_join", "clusteredjoin", "clustered_join_eager", "clustered_join_lazy"}
 
 
 def _runtime_timestamp_for_index(

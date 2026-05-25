@@ -36,10 +36,12 @@ def test_runtime_experiment_uses_indexed_sequence_window() -> None:
     config, config_path = load_demo_config("configs/icpp_demo_zhipu.json")
     _, experiment = experiment_config(config, "runtime")
 
-    assert experiment["join_methods"] == ["ivf"]
+    assert experiment["join_methods"] == ["clustered_join"]
     assert experiment["measurement_mode"] == "engine"
     assert experiment["runtime_timestamp_mode"] == "sequence"
-    assert experiment["parallelism"] == [1, 2, 4]
+    assert experiment["parallelism"] == [1, 2, 4, 8]
+    assert experiment["similarity_thresholds"] == [0.5]
+    assert experiment["clustered_multicast_k"] == 2
     assert "nvd_2024_q1_3k" in str(resolve_config_path(experiment["paths"]["events"], config_path))
     assert _runtime_window_ms_for_config(
         runtime_window_ms=None,
