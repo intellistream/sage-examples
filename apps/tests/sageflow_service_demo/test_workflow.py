@@ -29,7 +29,16 @@ def test_latest_snapshot_exposes_source_breakdown() -> None:
     assert snapshot.source_breakdown["vendor_advisory"] == 2
 
 
-def test_pipeline_can_materialize_contracts_and_explicit_llm_fallback() -> None:
+def test_pipeline_can_materialize_contracts_and_explicit_llm_fallback(monkeypatch) -> None:
+    for key in (
+        "SAGEFLOW_DEMO_LLM_BASE_URL",
+        "SAGEFLOW_DEMO_LLM_MODEL",
+        "SAGEFLOW_DEMO_LLM_PROVIDER",
+        "SAGEFLOW_DEMO_LLM_API_KEY",
+        "VLLM_BASE_URL",
+        "VLLM_MODEL",
+    ):
+        monkeypatch.delenv(key, raising=False)
     service = SageFlowServiceDemoApplication()
 
     result = service.run_demo(reset=True, generate_llm=True, allow_template_fallback=True)

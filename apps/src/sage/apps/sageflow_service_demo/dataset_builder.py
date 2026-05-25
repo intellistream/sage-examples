@@ -101,8 +101,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--dataset-id", default="cisa-kev")
-    parser.add_argument("--nvd-pub-start", default="2024-01-01T00:00:00.000")
-    parser.add_argument("--nvd-pub-end", default="2024-12-31T23:59:59.999")
+    parser.add_argument("--nvd-pub-start", default="2024-01-01T00:00:00.000Z")
+    parser.add_argument("--nvd-pub-end", default="2024-03-31T23:59:59.999Z")
     parser.add_argument("--nvd-api-key", default="")
     args = parser.parse_args(argv)
 

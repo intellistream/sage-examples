@@ -98,18 +98,25 @@ class EmbeddingCache:
     def _load(self) -> None:
         if not self.path.exists():
             raise FileNotFoundError(f"embedding cache not found: {self.path}")
-        with self.path.open("r", encoding="utf-8") as handle:
+        paths = sorted(self.path.glob("*.jsonl")) if self.path.is_dir() else [self.path]
+        if not paths:
+            raise FileNotFoundError(f"embedding cache directory has no jsonl shards: {self.path}")
+        for path in paths:
+            self._load_jsonl(path)
+
+    def _load_jsonl(self, path: Path) -> None:
+        with path.open("r", encoding="utf-8") as handle:
             for line in handle:
                 if not line.strip():
                     continue
                 item = json.loads(line)
                 if item.get("type") == "metadata":
-                    self._metadata = dict(item)
+                    self._metadata = {**dict(item), "cache_path": str(self.path)}
                     continue
                 event_id = str(item.get("event_id", ""))
                 embedding = item.get("embedding")
                 if not event_id or not isinstance(embedding, list) or not embedding:
-                    raise ValueError(f"invalid embedding cache row in {self.path}")
+                    raise ValueError(f"invalid embedding cache row in {path}")
                 self._by_event_id[event_id] = [float(value) for value in embedding]
 
 

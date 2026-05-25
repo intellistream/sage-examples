@@ -27,6 +27,7 @@ from .models import (
 )
 
 Side = Literal["left", "right"]
+RuntimeTimestampMode = Literal["event_time", "sequence"]
 
 
 def _load_sage_flow_module():
@@ -83,6 +84,8 @@ class InMemorySageFlowSnapshotAdapter:
         queue_capacity: int = 1024,
         join_method: str = "bruteforce_lazy",
         runtime_window_ms: int = 180 * 24 * 60 * 60 * 1000,
+        runtime_timestamp_mode: RuntimeTimestampMode = "event_time",
+        runtime_event_interval_ms: int = 10,
         parallelism: int = 1,
     ) -> None:
         if window_size <= 0:
@@ -95,6 +98,10 @@ class InMemorySageFlowSnapshotAdapter:
             raise ValueError("queue_capacity must be positive")
         if runtime_window_ms <= 0:
             raise ValueError("runtime_window_ms must be positive")
+        if runtime_timestamp_mode not in {"event_time", "sequence"}:
+            raise ValueError("runtime_timestamp_mode must be 'event_time' or 'sequence'")
+        if runtime_event_interval_ms <= 0:
+            raise ValueError("runtime_event_interval_ms must be positive")
         if not join_method:
             raise ValueError("join_method must be non-empty")
 
@@ -104,6 +111,8 @@ class InMemorySageFlowSnapshotAdapter:
         self.queue_capacity = queue_capacity
         self.join_method = join_method
         self.runtime_window_ms = runtime_window_ms
+        self.runtime_timestamp_mode = runtime_timestamp_mode
+        self.runtime_event_interval_ms = runtime_event_interval_ms
         self.parallelism = parallelism
 
         self._latest_snapshot: SageFlowWindowSnapshot | None = None
@@ -118,6 +127,7 @@ class InMemorySageFlowSnapshotAdapter:
         self._runtime_dim: int | None = None
         self._seen_right_uids: set[int] = set()
         self._seen_left_uids: set[int] = set()
+        self._runtime_sequence_index = 0
 
     def reset(self) -> None:
         with self._lock:
@@ -133,6 +143,7 @@ class InMemorySageFlowSnapshotAdapter:
             self._runtime_pair_cursor = 0
             self._seen_right_uids.clear()
             self._seen_left_uids.clear()
+            self._runtime_sequence_index = 0
 
     def process_event(
         self,
@@ -205,15 +216,16 @@ class InMemorySageFlowSnapshotAdapter:
         uid = _stable_uid(event.event_id)
         self._event_by_uid[uid] = event
         self._upsert_active_event_locked(event)
+        runtime_timestamp_ms = self._next_runtime_timestamp_ms(event)
 
         cursor = self._runtime.emitted_pair_count()
         if side == "right":
-            self._add_right_locked(uid, event)
-            self._add_left_locked(uid, event)
+            self._add_right_locked(uid, event, runtime_timestamp_ms)
+            self._add_left_locked(uid, event, runtime_timestamp_ms)
         else:
             if mirror_to_right:
-                self._add_right_locked(uid, event)
-            self._add_left_locked(uid, event)
+                self._add_right_locked(uid, event, runtime_timestamp_ms)
+            self._add_left_locked(uid, event, runtime_timestamp_ms)
 
         self._runtime.wait_for_pair_count(cursor + 1, 50)
         time.sleep(0.001)
@@ -261,16 +273,31 @@ class InMemorySageFlowSnapshotAdapter:
         )
         self._runtime.start()
 
-    def _add_left_locked(self, uid: int, event: VectorStreamEvent) -> None:
+    def _next_runtime_timestamp_ms(self, event: VectorStreamEvent) -> int:
+        if self.runtime_timestamp_mode == "event_time":
+            return _timestamp_to_epoch_millis(event.timestamp)
+        timestamp_ms = self._runtime_sequence_index * self.runtime_event_interval_ms
+        self._runtime_sequence_index += 1
+        return timestamp_ms
+
+    def _add_left_locked(self, uid: int, event: VectorStreamEvent, runtime_timestamp_ms: int) -> None:
         if uid in self._seen_left_uids:
             return
-        self._runtime.add_left(uid, _timestamp_to_epoch_millis(event.timestamp), _to_runtime_vector(event.embedding, self._runtime_dim or 16))
+        self._runtime.add_left(
+            uid,
+            runtime_timestamp_ms,
+            _to_runtime_vector(event.embedding, self._runtime_dim or 16),
+        )
         self._seen_left_uids.add(uid)
 
-    def _add_right_locked(self, uid: int, event: VectorStreamEvent) -> None:
+    def _add_right_locked(self, uid: int, event: VectorStreamEvent, runtime_timestamp_ms: int) -> None:
         if uid in self._seen_right_uids:
             return
-        self._runtime.add_right(uid, _timestamp_to_epoch_millis(event.timestamp), _to_runtime_vector(event.embedding, self._runtime_dim or 16))
+        self._runtime.add_right(
+            uid,
+            runtime_timestamp_ms,
+            _to_runtime_vector(event.embedding, self._runtime_dim or 16),
+        )
         self._seen_right_uids.add(uid)
 
     def _upsert_active_event_locked(self, event: VectorStreamEvent) -> None:

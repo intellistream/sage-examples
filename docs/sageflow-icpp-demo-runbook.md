@@ -11,11 +11,11 @@ PYTHONPATH=/path/to/SAGE/src:/path/to/sage-examples/apps/src \
 python -m sage.apps.sageflow_service_demo.build_dataset \
   --source cisa-kev \
   --source nvd-api \
-  --nvd-pub-start 2024-01-01T00:00:00.000 \
-  --nvd-pub-end 2024-12-31T23:59:59.999 \
-  --limit 1000 \
-  --out data/icpp_demo/vuln_public_1k \
-  --dataset-id vuln-public-1k
+  --nvd-pub-start 2024-01-01T00:00:00.000Z \
+  --nvd-pub-end 2024-03-31T23:59:59.999Z \
+  --limit 3000 \
+  --out data/icpp_demo/nvd_2024_q1_3k \
+  --dataset-id nvd-2024-q1-3k
 ```
 
 Describe the generated dataset:
@@ -23,22 +23,24 @@ Describe the generated dataset:
 ```bash
 PYTHONPATH=/path/to/SAGE/src:/path/to/sage-examples/apps/src \
 python -m sage.apps.sageflow_service_demo.describe_dataset \
-  data/icpp_demo/vuln_public_1k/manifest.json
+  data/icpp_demo/nvd_2024_q1_3k/manifest.json
 ```
 
 ## 2. Build Real Embeddings
 
-Use an OpenAI-compatible embedding service. The embedding cache is the
-deterministic replay artifact; the vectors themselves must come from a real
-embedding model or service.
+Use the local SentenceTransformers deployment for the paper artifact. The cache
+is only the deterministic replay artifact; the vectors themselves are produced
+by `sentence_transformers.SentenceTransformer("BAAI/bge-small-en-v1.5")` with
+normalized 384-dimensional outputs.
 
 ```bash
 PYTHONPATH=/path/to/SAGE/src:/path/to/sage-examples/apps/src \
 python -m sage.apps.sageflow_service_demo.build_embeddings \
   --provider sentence-transformers \
-  --events data/icpp_demo/vuln_public_1k/events.jsonl \
-  --out data/icpp_demo/vuln_public_1k/embeddings.jsonl \
-  --model BAAI/bge-small-en-v1.5
+  --events data/icpp_demo/nvd_2024_q1_3k/events.jsonl \
+  --out data/icpp_demo/nvd_2024_q1_3k/embeddings.jsonl \
+  --model BAAI/bge-small-en-v1.5 \
+  --batch-size 64
 ```
 
 If an OpenAI-compatible embedding service is preferred, use:
@@ -47,8 +49,8 @@ If an OpenAI-compatible embedding service is preferred, use:
 PYTHONPATH=/path/to/SAGE/src:/path/to/sage-examples/apps/src \
 python -m sage.apps.sageflow_service_demo.build_embeddings \
   --provider openai \
-  --events data/icpp_demo/vuln_public_1k/events.jsonl \
-  --out data/icpp_demo/vuln_public_1k/embeddings.jsonl \
+  --events data/icpp_demo/nvd_2024_q1_3k/events.jsonl \
+  --out data/icpp_demo/nvd_2024_q1_3k/embeddings.jsonl \
   --base-url http://127.0.0.1:8000/v1 \
   --model BAAI/bge-small-en-v1.5
 ```
@@ -56,6 +58,18 @@ python -m sage.apps.sageflow_service_demo.build_embeddings \
 The cache must contain a metadata row plus one row per embedded event. Paper
 tables should cite the model name, vector dimension, source count, and record
 count from the generated manifest/cache.
+
+For repository storage, the 3k cache is sharded under
+`data/icpp_demo/nvd_2024_q1_3k/embeddings/`; `EmbeddingCache` accepts either a
+single JSONL file or a directory of JSONL shards.
+
+Sanity-check that cached vectors are real model outputs by recomputing at least
+one event with the same model and comparing it to the cache. The current
+`nvd_2024_q1_3k` cache was verified with maximum absolute difference below
+`1e-7`, which is float roundoff.
+
+The NVD API enforces bounded publication-date ranges; keep the date window to a
+quarter-scale range unless an API key and paginated date sharding are added.
 
 ## 3. Run Runtime Experiments
 
@@ -73,41 +87,41 @@ Run the experiment harness:
 PYTHONPATH=/path/to/SAGE/src:/path/to/sage-examples/apps/src:/path/to/sageFlow/build/lib \
 SAGEFLOW_ROOT=/path/to/sageFlow \
 python -m sage.apps.sageflow_service_demo.run_experiment \
-  --events data/icpp_demo/vuln_public_1k/events.jsonl \
-  --embedding-cache data/icpp_demo/vuln_public_1k/embeddings.jsonl \
-  --out-dir data/icpp_demo/results/vuln_public_1k \
-  --limit 1000 \
-  --window-size 64 \
-  --window-size 256 \
-  --parallelism 1 \
-  --parallelism 2 \
-  --parallelism 4 \
-  --similarity-threshold 0.80 \
-  --similarity-threshold 0.90
+  --config configs/icpp_demo_zhipu.json \
+  --experiment runtime
 ```
 
-The harness writes one JSONL file per runtime configuration and a summary file
-with throughput, p50/p95 latency, runtime counters, and weak-label purity.
+The harness writes one result artifact per runtime configuration and a summary
+file with throughput, latency, runtime counters, and weak-label purity where the
+selected measurement mode exposes it.
+The runtime experiment intentionally uses `runtime_timestamp_mode=sequence`, so
+`window_size=128/512` maps to the most recent 128/512 vector arrivals instead
+of years of CVE publication time. This keeps SageFlow's indexed strategies in a
+streaming regime and makes the parallelism sweep meaningful. The current paper
+profile uses the indexed `ivf` strategy over parallelism `1,2,4`; do not
+report `bruteforce_lazy` as the main result.
+
+`measurement_mode=engine` is used for the runtime table. It bypasses the
+service-level contract builder and measures SageFlow ingest plus drain time over
+the real cached vectors. The service-level contract path is still measured in
+the LLM experiment, where the goal is evidence faithfulness rather than raw
+engine throughput.
 
 ## 4. Run API-backed Generation
 
 The paper/demo path uses an OpenAI-compatible chat endpoint after the
 SageFlow runtime emits a bounded evidence contract. For the current demo, the
-recommended cloud profile is Zhipu GLM:
+recommended cloud profile is Zhipu GLM. Runtime parameters live in
+`configs/icpp_demo_zhipu.json`; only the secret key stays in the shell:
 
 ```bash
-export SAGEFLOW_DEMO_LLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4
-export SAGEFLOW_DEMO_LLM_MODEL=glm-4.5
-export SAGEFLOW_DEMO_LLM_PROVIDER=zhipu
-export SAGEFLOW_DEMO_LLM_API_KEY=<your-api-key>
-export SAGEFLOW_DEMO_LLM_MAX_TOKENS=384
+export ZHIPU_API_KEY=<your-api-key>
 ```
 
 The `zhipu` provider profile sends `thinking={"type":"disabled"}` so the demo
 receives a concise answer in `choices[0].message.content`. A local vLLM service
-can still be used by setting `SAGEFLOW_DEMO_LLM_BASE_URL` to the vLLM
-OpenAI-compatible endpoint and `SAGEFLOW_DEMO_LLM_MODEL` to the served model,
-for example `Qwen/Qwen2.5-1.5B-Instruct`.
+can still be used by adding another JSON config profile with its own
+`llm.base_url` and `llm.model`, for example `Qwen/Qwen2.5-1.5B-Instruct`.
 
 Run the LLM evidence experiment:
 
@@ -115,14 +129,8 @@ Run the LLM evidence experiment:
 PYTHONPATH=/path/to/SAGE/src:/path/to/sage-examples/apps/src:/path/to/sageFlow/build/lib \
 SAGEFLOW_ROOT=/path/to/sageFlow \
 python -m sage.apps.sageflow_service_demo.run_experiment \
-  --events data/icpp_demo/vuln_public_1k/events.jsonl \
-  --embedding-cache data/icpp_demo/vuln_public_1k/embeddings.jsonl \
-  --out-dir data/icpp_demo/results/vuln_public_1k_llm \
-  --limit 100 \
-  --window-size 64 \
-  --parallelism 1 \
-  --similarity-threshold 0.85 \
-  --generate-llm
+  --config configs/icpp_demo_zhipu.json \
+  --experiment zhipu_llm
 ```
 
 Do not use `--allow-template-fallback` for paper results. That flag is reserved
@@ -136,12 +144,8 @@ cd /path/to/brisksnapshot-ui
 
 PYTHONPATH=/path/to/SAGE/src:/path/to/sage-examples/apps/src:/path/to/sageFlow/build/lib \
 SAGEFLOW_ROOT=/path/to/sageFlow \
-BRISKSNAPSHOT_LIVE_EVENTS_JSONL=/path/to/sage-examples/data/icpp_demo/vuln_public_1k/events.jsonl \
-SAGEFLOW_DEMO_EMBEDDING_CACHE=/path/to/sage-examples/data/icpp_demo/vuln_public_1k/embeddings.jsonl \
-SAGEFLOW_DEMO_LLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4 \
-SAGEFLOW_DEMO_LLM_MODEL=glm-4.5 \
-SAGEFLOW_DEMO_LLM_PROVIDER=zhipu \
-SAGEFLOW_DEMO_LLM_API_KEY=<your-api-key> \
+BRISKSNAPSHOT_DEMO_CONFIG=/path/to/sage-examples/configs/icpp_demo_zhipu.json \
+ZHIPU_API_KEY=<your-api-key> \
 python backend/live_demo_server.py
 ```
 

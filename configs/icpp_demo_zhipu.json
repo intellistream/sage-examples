@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "default_experiment": "zhipu_llm",
+  "paths": {
+    "events": "../data/icpp_demo/vuln_public_100/events.jsonl",
+    "embedding_cache": "../data/icpp_demo/vuln_public_100/embeddings.jsonl"
+  },
+  "embedding": {
+    "provider": "sentence-transformers",
+    "model": "BAAI/bge-small-en-v1.5"
+  },
+  "llm": {
+    "provider": "zhipu",
+    "base_url": "https://open.bigmodel.cn/api/paas/v4",
+    "model": "glm-4.5",
+    "api_key_env": "ZHIPU_API_KEY",
+    "temperature": 0.2,
+    "max_tokens": 384,
+    "timeout_seconds": 60
+  },
+  "experiments": {
+    "runtime": {
+      "paths": {
+        "events": "../data/icpp_demo/nvd_2024_q1_3k/events.jsonl",
+        "embedding_cache": "../data/icpp_demo/nvd_2024_q1_3k/embeddings"
+      },
+      "output_dir": "../data/icpp_demo/results/nvd_2024_q1_3k_runtime",
+      "limit": 3000,
+      "join_methods": ["ivf"],
+      "window_sizes": [512, 1024],
+      "parallelism": [1, 2, 4],
+      "similarity_thresholds": [0.8],
+      "measurement_mode": "engine",
+      "queue_capacity": 4096,
+      "runtime_timestamp_mode": "sequence",
+      "runtime_event_interval_ms": 10,
+      "generate_llm": false,
+      "allow_template_fallback": false
+    },
+    "zhipu_llm": {
+      "output_dir": "../data/icpp_demo/results/vuln_public_100_zhipu_llm",
+      "limit": 20,
+      "join_method": "ivf",
+      "window_sizes": [64],
+      "parallelism": [2],
+      "similarity_thresholds": [0.85],
+      "runtime_timestamp_mode": "sequence",
+      "runtime_event_interval_ms": 10,
+      "generate_llm": true,
+      "allow_template_fallback": false
+    }
+  },
+  "live_demo": {
+    "event_limit": 48
+  }
+}

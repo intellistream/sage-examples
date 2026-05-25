@@ -12,63 +12,155 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from .adapter import InMemorySageFlowSnapshotAdapter
+from .adapter import InMemorySageFlowSnapshotAdapter, _load_sage_flow_module, _stable_uid, _to_runtime_vector
+from .config import apply_runtime_environment, experiment_config, load_demo_config, resolve_config_path
 from .contracts import build_snapshot_contract, contract_allowed_evidence_ids, contract_evidence_ids
 from .dataset_builder import read_jsonl
 from .embeddings import EmbeddingCache
 from .llm import generate_answer_from_contract
 from .models import VectorStreamEvent
 
+DEFAULT_RUNTIME_WINDOW_MS = 180 * 24 * 60 * 60 * 1000
+
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--events", type=Path, required=True)
-    parser.add_argument("--embedding-cache", type=Path, required=True)
-    parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--config", type=Path, default=None)
+    parser.add_argument("--experiment", default=None)
+    parser.add_argument("--events", type=Path, default=None)
+    parser.add_argument("--embedding-cache", type=Path, default=None)
+    parser.add_argument("--out-dir", type=Path, default=None)
     parser.add_argument("--limit", type=int, default=None)
-    parser.add_argument("--join-method", default="bruteforce_lazy")
+    parser.add_argument("--join-method", action="append", default=None)
     parser.add_argument("--window-size", type=int, action="append", default=None)
     parser.add_argument("--parallelism", type=int, action="append", default=None)
     parser.add_argument("--similarity-threshold", type=float, action="append", default=None)
-    parser.add_argument("--generate-llm", action="store_true")
-    parser.add_argument("--allow-template-fallback", action="store_true")
+    parser.add_argument("--runtime-window-ms", type=int, default=None)
+    parser.add_argument("--runtime-timestamp-mode", choices=("event_time", "sequence"), default=None)
+    parser.add_argument("--runtime-event-interval-ms", type=int, default=None)
+    parser.add_argument("--measurement-mode", choices=("service", "engine"), default=None)
+    parser.add_argument("--generate-llm", action="store_true", default=None)
+    parser.add_argument("--allow-template-fallback", action="store_true", default=None)
     args = parser.parse_args(argv)
 
-    raw_events = read_jsonl(args.events)
-    if args.limit is not None:
-        raw_events = raw_events[: args.limit]
-    cache = EmbeddingCache(args.embedding_cache)
+    config, config_path = load_demo_config(args.config)
+    apply_runtime_environment(config)
+    _, selected_experiment = experiment_config(config, args.experiment)
+    global_paths = config.get("paths") if isinstance(config.get("paths"), dict) else {}
+    experiment_paths = selected_experiment.get("paths") if isinstance(selected_experiment.get("paths"), dict) else {}
+    paths = {**global_paths, **experiment_paths}
+
+    events_path = args.events or resolve_config_path(paths.get("events"), config_path)
+    embedding_cache_path = args.embedding_cache or resolve_config_path(paths.get("embedding_cache"), config_path)
+    output_dir = args.out_dir or resolve_config_path(selected_experiment.get("output_dir"), config_path)
+    if events_path is None:
+        parser.error("--events is required when the config has no paths.events")
+    if embedding_cache_path is None:
+        parser.error("--embedding-cache is required when the config has no paths.embedding_cache")
+    if output_dir is None:
+        parser.error("--out-dir is required when the selected config experiment has no output_dir")
+
+    limit = _coalesce(args.limit, selected_experiment.get("limit"))
+    raw_events = read_jsonl(events_path)
+    if limit is not None:
+        raw_events = raw_events[: int(limit)]
+    cache = EmbeddingCache(embedding_cache_path)
     events = [_event_with_cached_embedding(item, cache) for item in raw_events]
     if not events:
         raise ValueError("experiment requires at least one event")
 
-    window_sizes = args.window_size or [64]
-    parallelism_values = args.parallelism or [1]
-    thresholds = args.similarity_threshold or [0.85]
+    window_sizes = args.window_size or _int_list(selected_experiment.get("window_sizes"), [64])
+    parallelism_values = args.parallelism or _int_list(selected_experiment.get("parallelism"), [1])
+    thresholds = args.similarity_threshold or _float_list(selected_experiment.get("similarity_thresholds"), [0.85])
+    join_methods = args.join_method or _str_list(
+        selected_experiment.get("join_methods", selected_experiment.get("join_method")),
+        ["bruteforce_lazy"],
+    )
+    runtime_window_ms = _coalesce(args.runtime_window_ms, selected_experiment.get("runtime_window_ms"))
+    runtime_timestamp_mode = str(
+        _coalesce(args.runtime_timestamp_mode, selected_experiment.get("runtime_timestamp_mode", "event_time"))
+    )
+    runtime_event_interval_ms = int(
+        _coalesce(args.runtime_event_interval_ms, selected_experiment.get("runtime_event_interval_ms", 10))
+    )
+    measurement_mode = str(_coalesce(args.measurement_mode, selected_experiment.get("measurement_mode", "service")))
+    queue_capacity = int(selected_experiment.get("queue_capacity", max(4096, len(events) * 2 + 16)))
+    generate_llm = _bool_coalesce(args.generate_llm, selected_experiment.get("generate_llm"), False)
+    allow_template_fallback = _bool_coalesce(
+        args.allow_template_fallback,
+        selected_experiment.get("allow_template_fallback"),
+        False,
+    )
 
-    args.out_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
     summaries: list[dict[str, Any]] = []
-    for window_size in window_sizes:
-        for parallelism in parallelism_values:
-            for threshold in thresholds:
-                summary = _run_one_config(
-                    events=events,
-                    output_dir=args.out_dir,
-                    join_method=args.join_method,
-                    window_size=window_size,
-                    parallelism=parallelism,
-                    similarity_threshold=threshold,
-                    generate_llm=args.generate_llm,
-                    allow_template_fallback=args.allow_template_fallback,
-                    embedding_cache_metadata=cache.metadata,
-                )
-                summaries.append(summary)
+    for join_method in join_methods:
+        for window_size in window_sizes:
+            for parallelism in parallelism_values:
+                for threshold in thresholds:
+                    run_args = dict(
+                        events=events,
+                        output_dir=output_dir,
+                        join_method=join_method,
+                        window_size=window_size,
+                        parallelism=parallelism,
+                        similarity_threshold=threshold,
+                        runtime_window_ms=runtime_window_ms,
+                        runtime_timestamp_mode=runtime_timestamp_mode,
+                        runtime_event_interval_ms=runtime_event_interval_ms,
+                        embedding_cache_metadata=cache.metadata,
+                    )
+                    if measurement_mode == "engine":
+                        summary = _run_engine_config(queue_capacity=queue_capacity, **run_args)
+                    else:
+                        summary = _run_one_config(
+                            generate_llm=generate_llm,
+                            allow_template_fallback=allow_template_fallback,
+                            **run_args,
+                        )
+                    summaries.append(summary)
 
-    summary_path = args.out_dir / "summary.json"
+    summary_path = output_dir / "summary.json"
     with summary_path.open("w", encoding="utf-8") as handle:
         json.dump({"runs": summaries}, handle, ensure_ascii=False, indent=2, sort_keys=True)
     print(json.dumps({"summary_path": str(summary_path), "runs": summaries}, ensure_ascii=False, indent=2, sort_keys=True))
     return 0
+
+
+def _coalesce(primary: Any, fallback: Any) -> Any:
+    return primary if primary is not None else fallback
+
+
+def _bool_coalesce(primary: bool | None, fallback: Any, default: bool) -> bool:
+    if primary is not None:
+        return bool(primary)
+    if fallback is None:
+        return default
+    return bool(fallback)
+
+
+def _int_list(value: Any, default: list[int]) -> list[int]:
+    if value is None:
+        return default
+    if isinstance(value, list):
+        return [int(item) for item in value]
+    return [int(value)]
+
+
+def _float_list(value: Any, default: list[float]) -> list[float]:
+    if value is None:
+        return default
+    if isinstance(value, list):
+        return [float(item) for item in value]
+    return [float(value)]
+
+
+def _str_list(value: Any, default: list[str]) -> list[str]:
+    if value is None:
+        return default
+    if isinstance(value, list):
+        return [str(item) for item in value]
+    return [str(value)]
 
 
 def _run_one_config(
@@ -79,10 +171,19 @@ def _run_one_config(
     window_size: int,
     parallelism: int,
     similarity_threshold: float,
+    runtime_window_ms: Any,
+    runtime_timestamp_mode: str,
+    runtime_event_interval_ms: int,
     generate_llm: bool,
     allow_template_fallback: bool,
     embedding_cache_metadata: dict[str, Any],
 ) -> dict[str, Any]:
+    effective_runtime_window_ms = _runtime_window_ms_for_config(
+        runtime_window_ms=runtime_window_ms,
+        runtime_timestamp_mode=runtime_timestamp_mode,
+        runtime_event_interval_ms=runtime_event_interval_ms,
+        window_size=window_size,
+    )
     run_id = (
         f"ws{window_size}-p{parallelism}-t{str(similarity_threshold).replace('.', '_')}"
         f"-{join_method}"
@@ -92,6 +193,9 @@ def _run_one_config(
         window_size=window_size,
         similarity_threshold=similarity_threshold,
         join_method=join_method,
+        runtime_window_ms=effective_runtime_window_ms,
+        runtime_timestamp_mode=runtime_timestamp_mode,
+        runtime_event_interval_ms=runtime_event_interval_ms,
         parallelism=parallelism,
     )
     rows: list[dict[str, Any]] = []
@@ -133,6 +237,7 @@ def _run_one_config(
                     "neighbor_count": len(contract.neighbors),
                     "evidence_ids": contract_evidence_ids(contract),
                     "runtime": contract.runtime.to_dict() if contract.runtime is not None else None,
+                    "runtime_timestamp_mode": runtime_timestamp_mode,
                     "quality": _contract_quality(contract, event_by_id),
                     "llm": answer.to_dict() if answer is not None else None,
                     "faithfulness": _answer_faithfulness(answer.to_dict(), contract) if answer is not None else None,
@@ -158,6 +263,7 @@ def _run_one_config(
     wall_seconds = max(time.perf_counter() - started_run, 1e-9)
     return {
         "run_id": run_id,
+        "measurement_mode": "service",
         "created_at": dt.datetime.now(dt.UTC).isoformat(),
         "rows_path": str(rows_path),
         "event_count": len(rows),
@@ -165,6 +271,9 @@ def _run_one_config(
         "embedding_dim": len(events[0].embedding),
         "join_method": join_method,
         "window_size": window_size,
+        "runtime_window_ms": effective_runtime_window_ms,
+        "runtime_timestamp_mode": runtime_timestamp_mode,
+        "runtime_event_interval_ms": runtime_event_interval_ms,
         "parallelism": parallelism,
         "similarity_threshold": similarity_threshold,
         "throughput_events_per_sec": round(len(rows) / wall_seconds, 3),
@@ -184,6 +293,120 @@ def _run_one_config(
         ),
         "llm_errors": sum(1 for row in rows if row.get("llm") and row["llm"].get("error")),
     }
+
+
+def _run_engine_config(
+    *,
+    events: list[VectorStreamEvent],
+    output_dir: Path,
+    join_method: str,
+    window_size: int,
+    parallelism: int,
+    similarity_threshold: float,
+    runtime_window_ms: Any,
+    runtime_timestamp_mode: str,
+    runtime_event_interval_ms: int,
+    embedding_cache_metadata: dict[str, Any],
+    queue_capacity: int,
+) -> dict[str, Any]:
+    effective_runtime_window_ms = _runtime_window_ms_for_config(
+        runtime_window_ms=runtime_window_ms,
+        runtime_timestamp_mode=runtime_timestamp_mode,
+        runtime_event_interval_ms=runtime_event_interval_ms,
+        window_size=window_size,
+    )
+    run_id = (
+        f"ws{window_size}-p{parallelism}-t{str(similarity_threshold).replace('.', '_')}"
+        f"-{join_method}-engine"
+    )
+    rows_path = output_dir / f"{run_id}.json"
+    dim = max(len(events[0].embedding), 16)
+    prepared_records = [
+        (
+            _stable_uid(event.event_id),
+            _runtime_timestamp_for_index(event, index, runtime_timestamp_mode, runtime_event_interval_ms),
+            _to_runtime_vector(event.embedding, dim),
+        )
+        for index, event in enumerate(events)
+    ]
+    sage_flow = _load_sage_flow_module()
+    runtime = sage_flow.PersistentVectorJoinRuntime(
+        dim,
+        join_method,
+        similarity_threshold,
+        effective_runtime_window_ms,
+        queue_capacity,
+        parallelism,
+    )
+
+    startup_started = time.perf_counter()
+    runtime.start()
+    startup_ms = _elapsed_ms(startup_started)
+
+    feed_started = time.perf_counter()
+    try:
+        for uid, timestamp_ms, vector in prepared_records:
+            runtime.add_right(uid, timestamp_ms, vector)
+            runtime.add_left(uid, timestamp_ms, vector)
+        runtime_info_before_close = runtime.runtime_info()
+    finally:
+        runtime.close()
+    feed_and_drain_seconds = max(time.perf_counter() - feed_started, 1e-9)
+    emitted_pairs = int(runtime.emitted_pair_count())
+
+    summary = {
+        "run_id": run_id,
+        "measurement_mode": "engine",
+        "created_at": dt.datetime.now(dt.UTC).isoformat(),
+        "rows_path": str(rows_path),
+        "event_count": len(events),
+        "vector_insert_count": len(events) * 2,
+        "embedding_model": embedding_cache_metadata.get("model"),
+        "embedding_dim": dim,
+        "join_method": join_method,
+        "window_size": window_size,
+        "runtime_window_ms": effective_runtime_window_ms,
+        "runtime_timestamp_mode": runtime_timestamp_mode,
+        "runtime_event_interval_ms": runtime_event_interval_ms,
+        "parallelism": parallelism,
+        "similarity_threshold": similarity_threshold,
+        "queue_capacity": queue_capacity,
+        "startup_ms": startup_ms,
+        "feed_and_drain_ms": round(feed_and_drain_seconds * 1000, 3),
+        "throughput_events_per_sec": round(len(events) / feed_and_drain_seconds, 3),
+        "throughput_vectors_per_sec": round((len(events) * 2) / feed_and_drain_seconds, 3),
+        "emitted_pairs": emitted_pairs,
+        "runtime_info_before_close": dict(runtime_info_before_close),
+    }
+    rows_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+    return summary
+
+
+def _runtime_timestamp_for_index(
+    event: VectorStreamEvent,
+    index: int,
+    runtime_timestamp_mode: str,
+    runtime_event_interval_ms: int,
+) -> int:
+    if runtime_timestamp_mode == "event_time":
+        normalized = event.timestamp.replace("Z", "+00:00")
+        parsed = dt.datetime.fromisoformat(normalized)
+        return int(parsed.timestamp() * 1000)
+    return index * runtime_event_interval_ms
+
+
+def _runtime_window_ms_for_config(
+    *,
+    runtime_window_ms: Any,
+    runtime_timestamp_mode: str,
+    runtime_event_interval_ms: int,
+    window_size: int,
+) -> int:
+    if runtime_window_ms is not None:
+        return int(runtime_window_ms)
+    if runtime_timestamp_mode == "sequence":
+        return max(int(window_size) * int(runtime_event_interval_ms), int(runtime_event_interval_ms))
+    return DEFAULT_RUNTIME_WINDOW_MS
 
 
 def _event_with_cached_embedding(payload: dict[str, Any], cache: EmbeddingCache) -> VectorStreamEvent:

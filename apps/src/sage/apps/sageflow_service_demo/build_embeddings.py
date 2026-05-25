@@ -48,6 +48,12 @@ def main(argv: list[str] | None = None) -> int:
                     "base_url": args.base_url.rstrip("/") if args.base_url else "",
                     "record_count": len(events),
                     "embedding_dim": len(embeddings[0]) if embeddings else 0,
+                    "implementation": (
+                        "sentence_transformers.SentenceTransformer"
+                        if args.provider == "sentence-transformers"
+                        else "openai-compatible /embeddings"
+                    ),
+                    "normalize_embeddings": args.provider == "sentence-transformers",
                 },
                 ensure_ascii=False,
                 sort_keys=True,

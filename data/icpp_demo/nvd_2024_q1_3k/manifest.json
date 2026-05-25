@@ -1,0 +1,10 @@
+{
+  "created_at": "2026-05-25T17:02:29.245419+00:00",
+  "dataset_id": "nvd-2024-q1-3k",
+  "events_path": "data/icpp_demo/nvd_2024_q1_3k/events.jsonl",
+  "record_count": 3000,
+  "schema": "sageflow_service_demo.raw_events.v1",
+  "source_urls": [
+    "https://services.nvd.nist.gov/rest/json/cves/2.0"
+  ]
+}
