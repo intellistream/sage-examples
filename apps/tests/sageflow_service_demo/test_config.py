@@ -26,7 +26,7 @@ def test_icpp_demo_config_drives_runtime_environment(monkeypatch) -> None:
     assert experiment_name == "zhipu_llm"
     assert experiment["generate_llm"] is True
     assert os.environ["SAGEFLOW_DEMO_LLM_BASE_URL"] == "https://open.bigmodel.cn/api/paas/v4"
-    assert os.environ["SAGEFLOW_DEMO_LLM_MODEL"] == "glm-4.5"
+    assert os.environ["SAGEFLOW_DEMO_LLM_MODEL"] == "glm-4.7"
     assert os.environ["SAGEFLOW_DEMO_LLM_PROVIDER"] == "zhipu"
     assert os.environ["SAGEFLOW_DEMO_LLM_API_KEY"] == "test-key"
     assert resolve_config_path(config["paths"]["events"], config_path).name == "events.jsonl"
