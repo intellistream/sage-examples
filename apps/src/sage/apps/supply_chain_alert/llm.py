@@ -46,8 +46,6 @@ def _load_local_env_file(env_file: str | os.PathLike[str] | None = None) -> None
         candidate_paths.append(Path(env_file).expanduser())
     else:
         candidate_paths.append(Path.cwd() / ".env")
-        for parent in Path(__file__).resolve().parents:
-            candidate_paths.append(parent / ".env")
 
     seen_paths: set[Path] = set()
     for candidate_path in candidate_paths:

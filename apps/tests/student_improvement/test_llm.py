@@ -46,6 +46,30 @@ def test_llm_settings_from_dotenv(tmp_path, monkeypatch) -> None:
     assert settings.configured is True
 
 
+def test_llm_settings_ignore_parent_dotenv(tmp_path, monkeypatch) -> None:
+    parent_dir = tmp_path / "parent"
+    child_dir = parent_dir / "child"
+    child_dir.mkdir(parents=True)
+    (parent_dir / ".env").write_text(
+        "SAGE_OPENAI_BASE_URL=https://parent.example/v1\n"
+        "SAGE_OPENAI_API_KEY=parent-key\n"  # pragma: allowlist secret
+        "SAGE_OPENAI_MODEL=parent-model\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.chdir(child_dir)
+    monkeypatch.delenv("SAGE_OPENAI_BASE_URL", raising=False)
+    monkeypatch.delenv("SAGE_OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("SAGE_OPENAI_MODEL", raising=False)
+
+    settings = SageOpenAISettings.from_env()
+
+    assert settings.base_url == "https://api.sage.org.ai/v1"
+    assert settings.api_key is None
+    assert settings.model is None
+    assert settings.configured is False
+
+
 def test_console_app_imports_next_demo_exam(tmp_path) -> None:
     app = StudentImprovementConsoleApp(storage_path=tmp_path / "student-state.json")
 

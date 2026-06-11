@@ -32,6 +32,32 @@ def test_gateway_settings_support_remote_base_url(monkeypatch) -> None:
     assert settings.health_url == "https://api.sage.org.ai/health"
 
 
+def test_gateway_settings_ignore_parent_dotenv(tmp_path, monkeypatch) -> None:
+    parent_dir = tmp_path / "parent"
+    child_dir = parent_dir / "child"
+    child_dir.mkdir(parents=True)
+    (parent_dir / ".env").write_text(
+        "SAGE_SUPPLY_CHAIN_GATEWAY_HOST=10.0.0.8\n"
+        "SAGE_SUPPLY_CHAIN_GATEWAY_PORT=18080\n"
+        "SAGE_SUPPLY_CHAIN_MODEL=parent-model\n"
+        "SAGE_SUPPLY_CHAIN_API_KEY=parent-key\n",  # pragma: allowlist secret
+        encoding="utf-8",
+    )
+
+    monkeypatch.chdir(child_dir)
+    monkeypatch.delenv("SAGE_SUPPLY_CHAIN_GATEWAY_HOST", raising=False)
+    monkeypatch.delenv("SAGE_SUPPLY_CHAIN_GATEWAY_PORT", raising=False)
+    monkeypatch.delenv("SAGE_SUPPLY_CHAIN_MODEL", raising=False)
+    monkeypatch.delenv("SAGE_SUPPLY_CHAIN_API_KEY", raising=False)
+
+    settings = SupplyChainGatewaySettings.from_env()
+
+    assert settings.host == "127.0.0.1"
+    assert settings.port == 8889
+    assert settings.model is None
+    assert settings.api_key == "EMPTY"
+
+
 def test_explainer_reports_unavailable_gateway(tmp_path, monkeypatch) -> None:
     service = SupplyChainAlertApplicationService(storage_path=tmp_path / "supply-chain-state.json")
     service.run_demo(reset=True)
